@@ -56,7 +56,8 @@ To write to the grievance officer directly, email {{ site.contact.email }} with 
 | A general complaint | Within 1 working day | Within 5 working days |
 | An order dispute | Within 4 working hours | Within 48 hours |
 | A food-safety dispute | Within 4 working hours, and first in our queue | Within 24 hours |
-| A report that a vendor was closed or the food not ready | When it is made | If the vendor does not reply within 2 hours, the NGO is refunded in full |
+
+In an order dispute, the other side has 24 hours to reply. If an NGO reports that a vendor was closed or the food was not ready, and the vendor does not reply within 2 hours, the NGO is refunded in full.
 
 Working days and working hours follow our office hours: {{ site.contact.hours }}. Most pickups happen in the evening, so a member of our team is also on call every evening for reports that a vendor was closed and for food-safety cases. We track our reply times against these targets.
 
@@ -120,10 +121,10 @@ The sale is between the vendor and the NGO. We help settle disputes between them
 ## 9. Food-safety cases
 
 - **Health first.** If someone may be ill from food, get medical help straight away. The problem report form will show an emergency number to call.
-- **First in the queue.** Food-safety reports go to the top of our queue, and we decide them within 24 hours.
+- **First in the queue.** Food-safety reports go to the top of our queue, and we decide them within 24 hours, even if the vendor's 24 hours to reply are not yet up.
 - **We can act before we decide.** To keep people safe, we can freeze every live listing from that vendor in the same category, and tell every NGO that collected food from the same batch.
 - **The authorities.** We keep the photos and the timeline, and we cooperate with the Islamabad Food Authority. Vendors must tell us about any food incident, or any action by the Islamabad Food Authority, within 24 hours.
-- **If the complaint is upheld,** the NGO is refunded in full or in part and the vendor gets a strike.
+- **If the complaint is upheld,** the NGO gets a full or partial refund, if it has not had one already, and the vendor gets a strike.
 - **Later concerns.** If you learn of a food-safety problem after the 24-hour window, for example someone falling ill, tell us anyway. We still look into it as a safety matter.
 
 Our [Food Safety Policy]({{ '/legal/food-safety-policy/' | relative_url }}) has the full incident and recall steps.

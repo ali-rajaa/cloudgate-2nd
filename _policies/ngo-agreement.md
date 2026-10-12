@@ -15,9 +15,9 @@ This agreement is between {{ site.company.legal_name }} ("Rizq Rasan", "we", "us
 
 ## 1. Parties and how this agreement is made
 
-- **The parties.** The agreement is made with your organisation, not with the person who clicks to accept it. Our company details are on the [Legal Information]({{ '/legal/company/' | relative_url }}) page. {{ site.company.status }}.
+- **The parties.** The agreement is made with your organisation, not with the person who accepts it. Our details are on the [Legal Information]({{ '/legal/company/' | relative_url }}) page.
 - **Who accepts it.** A person aged 18 or over who is allowed to act for your organisation, shown by an authority letter and your list of office bearers, accepts this agreement during onboarding. By accepting, they confirm they have that authority.
-- **Accepting online.** Under the Electronic Transactions Ordinance 2002, accepting online has the same effect as signing on paper. We record the version you accepted, the language you saw it in, the time and the IP address.
+- **Accepting online.** Under the Electronic Transactions Ordinance 2002, accepting online has the same effect as signing on paper. We record the version, language, time and IP address of your acceptance.
 - **When it starts.** This agreement takes effect when we approve your organisation.
 - **Who you buy from.** When you pay for a claim, you buy the food from the vendor. Rizq Rasan is not the seller. We collect the payment as the vendor's agent, so paying us counts as paying the vendor.
 - **The pilot.** Organisations invited before launch sign separate pilot terms, which apply until this agreement takes effect for them. During the pilot, NGOs pay vendors directly and Rizq Rasan is not involved in the payment.
@@ -85,8 +85,8 @@ A vendor sets food aside for you when you claim it, and other organisations lose
 - **No cash, no side deals.** Cash at pickup is never accepted, and you must not pay a vendor in any other way for food claimed through Rizq Rasan.
 - **Who can pay.** You can name up to 3 people allowed to pay for you. When you claim, each gets a pay link by email and WhatsApp that works until the deadline, with no login needed. Receipts are always in your organisation's name, even when someone pays from their own wallet.
 - **The price.** You pay the listing price with nothing added. It is fixed once you claim.
-- **Slow confirmations.** If your payment is still processing at the deadline, we hold the food for up to 15 more minutes while the gateway confirms it. If a payment is confirmed after the hold ended, the order is reinstated if the food is still free. If another organisation has it, your payment is refunded in full automatically.
-- **Outages.** If payments or the network go down, we can pause every payment countdown and add the lost time back. No strikes are given for a missed deadline caused by such an outage.
+- **Slow confirmations.** If your payment is still processing at the deadline, we hold the food for up to 15 more minutes. If it is confirmed after the hold ended, the order is reinstated if the food is still free, or refunded in full automatically if another organisation has it.
+- **Outages.** If payments or the network go down, we can pause every countdown and add the lost time back. A deadline or pickup missed because of an outage does not count against you.
 
 Once your payment is confirmed, you get the 4-digit pickup code, the vendor's address and phone number, and a collector pass to send to your driver. The [Payments and Refunds]({{ '/legal/payments/' | relative_url }}) policy has the full rules.
 
@@ -130,7 +130,7 @@ Once you have paid, the vendor keeps the food for you and turns other organisati
 | You release a claim before paying | Nothing was paid | No penalty |
 | A claim expires unpaid | Nothing was paid | 3 in 7 days pauses claiming for 24 hours, not a strike |
 | You cancel at least 60 minutes before pickup starts | 100% | None. The food goes back to other organisations |
-| You cancel within 60 minutes of pickup starting, or later | Nothing | Counts as a no-show: the vendor is paid and you get a strike |
+| You cancel less than 60 minutes before pickup starts, or later | Nothing | Counts as a no-show: the vendor is paid and you get a strike |
 | Your collector doesn't come | Nothing | No-show: the vendor is paid and you get a strike |
 | The vendor cancels, is closed or the food is not ready | 100% | Vendor strike |
 
@@ -141,14 +141,13 @@ Once you have paid, the vendor keeps the food for you and turns other organisati
 
 - **Within 24 hours.** Within 24 hours of pickup, confirm that everything arrived or report a problem: food not as described, less than you paid for, spoiled or unsafe food, a vendor who was closed, a payment problem, someone's behaviour, or anything else. Add details in English or Urdu and up to 3 photos, and say whether you want a full refund, a partial refund, or just to let us know. If you don't reply, the order is Completed.
 - **If someone may be ill.** Get medical help first. The report form shows an emergency number, and your case goes to the top of our queue.
-- **How we decide.** You get a reference number. The other side has 24 hours to reply. We acknowledge a dispute within 4 working hours and decide it within 48 hours, or within 24 hours for food safety, and send the decision to both sides.
-- **Refunds.** An upheld problem leads to a full or partial refund, as decided.
+- **How we decide.** You get a reference number, and the other side has 24 hours to reply. We acknowledge a dispute within 4 working hours and decide it within 48 hours, or 24 hours for food safety, and send the decision to both sides. An upheld problem leads to a full or partial refund.
 
 General complaints follow our [Complaints and Disputes]({{ '/legal/complaints/' | relative_url }}) policy: acknowledged within 1 working day and resolved within 5 working days.
 
 ## 13. Strikes, reliability and appeals
 
-You get a strike for a no-show, which includes cancelling a paid order within 60 minutes of pickup starting.
+You get a strike for a no-show, which includes cancelling a paid order less than 60 minutes before pickup starts.
 
 | Active strikes | What happens |
 | --- | --- |
@@ -173,16 +172,15 @@ Our [Privacy Policy]({{ '/legal/privacy/' | relative_url }}) explains how we han
 
 ## 15. Term, suspension and termination
 
-- **Length.** This agreement lasts from your approval until it is ended by you or by us.
-- **Ending it yourself.** You can close your account at any time once you have no open orders.
-- **Suspension or removal by us.** We can suspend or remove your organisation if you break this agreement, the terms or the law, put food safety or other people at risk, appear on a sanctions or proscribed list, or no longer meet the conditions in section 2. Reselling food or uploading forged documents means permanent removal. We always give a written reason, and you can appeal a suspension within 7 days.
-- **What suspension means.** Paid orders can still be collected unless we decide otherwise. You keep read access to your records.
+- **Length.** This agreement lasts from your approval until you or we end it.
+- **By you.** You can close your account once you have no open orders.
+- **By us.** We can suspend or remove your organisation if you break this agreement, the terms or the law, put food safety or other people at risk, appear on a sanctions or proscribed list, or no longer meet section 2. We give a written reason, and you can appeal a suspension within 7 days. While suspended, your paid orders can still be collected unless we decide otherwise, and you keep read access to your records.
 - **What survives.** Refunds and money owed, the no-resale promise for food you already collected, limits of liability and record-keeping continue after this agreement ends.
 
 ## 16. Changes and general terms
 
-- **Changes.** We will tell you about material changes to this agreement by email at least 14 days before they take effect, and show the new version number and effective date on this page. If the law or a safety risk requires a change sooner, we will tell you as soon as we can. If you don't agree, you can close your account before the change takes effect.
+- **Changes.** We tell you about material changes by email at least 14 days ahead, and show the new version and effective date here. If the law or a safety risk requires a change sooner, we tell you as soon as we can. If you don't agree, you can close your account first.
 - **Liability.** The vendor is responsible for the food until handover and you are responsible for it after. Our liability is limited as section 15 of the [Terms of Service]({{ '/legal/terms/' | relative_url }}) explains, and section 16 of the terms covers your indemnity, including for the handling, use or resale of food after pickup.
 - **Transfer.** You may not transfer this agreement or your account to anyone else.
-- **Disputes and law.** Disputes with us, governing law and the courts are covered in section 19 of the [Terms of Service]({{ '/legal/terms/' | relative_url }}): Pakistani law applies, mediation is offered first, and the courts at Islamabad decide.
-- **Language and notices.** The English text is binding. We send notices to the email address on your account, and you can send notices to {{ site.contact.email }}.
+- **Disputes and law.** Disputes with us follow section 19 of the [Terms of Service]({{ '/legal/terms/' | relative_url }}), under Pakistani law and the courts at Islamabad.
+- **Language and notices.** The English text is binding. We send notices to the email address on your account, and you can write to us at {{ site.contact.email }}.

@@ -5,7 +5,7 @@ description: The company behind Rizq Rasan, its registration status, registered 
 version: "0.1 (draft)"
 effective: on publication
 summary:
-  - Rizq Rasan is run by a private limited company based in Islamabad.
+  - Rizq Rasan is being set up as a private limited company based in Islamabad.
   - Its SECP registration number, NTN and registered office appear on this page as soon as they are issued.
   - We take no payments until the company is incorporated and our payment gateway has approved it.
   - Complaints go to our grievance officer. They are acknowledged within 1 working day and resolved within 5 working days.

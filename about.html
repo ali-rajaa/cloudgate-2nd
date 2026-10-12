@@ -162,7 +162,7 @@ actions:
       <div>
         {% include section-head.html eyebrow="The company" title="Who runs Rizq Rasan" id="company-title" %}
         <div class="stack">
-          <p>Rizq Rasan is run by {{ site.company.legal_name }}, a private limited company. {{ site.company.status }}.</p>
+          <p>{% include company-line.html %}</p>
           <p>Real payments start only once the company is incorporated and the payment gateway has approved us. Until then, in the pilot, NGOs pay businesses directly and we never handle the money.</p>
         </div>
         <p class="section-link"><a class="text-link" href="{{ '/legal/company/' | relative_url }}">Read our legal information {% include icon.html name="arrow-right" size=18 %}</a></p>

@@ -1,0 +1,6 @@
+{%- comment -%} One sentence on who runs Rizq Rasan. It updates itself once the SECP number is set in _config.yml. {%- endcomment -%}
+{%- if site.company.secp_number != "" -%}
+Rizq Rasan is run by {{ site.company.legal_name }}, a private limited company registered with the Securities and Exchange Commission of Pakistan (registration number {{ site.company.secp_number }}).
+{%- else -%}
+Rizq Rasan is being set up as {{ site.company.legal_name }}, a private limited company. {{ site.company.status }}.
+{%- endif -%}

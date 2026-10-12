@@ -15,7 +15,7 @@ These terms set out the rules for using Rizq Rasan: this website now, and the pl
 
 ## 1. Who we are
 
-Rizq Rasan is run by {{ site.company.legal_name }}, a private limited company. {{ site.company.status }}.
+{% include company-line.html %}
 
 | Detail | Value |
 | --- | --- |

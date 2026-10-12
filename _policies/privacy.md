@@ -15,7 +15,7 @@ This policy explains how Rizq Rasan handles personal data: what we collect, why,
 
 ## 1. Who we are
 
-Rizq Rasan is run by {{ site.company.legal_name }}. {{ site.company.status }}. We decide why and how your personal data is used, so we are responsible for it as the data controller.
+{% include company-line.html %} We decide why and how your personal data is used, so we are responsible for it as the data controller.
 
 | Detail | Value |
 | --- | --- |

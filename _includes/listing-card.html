@@ -1,0 +1,31 @@
+{%- comment -%}
+  The real listing card, shown on marketing pages with an "Example" tag (never a live listing).
+{%- endcomment -%}
+<article class="listing-card" aria-label="Example listing">
+  <div class="listing-card__photo" aria-hidden="true">
+    <span class="listing-card__photo-label">{% include icon.html name="camera" size=18 %} Vendor's photo</span>
+  </div>
+  <div class="listing-card__body">
+    <div class="listing-card__tags">
+      <span class="chip chip--example">Example</span>
+      <span class="chip">Bread and bakery</span>
+    </div>
+    <h3 class="listing-card__title">Naan and sheermal, 40 pieces</h3>
+    <p class="listing-card__vendor">{% include icon.html name="shield" size=16 %} Verified bakery · 98% reliable</p>
+    <div class="listing-card__price">
+      <span class="listing-card__amount">Rs 1,200</span>
+      <s class="listing-card__retail" aria-label="Retail value Rs 2,400">Rs 2,400</s>
+      <span class="listing-card__save">Save 50%</span>
+    </div>
+    <dl class="listing-card__facts">
+      <div><dt>{% include icon.html name="clock" size=16 %}<span>Pickup</span></dt><dd>Today, 10:00 to 10:45 pm</dd></div>
+      <div><dt>{% include icon.html name="pin" size=16 %}<span>Where</span></dt><dd>F-7 Markaz · 2.1 km</dd></div>
+      <div><dt>{% include icon.html name="thermometer" size=16 %}<span>Safe until</span></dt><dd>Tomorrow, 11:00 am</dd></div>
+      <div><dt>{% include icon.html name="leaf" size=16 %}<span>Dietary</span></dt><dd>Halal (vendor-declared) · contains gluten, milk</dd></div>
+    </dl>
+    <div class="listing-card__timer" data-countdown data-seconds="1781">
+      <span class="listing-card__timer-label">Claimed · pay within</span>
+      <span class="listing-card__timer-value" data-countdown-value>29:41</span>
+    </div>
+  </div>
+</article>

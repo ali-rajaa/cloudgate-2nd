@@ -1,0 +1,40 @@
+# Footer link columns. Phase 2 pages (Help centre, Stories, Volunteer and careers)
+# are added here only once they exist.
+columns:
+  - title: Platform
+    links:
+      - { title: How it works, url: /how-it-works/ }
+      - { title: Pricing and fees, url: /pricing/ }
+      - { title: Impact, url: /impact/ }
+      - { title: Food safety, url: /food-safety/ }
+      - { title: FAQ, url: /faq/ }
+  - title: For businesses
+    links:
+      - { title: Why list with us, url: /for-businesses/ }
+      - { title: Register your business, url: /for-businesses/#register }
+      - { title: Vendor Agreement, url: /legal/vendor-agreement/ }
+      - { title: Food safety for vendors, url: /food-safety/#vendors }
+      - { title: Verification Policy, url: /legal/verification/ }
+  - title: For NGOs
+    links:
+      - { title: Why join, url: /for-ngos/ }
+      - { title: Register your organisation, url: /for-ngos/#register }
+      - { title: NGO Agreement, url: /legal/ngo-agreement/ }
+      - { title: Food safety after pickup, url: /food-safety/#ngos }
+      - { title: Reliability and No-show Policy, url: /legal/reliability/ }
+  - title: Company
+    links:
+      - { title: About us, url: /about/ }
+      - { title: The problem, url: /the-problem/ }
+      - { title: Partners, url: /partners/ }
+      - { title: Contact, url: /contact/ }
+      - { title: Legal Information, url: /legal/company/ }
+  - title: Legal
+    links:
+      - { title: Terms of Service, url: /legal/terms/ }
+      - { title: Privacy Policy, url: /legal/privacy/ }
+      - { title: Payments and refunds, url: /legal/payments/ }
+      - { title: Food Safety Policy, url: /legal/food-safety-policy/ }
+      - { title: Complaints and disputes, url: /legal/complaints/ }
+      - { title: Cookie Policy, url: /legal/cookies/ }
+      - { title: All policies, url: /legal/ }

@@ -1,0 +1,25 @@
+{%- comment -%}
+  Businesses / NGOs segmented control with three steps each. Param: id (unique prefix)
+{%- endcomment -%}
+{%- assign uid = include.id | default: "steps" -%}
+<div class="steps-switch" data-tabs>
+  <div class="segmented" role="tablist" aria-label="Show steps for">
+    <span class="segmented__thumb" data-tabs-thumb aria-hidden="true"></span>
+    <button class="segmented__option" role="tab" id="{{ uid }}-tab-business" aria-controls="{{ uid }}-panel-business" aria-selected="true" type="button">For businesses</button>
+    <button class="segmented__option" role="tab" id="{{ uid }}-tab-ngo" aria-controls="{{ uid }}-panel-ngo" aria-selected="false" tabindex="-1" type="button">For NGOs</button>
+  </div>
+  {%- assign groups = "business,ngo" | split: "," %}
+  {%- for g in groups %}
+  <div class="steps-panel" role="tabpanel" id="{{ uid }}-panel-{{ g }}" aria-labelledby="{{ uid }}-tab-{{ g }}" data-tabs-panel{% unless forloop.first %} hidden{% endunless %}>
+    <ol class="steps">
+      {%- for step in site.data.steps[g] %}
+      <li class="step">
+        <span class="step__number" aria-hidden="true">{{ forloop.index }}</span>
+        <h3 class="step__title">{{ step.title }}</h3>
+        <p class="step__text">{{ step.text }}</p>
+      </li>
+      {%- endfor %}
+    </ol>
+  </div>
+  {%- endfor %}
+</div>

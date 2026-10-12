@@ -1,0 +1,120 @@
+# FAQ, grouped. Items with home: true appear on the Home page (keep it to six).
+# Answers follow "Rules at a glance" in the master plan.
+- group: Businesses
+  id: businesses
+  items:
+    - q: Who can list food on Rizq Rasan?
+      home: true
+      a: >-
+        Restaurants, bakeries, grocers, cafes, caterers and hotels in Islamabad with an NTN and an
+        Islamabad Food Authority licence. Restaurants and cafes also need their Department of Tourist
+        Services registration. We check every business before it can list.
+    - q: How much do I earn from a listing?
+      a: >-
+        You set a recovery price of at least Rs 1,000 and no more than half the food's retail value.
+        You keep 95% of that price. Any tax the law requires us to withhold is shown line by line on
+        your statement.
+    - q: When do I get paid?
+      a: >-
+        Payouts go out every Monday and Thursday by bank transfer to an account in your business name,
+        for orders that are complete and settled by the payment gateway. That is usually within
+        6 working days of pickup.
+    - q: What happens if nobody claims my food?
+      a: >-
+        The listing ends when its pickup window closes, and nothing is charged. We'll send you tips,
+        such as an earlier pickup window or a lower price.
+    - q: What if the NGO doesn't turn up?
+      a: >-
+        Thirty minutes after the pickup window ends we ask you whether they collected. If they didn't,
+        you are still paid and the NGO gets a strike.
+    - q: Can my counter staff hand over food without seeing our money?
+      a: >-
+        Yes. Owners can invite staff with a pickup-only role. Staff see today's pickups and type in
+        pickup codes, but cannot list food or see earnings.
+- group: NGOs
+  id: ngos
+  items:
+    - q: Which organisations can join?
+      home: true
+      a: >-
+        Registered NGOs, shelters, community kitchens and food banks that feed people. We accept
+        registration under the ICT Charities Act, the Societies Registration Act, the ICT Trust Act,
+        Section 42 of the Companies Act, or the Voluntary Social Welfare Agencies Ordinance.
+    - q: Why isn't the food free?
+      home: true
+      a: >-
+        A small recovery price covers the vendor's packing and handover time, which keeps them
+        listing food instead of throwing it away. Prices are capped at half of retail value, so you
+        always save at least 50%.
+    - q: How much can we claim?
+      a: >-
+        New organisations start with up to 2 claims a day. After the first month or 10 completed
+        pickups, whichever is later, the limit rises to 6 a day. Organisations certified by the
+        Pakistan Centre for Philanthropy or approved by FBR under section 2(36) have no daily limit.
+    - q: Who collects the food?
+      a: >-
+        Anyone you choose. Add up to five drivers or volunteers as collectors. They get a WhatsApp
+        link with the pickup code, address and time, and don't need an account.
+    - q: Can we sell food we collect?
+      a: >-
+        No. Food claimed through Rizq Rasan must be served or given to people for free. Reselling it
+        means permanent removal from the platform.
+- group: Payments
+  id: payments
+  items:
+    - q: How do NGOs pay?
+      home: true
+      a: >-
+        By Raast, approving the payment in your own banking app, or by JazzCash or Easypaisa wallet,
+        through our payment partner PayFast. Card payments come later.
+    - q: Why can't we pay cash at pickup?
+      a: >-
+        Paying when you claim protects vendors from no-shows and lets the food be held for you. It also
+        means we never handle cash, and every payment gets a proper receipt.
+    - q: How long do we have to pay?
+      a: >-
+        Thirty minutes from claiming, or until 15 minutes before pickup ends if that comes first. If
+        you don't pay in time, the food goes back to other organisations.
+    - q: When do we get a refund?
+      a: >-
+        You get a full refund if the vendor cancels, is closed, or the food is unsafe at pickup, and a
+        refund for anything missing if the vendor hands over less than listed. If you cancel at least
+        60 minutes before pickup starts, you get a full refund too. See the Payments and Refunds
+        policy for every case.
+    - q: Does Rizq Rasan store our bank or wallet details?
+      a: >-
+        No. You pay on PayFast's own page or in your bank's app. Our servers never see your bank or
+        wallet details.
+- group: Safety
+  id: safety
+  items:
+    - q: How do you keep the food safe?
+      home: true
+      a: >-
+        Every category has a time limit, cooked food can spend at most 2 hours at room temperature,
+        and we start with low-risk food such as bread, bakery, produce and packaged goods. Vendors must
+        hold a food licence, and collectors check the food before taking it.
+    - q: What if the food looks unsafe at pickup?
+      a: >-
+        Don't take it. Tap "Refuse food" on the collector pass and add a photo. You are refunded in
+        full straight away, and our team looks into it.
+    - q: Is the food halal?
+      a: >-
+        Vendors declare whether food is halal. Listings show "halal-certified" only when the vendor
+        has uploaded a halal certificate. Allergens and meat types are always shown.
+- group: Accounts
+  id: accounts
+  items:
+    - q: When can we sign up?
+      home: true
+      a: >-
+        Rizq Rasan launches across Islamabad on 22 March 2027. Until then, register your interest and
+        we'll invite you as soon as there's a place in our pilot.
+    - q: How long does verification take?
+      a: >-
+        Two working days once all your documents are in. If something is missing, we'll tell you
+        exactly what, and only that part needs redoing.
+    - q: Who can see our documents?
+      a: >-
+        Only Rizq Rasan's verification team. Documents are stored privately, every view is logged,
+        and they are never shown to other users.

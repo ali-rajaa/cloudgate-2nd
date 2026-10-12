@@ -1,0 +1,16 @@
+# UN Sustainable Development Goals the platform serves, in the order the team uses.
+- number: 2
+  name: Zero Hunger
+  metric: Meal equivalents delivered and NGOs served
+- number: 12
+  name: Responsible Consumption and Production
+  metric: Kilograms of food kept from waste (target 12.3)
+- number: 1
+  name: No Poverty
+  metric: Rupees saved by NGOs (retail value minus price paid)
+- number: 11
+  name: Sustainable Cities and Communities
+  metric: Kilograms kept out of Islamabad's municipal waste
+- number: 17
+  name: Partnerships for the Goals
+  metric: Active vendor and NGO partnerships

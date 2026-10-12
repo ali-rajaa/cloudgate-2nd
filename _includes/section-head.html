@@ -1,0 +1,13 @@
+{%- comment -%}
+  Section heading. Params: eyebrow, title (required), lead, id, align ("center" or default left), level (2 default)
+{%- endcomment -%}
+{%- assign level = include.level | default: 2 -%}
+<div class="section-head{% if include.align == 'center' %} section-head--center{% endif %}">
+  {%- if include.eyebrow %}
+  <p class="eyebrow">{{ include.eyebrow }}</p>
+  {%- endif %}
+  <h{{ level }} class="display display--section"{% if include.id %} id="{{ include.id }}"{% endif %}>{{ include.title }}</h{{ level }}>
+  {%- if include.lead %}
+  <p class="lead">{{ include.lead }}</p>
+  {%- endif %}
+</div>

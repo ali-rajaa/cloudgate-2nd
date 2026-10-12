@@ -1,0 +1,36 @@
+# Figures for "The problem". Each must be re-checked on its source page before launch
+# (see README). Only figures marked safe are shown on the Home page.
+- value: "106th"
+  of: "of 123"
+  label: Pakistan's rank on the 2025 Global Hunger Index, a level rated "serious"
+  source: Global Hunger Index 2025
+  url: https://www.globalhungerindex.org/results/
+  year: 2025
+  home: true
+- value: "1 in 4"
+  label: households were moderately or severely food insecure in 2024-25, up from about 1 in 6 in 2018-19
+  detail: 24.35% of households, up from 15.92%
+  source: Household Integrated Economic Survey 2024-25, Pakistan Bureau of Statistics (reported by Business Recorder)
+  url: https://www.brecorder.com/news/40400685/food-insecurity-surges-in-pakistan-with-one-in-four-households-affected
+  year: 2025
+  home: true
+- value: "40%"
+  label: of children in Pakistan are stunted
+  source: WFP Pakistan Country Brief, June 2025
+  url: https://docs.wfp.org/api/documents/WFP-0000167722/download
+  year: 2025
+  home: false
+- value: "19.6M"
+  unit: tonnes
+  label: of food is estimated to be lost or wasted in Pakistan every year, about a quarter of what the country produces
+  source: Ministry of National Food Security figure, reported by ProPakistani
+  url: https://propakistani.pk/2023/05/02/pakistan-wastes-4-billion-worth-of-food-and-govt-campaign-will-try-to-fix-it/
+  year: 2023
+  home: true
+- value: "1.05B"
+  unit: tonnes
+  label: of food was wasted worldwide in 2022
+  source: UNEP Food Waste Index Report 2024
+  url: https://www.unep.org/resources/publication/food-waste-index-report-2024
+  year: 2024
+  home: false

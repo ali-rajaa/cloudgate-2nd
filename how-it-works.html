@@ -1,0 +1,280 @@
+---
+title: How it works
+permalink: /how-it-works/
+description: Every step from listing to payout, with the payment deadline, pickup codes, where the money goes, and what happens when something goes wrong.
+eyebrow: How it will work
+heading: From surplus food to a paid pickup, step by step
+lead: A business lists good food it couldn't sell. A verified NGO claims it, pays, and collects it with a 4-digit code. Rizq Rasan holds the money and pays the business twice a week. This is how it will work from launch on 22 March 2027.
+---
+<section class="section section--tight" aria-labelledby="hiw-steps-title">
+  <div class="container">
+    {% include section-head.html eyebrow="In short" title="Three steps on each side" id="hiw-steps-title" %}
+    {% include steps-switch.html id="hiw-steps" %}
+  </div>
+</section>
+
+<section class="section section--sunk" aria-labelledby="journey-title">
+  <div class="container">
+    {% include section-head.html eyebrow="One evening, start to finish" title="From listing to payout" id="journey-title" lead="Here is one example order with the real timers. A bakery in F-7 Markaz lists 40 pieces of naan and sheermal for Rs 1,200 at 8:30 pm, with pickup from 10:00 to 10:45 pm." %}
+    <div class="split split--reverse">
+      <div>
+        {% include listing-card.html %}
+      </div>
+      <ol class="timeline">
+        <li>
+          <h3>The vendor lists the food</h3>
+          <p>A photo, what it is, the price and a pickup window, in under a minute on a phone. The window must be at least 30 minutes long, end at least 60 minutes after publishing, and end at least 30 minutes before the food's safe-until time.</p>
+          <span class="meta">8:30 pm</span>
+        </li>
+        <li>
+          <h3>Verified NGOs nearby see it</h3>
+          <p>Listings are shown only to approved organisations within their search area, sorted by the pickup that ends soonest. Organisations that have set alerts get an email.</p>
+          <span class="meta">From 8:30 pm</span>
+        </li>
+        <li>
+          <h3>An NGO claims it</h3>
+          <p>The first organisation to tap Claim gets the food, and it is held for them while they pay. The vendor gets a WhatsApp message.</p>
+          <span class="meta">9:12 pm</span>
+        </li>
+        <li>
+          <h3>The NGO pays</h3>
+          <p>By Raast, or by JazzCash or Easypaisa wallet, through PayFast. Once the payment is confirmed, the NGO sees the pickup code, the vendor's address and phone number, and the vendor gets a second WhatsApp message to get the food ready.</p>
+          <span class="meta">By 9:42 pm, the payment deadline</span>
+        </li>
+        <li>
+          <h3>The collector picks it up</h3>
+          <p>The NGO's driver checks the food, then gives the 4-digit code at the counter. The vendor types it in and confirms the quantity handed over.</p>
+          <span class="meta">Between 10:00 and 10:45 pm</span>
+        </li>
+        <li>
+          <h3>The NGO confirms</h3>
+          <p>The NGO is asked "Did you receive everything?" and can report a problem with photos. If it doesn't reply within 24 hours, the order is Completed.</p>
+          <span class="meta">Within 24 hours of pickup</span>
+        </li>
+        <li>
+          <h3>The vendor is paid</h3>
+          <p>Once the order is Completed and the payment has settled, the vendor's 95% goes out in the next Monday or Thursday payout, by bank transfer to the business's own account.</p>
+          <span class="meta">Within 6 working days of pickup</span>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="deadline-title">
+  <div class="container">
+    {% include section-head.html eyebrow="The payment deadline" title="Pay within 30 minutes, or by 15 minutes before pickup ends" id="deadline-title" lead="Claiming holds the food. The NGO then has until the payment deadline to pay: 30 minutes after claiming, or 15 minutes before the pickup window ends, whichever comes first. A countdown shows the time left." %}
+    <div class="stack">
+      <p>For the example listing, with pickup from 10:00 to 10:45 pm, the deadline works out like this.</p>
+      <div class="table-wrap">
+        <table>
+          <caption class="visually-hidden">Payment deadline for a pickup window of 10:00 to 10:45 pm</caption>
+          <thead>
+            <tr>
+              <th scope="col">Claimed at</th>
+              <th scope="col">30 minutes later</th>
+              <th scope="col">15 minutes before pickup ends</th>
+              <th scope="col">Pay by</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">9:12 pm</th>
+              <td>9:42 pm</td>
+              <td>10:30 pm</td>
+              <td><strong>9:42 pm</strong>, 30 minutes to pay</td>
+            </tr>
+            <tr>
+              <th scope="row">10:05 pm</th>
+              <td>10:35 pm</td>
+              <td>10:30 pm</td>
+              <td><strong>10:30 pm</strong>, 25 minutes to pay</td>
+            </tr>
+            <tr>
+              <th scope="row">10:22 pm</th>
+              <td>10:52 pm</td>
+              <td>10:30 pm</td>
+              <td>Can't be claimed: only 8 minutes would be left</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The countdown turns amber at 5 minutes and red at 2 minutes. Screen readers announce it at 10, 5, 2 and 1 minutes left, never every second.</p>
+      <div class="grid grid--4">
+        <div class="card">
+          <span class="card__icon">{% include icon.html name="clock" size=22 %}</span>
+          <h3>At least 10 minutes to pay</h3>
+          <p>If less than 10 minutes would be left, the Claim button is disabled and the listing leaves the list.</p>
+        </div>
+        <div class="card">
+          <span class="card__icon">{% include icon.html name="receipt" size=22 %}</span>
+          <h3>Checkout needs 5 minutes</h3>
+          <p>PayFast's payment page can only be opened with 5 or more minutes left, and it closes at the deadline.</p>
+        </div>
+        <div class="card">
+          <span class="card__icon">{% include icon.html name="shield" size=22 %}</span>
+          <h3>Still processing</h3>
+          <p>If the bank or wallet is still confirming when time runs out, the food stays held for up to 15 more minutes.</p>
+        </div>
+        <div class="card">
+          <span class="card__icon">{% include icon.html name="x" size=22 %}</span>
+          <h3>Missed the deadline</h3>
+          <p>The claim expires and the food goes back to other organisations. It isn't a strike, but 3 expired claims in 7 days pause claiming for 24 hours.</p>
+        </div>
+      </div>
+      <div class="notice notice--info" role="note">
+        {% include icon.html name="alert" size=20 %}
+        <p><strong>During the January 2027 pilot,</strong> NGOs will pay the vendor directly, to the vendor's own Raast QR or account, before the same deadline, and then tap "I've paid". The vendor confirms "Payment received" within 15 minutes, which issues the pickup code. If they don't, the food stays held and our team phones both sides. No commission is charged during the pilot.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--sunk" aria-labelledby="codes-title">
+  <div class="container">
+    {% include section-head.html eyebrow="Pickup codes" title="A 4-digit code proves the right people met" id="codes-title" lead="Food is handed over only when the vendor types in the code the NGO received after paying. That one step closes the order." %}
+    <div class="split">
+      <ul class="check-list">
+        <li>The code appears for the NGO as soon as its payment is confirmed, with the vendor's address, a map link and phone number. It stays readable on the phone if the signal is weak.</li>
+        <li>The NGO sends a collector pass to its driver by WhatsApp. The driver needs no account: the pass shows the code, the address and the pickup time.</li>
+        <li>At the counter, the driver checks the food's look, smell and temperature first. If it looks unsafe, they tap "Refuse food" on the pass and add a photo, and the NGO is refunded in full.</li>
+        <li>If the food is fine, the driver gives the code. The vendor or their counter staff type it in, see the NGO, the collector's name and "Paid", confirm the quantity, and tap Confirm handover.</li>
+        <li>The vendor never sees the code in advance. They can only check a code that is typed in, so food can't be handed to the wrong person.</li>
+      </ul>
+      <dl class="key-facts">
+        <div><dt>Length</dt><dd>4 digits</dd></div>
+        <div><dt>Unique</dt><dd>For each vendor, each day</dd></div>
+        <div><dt>Wrong tries</dt><dd>5 wrong tries in 10 minutes lock entry for 10 minutes</dd></div>
+        <div><dt>Collector pass</dt><dd>Works until 24 hours after the pickup window ends</dd></div>
+        <div><dt>Someone else turns up</dt><dd>The vendor sees the expected collector's name and can call the NGO</dd></div>
+        <div><dt>Undo</dt><dd>10 seconds after tapping Confirm handover</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="money-title">
+  <div class="container">
+    {% include section-head.html eyebrow="Where the money goes" title="The vendor keeps 95%, and Rizq Rasan keeps 5%" id="money-title" lead="The NGO pays the listing price, with nothing added on top. Rizq Rasan's 5% commission comes out of that price, and the vendor receives the rest." %}
+    <div class="split">
+      <div class="stack">
+        <div class="split-bar" role="img" aria-label="Of Rs 1,200 paid by the NGO, the vendor receives Rs 1,140 and Rizq Rasan Rs 60"><span class="split-bar__vendor">Vendor Rs 1,140</span><span class="split-bar__fee">Rs 60</span></div>
+        <p><strong>NGO pays Rs 1,200 · Vendor receives Rs 1,140 · Rizq Rasan Rs 60</strong></p>
+        <p>The commission is 5% of the listing price, with services tax included, rounded down to the whole rupee. The vendor's 95% is before any tax the law requires us to withhold, which is shown line by line on their statement.</p>
+        <p>Rizq Rasan pays the payment gateway's fees out of its 5% on normal sales. There's no sign-up fee and no monthly charge.</p>
+      </div>
+      <dl class="key-facts">
+        <div><dt>The NGO pays</dt><dd>The listing price: at least Rs 1,000 and no more than half of retail</dd></div>
+        <div><dt>The money waits in</dt><dd>A collections account kept apart from company money</dd></div>
+        <div><dt>The vendor is paid</dt><dd>Every Monday and Thursday, to a bank account in the business's name</dd></div>
+        <div><dt>Balances and wallets</dt><dd>None. Nobody keeps money with us</dd></div>
+      </dl>
+    </div>
+    <p class="section-link"><a class="text-link" href="{{ '/pricing/#calculator' | relative_url }}">Work out your own figures with the calculator {% include icon.html name="arrow-right" size=18 %}</a></p>
+  </div>
+</section>
+
+<section class="section section--sunk" aria-labelledby="problems-title">
+  <div class="container">
+    {% include section-head.html eyebrow="When something goes wrong" title="Every case has a rule, written down in advance" id="problems-title" lead="Most orders go smoothly. When one doesn't, this is what happens, who gets their money back, and how fast we act." %}
+    <div class="stack">
+      <div class="table-wrap">
+        <table>
+          <caption class="visually-hidden">What happens when something goes wrong with an order</caption>
+          <thead>
+            <tr>
+              <th scope="col">If this happens</th>
+              <th scope="col">What happens next</th>
+              <th scope="col">NGO's money back</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">The NGO doesn't pay in time</th>
+              <td>The claim expires and the food goes back to other organisations. It isn't a strike, but 3 expired claims in 7 days pause claiming for 24 hours.</td>
+              <td>Nothing was paid</td>
+            </tr>
+            <tr>
+              <th scope="row">The payment is still processing at the deadline</th>
+              <td>The food stays held for up to 15 more minutes. If the payment is confirmed, the order goes ahead. If the money arrives after another organisation has claimed the food, it goes back automatically.</td>
+              <td>In full, automatically, if the food went to someone else</td>
+            </tr>
+            <tr>
+              <th scope="row">The NGO releases the food before paying</th>
+              <td>The food goes back to other organisations. No penalty.</td>
+              <td>Nothing was paid</td>
+            </tr>
+            <tr>
+              <th scope="row">The NGO cancels at least 60 minutes before pickup starts</th>
+              <td>The food goes back to other organisations.</td>
+              <td>In full</td>
+            </tr>
+            <tr>
+              <th scope="row">The NGO cancels later than that, or doesn't turn up</th>
+              <td>30 minutes after the pickup window ends, the vendor is asked "Did they collect?". If not, it's a no-show: the vendor is paid and the NGO gets a strike, which it can appeal within 24 hours.</td>
+              <td>None</td>
+            </tr>
+            <tr>
+              <th scope="row">The vendor cancels after the NGO has paid</th>
+              <td>No commission is charged, the vendor gets a strike, and the NGO is shown up to 3 similar listings.</td>
+              <td>In full</td>
+            </tr>
+            <tr>
+              <th scope="row">The vendor is closed or the food isn't ready</th>
+              <td>The collector reports it from the collector pass. If the vendor doesn't reply within 2 hours, the NGO is refunded and the vendor gets a strike.</td>
+              <td>In full</td>
+            </tr>
+            <tr>
+              <th scope="row">The vendor hands over less than listed</th>
+              <td>The vendor enters the real quantity at handover. More than 10% short gives the vendor a strike.</td>
+              <td>The missing share, automatically, rounded to the rupee</td>
+            </tr>
+            <tr>
+              <th scope="row">The food looks unsafe at pickup</th>
+              <td>The collector taps "Refuse food" on the collector pass and adds a photo. Our team reviews the case, and if the refusal is upheld, the vendor gets a strike.</td>
+              <td>In full, straight away</td>
+            </tr>
+            <tr>
+              <th scope="row">A problem shows up after pickup</th>
+              <td>The NGO reports it within 24 hours of pickup, with photos. We decide food-safety cases within 24 hours and others within 48 hours.</td>
+              <td>In full or in part, if upheld</td>
+            </tr>
+            <tr>
+              <th scope="row">Nobody confirms anything</th>
+              <td>After 48 hours the order is marked Completed (unconfirmed) and the vendor is paid. Nobody's reliability changes.</td>
+              <td>None</td>
+            </tr>
+            <tr>
+              <th scope="row">Payments or the internet go down</th>
+              <td>A payment method that is failing is greyed out. If all payments are down, or during a network shutdown, we pause every countdown and add the lost time back. No strikes are given during a shutdown.</td>
+              <td>Not needed</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="split">
+        <div class="stack">
+          <h3 class="display display--card">How fast we act</h3>
+          <p>Either side can report a problem, add photos and ask for a full or partial refund. Every case gets a reference number, and both sides see the decision in writing.</p>
+          <p>Strikes expire after 60 days. One strike brings a warning, two bring a 48-hour freeze on new claims or listings, and three bring a 7-day suspension and a review by our team. We can forgive one strike every 90 days on appeal.</p>
+        </div>
+        <dl class="key-facts">
+          <div><dt>Report a problem</dt><dd>Within 24 hours of pickup</dd></div>
+          <div><dt>The other side replies</dt><dd>Within 24 hours, or 2 hours if the vendor was closed</dd></div>
+          <div><dt>We acknowledge a dispute</dt><dd>Within 4 working hours</dd></div>
+          <div><dt>We decide</dt><dd>Within 48 hours, or 24 hours for food safety</dd></div>
+          <div><dt>Appeals</dt><dd>A strike within 24 hours, a suspension within 7 days</dd></div>
+          <div><dt>Other complaints</dt><dd>Acknowledged within 1 working day, resolved within 5 working days</dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <div class="button-row">
+      <a class="text-link" href="{{ '/legal/payments/' | relative_url }}">Payments and Refunds policy {% include icon.html name="arrow-right" size=18 %}</a>
+      <a class="text-link" href="{{ '/legal/reliability/' | relative_url }}">Reliability and No-show Policy {% include icon.html name="arrow-right" size=18 %}</a>
+      <a class="text-link" href="{{ '/legal/complaints/' | relative_url }}">Complaints and Disputes policy {% include icon.html name="arrow-right" size=18 %}</a>
+    </div>
+  </div>
+</section>
+
+{% include cta.html %}

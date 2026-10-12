@@ -1,0 +1,12 @@
+# Header links (logged out). Keep to five so the bar never wraps.
+main:
+  - title: How it works
+    url: /how-it-works/
+  - title: For businesses
+    url: /for-businesses/
+  - title: For NGOs
+    url: /for-ngos/
+  - title: Pricing
+    url: /pricing/
+  - title: Impact
+    url: /impact/

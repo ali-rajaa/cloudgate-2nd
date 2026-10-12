@@ -1,0 +1,56 @@
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__top">
+      <div class="site-footer__brand">
+        <a class="brand brand--on-dark" href="{{ '/' | relative_url }}">
+          {% include logo.html size=40 %}
+          <span class="brand__name">{{ site.title }}</span>
+        </a>
+        <p class="site-footer__tagline">{{ site.tagline }}</p>
+        <p class="site-footer__urdu" lang="ur" dir="rtl">{{ site.urdu_name }}</p>
+      </div>
+      <ul class="site-footer__contact">
+        <li>{% include icon.html name="mail" size=18 %}<a href="mailto:{{ site.contact.email }}">{{ site.contact.email }}</a></li>
+        {%- if site.contact.whatsapp != "" %}
+        <li>{% include icon.html name="chat" size=18 %}<span>WhatsApp <span class="nowrap">{{ site.contact.whatsapp }}</span></span></li>
+        {%- endif %}
+        <li>{% include icon.html name="pin" size=18 %}<span>{{ site.contact.city }}</span></li>
+      </ul>
+    </div>
+
+    <nav class="site-footer__cols" aria-label="Footer">
+      {%- for column in site.data.footer.columns %}
+      <details class="footer-col" data-footer-col open>
+        <summary class="footer-col__title"><h2>{{ column.title }}</h2>{% include icon.html name="chevron-down" size=18 class="footer-col__chevron" %}</summary>
+        <div class="footer-col__body" data-collapse-body>
+          <ul>
+            {%- for link in column.links %}
+            <li><a href="{{ link.url | relative_url }}">{{ link.title }}</a></li>
+            {%- endfor %}
+          </ul>
+        </div>
+      </details>
+      {%- endfor %}
+    </nav>
+
+    <div class="site-footer__bottom">
+      <a class="sdg-strip" href="{{ '/impact/#sdgs' | relative_url }}" aria-label="UN Sustainable Development Goals we work towards: {% for g in site.data.sdgs %}{{ g.number }} {{ g.name }}{% unless forloop.last %}, {% endunless %}{% endfor %}">
+        <span class="sdg-strip__label">SDGs</span>
+        {%- for g in site.data.sdgs %}<span class="sdg-chip">{{ g.number }}</span>{%- endfor %}
+      </a>
+      {%- if site.nust_credit %}
+      <p class="site-footer__credit">Started at NUST Business School</p>
+      {%- endif %}
+      {%- assign social_set = site.social.instagram | append: site.social.linkedin | append: site.social.facebook | append: site.social.whatsapp_channel %}
+      {%- if social_set != "" %}
+      <ul class="site-footer__social">
+        {%- if site.social.instagram != "" %}<li><a href="{{ site.social.instagram }}">Instagram</a></li>{% endif %}
+        {%- if site.social.linkedin != "" %}<li><a href="{{ site.social.linkedin }}">LinkedIn</a></li>{% endif %}
+        {%- if site.social.facebook != "" %}<li><a href="{{ site.social.facebook }}">Facebook</a></li>{% endif %}
+        {%- if site.social.whatsapp_channel != "" %}<li><a href="{{ site.social.whatsapp_channel }}">WhatsApp channel</a></li>{% endif %}
+      </ul>
+      {%- endif %}
+      <p class="site-footer__legal">© {{ site.time | date: "%Y" }} {{ site.company.legal_name }}. All rights reserved.</p>
+    </div>
+  </div>
+</footer>

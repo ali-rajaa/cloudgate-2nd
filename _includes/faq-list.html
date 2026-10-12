@@ -1,0 +1,23 @@
+{%- comment -%}
+  FAQ accordion. Params: group (id from _data/faq.yml) or home=true (the six Home questions).
+{%- endcomment -%}
+<div class="accordion" data-accordion>
+  {%- for g in site.data.faq %}
+    {%- for item in g.items %}
+      {%- if include.home %}
+        {%- unless item.home %}{% continue %}{% endunless %}
+      {%- elsif include.group %}
+        {%- if g.id != include.group %}{% continue %}{% endif %}
+      {%- endif %}
+  <details class="accordion__item" data-collapse>
+    <summary class="accordion__question">
+      <span>{{ item.q }}</span>
+      {% include icon.html name="chevron-down" size=20 class="accordion__chevron" %}
+    </summary>
+    <div class="accordion__answer" data-collapse-body>
+      <p>{{ item.a }}</p>
+    </div>
+  </details>
+    {%- endfor %}
+  {%- endfor %}
+</div>

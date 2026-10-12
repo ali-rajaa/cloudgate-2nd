@@ -1,0 +1,101 @@
+# Rizq Rasan public website
+# Values marked PLACEHOLDER must be confirmed before launch (see README).
+
+title: Rizq Rasan
+urdu_name: "رزق رسان"
+tagline: From surplus to sustenance.
+description: >-
+  Rizq Rasan connects Islamabad's restaurants, bakeries and grocers that have
+  good surplus food with verified NGOs that feed people. Vendors recover cost,
+  NGOs get food at up to half of retail, and nothing good goes to waste.
+lang: en
+locale: en_PK
+
+# Set url to the live domain once it is chosen, e.g. https://rizqrasan.pk
+url: ""
+# Leave baseurl empty for a custom domain. For a GitHub Pages project URL
+# (https://<user>.github.io/<repo>/) set it to "/<repo>".
+baseurl: ""
+
+contact:
+  email: hello@rizqrasan.pk      # PLACEHOLDER: confirm the domain and mailbox
+  whatsapp: ""                    # PLACEHOLDER: e.g. "+92 300 1234567"; hidden while empty
+  city: Islamabad, Pakistan
+  hours: Monday to Saturday, 9 am to 6 pm PKT
+  reply_time: within 1 working day
+
+company:
+  legal_name: Rizq Rasan (Pvt) Ltd
+  status: Registration with SECP in progress   # PLACEHOLDER: replace with SECP details once incorporated
+  secp_number: ""
+  ntn: ""
+  registered_office: ""
+  grievance_officer: ""
+
+# Form handler for the contact, partner and "register your interest" forms.
+# GitHub Pages cannot receive form posts, so point this at a form service
+# (for example Formspree or Getform). While empty, forms open a pre-filled email instead.
+forms:
+  endpoint: ""
+
+# The app is not live yet. When it is, set this and a "Log in" link appears.
+app_url: ""
+
+# Public impact numbers stay hidden until there is real, admin-published data.
+impact:
+  published: false
+  kg_rescued: 0
+  meals: 0
+  partners: 0
+  co2e_kg: 0
+
+# Only show the NUST credit once NUST has given written permission.
+nust_credit: false
+
+# Urdu versions of the six main pages are translated by a person before launch.
+# Keep false until /ur/ pages exist, so the language switch never leads nowhere.
+urdu_enabled: false
+
+launch_date: 2027-03-22
+
+social:
+  instagram: ""
+  linkedin: ""
+  facebook: ""
+  whatsapp_channel: ""
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+  auto_ids: true
+
+sass:
+  style: compressed
+
+collections:
+  policies:
+    output: true
+    permalink: /legal/:name/
+
+defaults:
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: page
+  - scope:
+      path: ""
+      type: policies
+    values:
+      layout: policy
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - .github
+  - .bundle
+  - node_modules
+  - scripts

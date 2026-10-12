@@ -1,0 +1,119 @@
+{%- comment -%}
+  Lead and contact forms. Param: type = business | ngo | partner | contact
+  Posts to site.forms.endpoint when set. Otherwise site.js opens a pre-filled email to site.contact.email.
+{%- endcomment -%}
+{%- assign t = include.type | default: "contact" -%}
+{%- case t -%}
+  {%- when "business" -%}{%- assign subject = "Business interest" -%}{%- assign submit = "Register my business" -%}
+  {%- when "ngo" -%}{%- assign subject = "NGO interest" -%}{%- assign submit = "Register my organisation" -%}
+  {%- when "partner" -%}{%- assign subject = "Partnership request" -%}{%- assign submit = "Send partnership request" -%}
+  {%- else -%}{%- assign subject = "Website message" -%}{%- assign submit = "Send message" -%}
+{%- endcase -%}
+<form class="form" data-form data-form-subject="{{ subject }}" data-form-email="{{ site.contact.email }}"
+      {% if site.forms.endpoint != "" %}action="{{ site.forms.endpoint }}" method="post"{% endif %} novalidate>
+  <input type="hidden" name="_subject" value="{{ subject }}">
+  <input type="hidden" name="form" value="{{ t }}">
+  <div class="form__error-summary" role="alert" tabindex="-1" data-form-errors hidden>
+    <h3>Check these details</h3>
+    <ul data-form-error-list></ul>
+  </div>
+
+  <div class="form__grid">
+  {%- if t == "business" %}
+    <div class="field field--full">
+      <label class="field__label" for="{{ t }}-org">Business name</label>
+      <input class="field__input" id="{{ t }}-org" name="business_name" autocomplete="organization" required>
+    </div>
+    <div class="field">
+      <label class="field__label" for="{{ t }}-kind">Type of business</label>
+      <select class="field__input" id="{{ t }}-kind" name="business_type" required>
+        <option value="">Choose one</option>
+        <option>Bakery</option><option>Restaurant</option><option>Grocer or supermarket</option>
+        <option>Cafe</option><option>Caterer</option><option>Hotel</option><option>Other</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="field__label" for="{{ t }}-when">When do you usually have surplus?</label>
+      <select class="field__input" id="{{ t }}-when" name="surplus_time">
+        <option value="">Choose one</option>
+        <option>Afternoon</option><option>Evening, after 8 pm</option><option>Late night</option><option>It varies</option>
+      </select>
+    </div>
+  {%- elsif t == "ngo" %}
+    <div class="field field--full">
+      <label class="field__label" for="{{ t }}-org">Organisation name</label>
+      <input class="field__input" id="{{ t }}-org" name="organisation_name" autocomplete="organization" required>
+    </div>
+    <div class="field">
+      <label class="field__label" for="{{ t }}-kind">Type of organisation</label>
+      <select class="field__input" id="{{ t }}-kind" name="organisation_type" required>
+        <option value="">Choose one</option>
+        <option>NGO</option><option>Shelter</option><option>Community kitchen</option>
+        <option>Food bank</option><option>Orphanage</option><option>Other</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="field__label" for="{{ t }}-people">People you serve each day</label>
+      <input class="field__input" id="{{ t }}-people" name="people_per_day" type="number" inputmode="numeric" min="1">
+    </div>
+  {%- elsif t == "partner" %}
+    <div class="field field--full">
+      <label class="field__label" for="{{ t }}-org">Organisation</label>
+      <input class="field__input" id="{{ t }}-org" name="organisation" autocomplete="organization" required>
+    </div>
+  {%- endif %}
+
+    <div class="field">
+      <label class="field__label" for="{{ t }}-name">Your name</label>
+      <input class="field__input" id="{{ t }}-name" name="name" autocomplete="name" required>
+    </div>
+    <div class="field">
+      <label class="field__label" for="{{ t }}-email">Email</label>
+      <input class="field__input" id="{{ t }}-email" name="email" type="email" autocomplete="email" required>
+    </div>
+    <div class="field">
+      <label class="field__label" for="{{ t }}-phone">Mobile number{% if t == "contact" or t == "partner" %} <span class="field__optional">(optional)</span>{% endif %}</label>
+      <div class="phone-field">
+        <span class="phone-field__prefix" aria-hidden="true">+92</span>
+        <input class="field__input phone-field__input" id="{{ t }}-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="300 1234567" aria-describedby="{{ t }}-phone-hint"{% unless t == "contact" or t == "partner" %} required{% endunless %} data-phone>
+      </div>
+      <p class="field__hint" id="{{ t }}-phone-hint">A Pakistani mobile number, like 0300 1234567</p>
+    </div>
+  {%- if t == "business" or t == "ngo" %}
+    <div class="field">
+      <label class="field__label" for="{{ t }}-area">Area of Islamabad</label>
+      <input class="field__input" id="{{ t }}-area" name="area" placeholder="For example F-7 Markaz or G-9/4" autocomplete="address-level3">
+    </div>
+  {%- endif %}
+  {%- if t == "contact" %}
+    <div class="field">
+      <label class="field__label" for="{{ t }}-topic">What is it about?</label>
+      <select class="field__input" id="{{ t }}-topic" name="topic" required>
+        <option value="">Choose one</option>
+        <option>I run a food business</option><option>I'm with an NGO</option><option>Partnership</option>
+        <option>Press</option><option>Complaint</option><option>Something else</option>
+      </select>
+    </div>
+  {%- endif %}
+    <div class="field field--full">
+      <label class="field__label" for="{{ t }}-message">{% if t == "partner" %}How would you like to work with us?{% elsif t == "contact" %}Message{% else %}Anything else we should know? <span class="field__optional">(optional)</span>{% endif %}</label>
+      <textarea class="field__input" id="{{ t }}-message" name="message" rows="4"{% if t == "contact" or t == "partner" %} required{% endif %}></textarea>
+    </div>
+    <div class="field field--full field--check">
+      <input class="check" id="{{ t }}-consent" name="consent" type="checkbox" value="yes" required>
+      <label for="{{ t }}-consent">Rizq Rasan may contact me about this request. See our <a href="{{ '/legal/privacy/' | relative_url }}">Privacy Policy</a>.</label>
+    </div>
+  </div>
+
+  <div class="form__actions">
+    <button class="btn btn--primary" type="submit">{{ submit }}</button>
+    <p class="form__note">We reply {{ site.contact.reply_time }}.</p>
+  </div>
+  <div class="form__done" role="status" data-form-done hidden tabindex="-1">
+    {% include icon.html name="check" size=24 %}
+    <div>
+      <h3 data-form-done-title>Thank you, we've got it.</h3>
+      <p data-form-done-text>We'll reply {{ site.contact.reply_time }}.</p>
+    </div>
+  </div>
+</form>

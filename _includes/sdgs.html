@@ -1,0 +1,9 @@
+<ul class="sdg-grid">
+  {%- for g in site.data.sdgs %}
+  <li class="sdg-card">
+    <span class="sdg-card__number" aria-hidden="true">{{ g.number }}</span>
+    <h3 class="sdg-card__name"><span class="visually-hidden">Goal {{ g.number }}: </span>{{ g.name }}</h3>
+    <p class="sdg-card__metric">{{ g.metric }}</p>
+  </li>
+  {%- endfor %}
+</ul>

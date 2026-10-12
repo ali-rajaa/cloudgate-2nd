@@ -1,0 +1,15 @@
+# Three-step summaries used on Home and How it works.
+business:
+  - title: List what's left
+    text: Snap a photo, set a recovery price and a pickup window. It takes under a minute on your phone.
+  - title: An NGO claims and pays
+    text: A verified NGO nearby claims it and pays straight away. You get a WhatsApp message to get the food ready.
+  - title: Hand over and get paid
+    text: Type the NGO's 4-digit pickup code at the counter. Your 95% arrives in the next Monday or Thursday payout.
+ngo:
+  - title: Find food near you
+    text: See verified listings within your area, sorted by the pickup that ends soonest.
+  - title: Claim and pay
+    text: Claim the food and pay by Raast or a JazzCash or Easypaisa wallet before the payment deadline.
+  - title: Collect with your code
+    text: Send the pickup code to your driver by WhatsApp. They show it at the counter and bring the food back.

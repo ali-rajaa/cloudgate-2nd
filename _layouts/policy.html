@@ -1,0 +1,46 @@
+---
+layout: default
+---
+<article class="policy">
+  <div class="container policy__layout">
+    <header class="policy__header">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="{{ '/legal/' | relative_url }}">Policies</a></li>
+          <li aria-current="page">{{ page.title }}</li>
+        </ol>
+      </nav>
+      <h1 class="display display--page">{{ page.title }}</h1>
+      <p class="policy__meta">
+        <span>Version {{ page.version | default: "0.1 (draft)" }}</span>
+        <span aria-hidden="true">·</span>
+        <span>Effective {{ page.effective | default: "from launch" }}</span>
+      </p>
+      <div class="notice notice--info" role="note">
+        {% include icon.html name="doc" size=20 %}
+        <p>This policy is a draft. It will be reviewed by a Pakistani lawyer before Rizq Rasan launches, and the English text is the binding version.</p>
+      </div>
+      {%- if page.summary %}
+      <aside class="in-short" aria-labelledby="in-short-title">
+        <h2 id="in-short-title">In short</h2>
+        <ul>
+          {%- for point in page.summary %}
+          <li>{{ point }}</li>
+          {%- endfor %}
+        </ul>
+      </aside>
+      {%- endif %}
+    </header>
+
+    <nav class="policy__toc" aria-label="On this page" data-toc hidden>
+      <h2 class="policy__toc-title">On this page</h2>
+      <ol data-toc-list></ol>
+    </nav>
+
+    <div class="prose policy__body" data-toc-source>
+{{ content }}
+      <hr>
+      <p class="policy__questions">Questions about this policy? Email <a href="mailto:{{ site.contact.email }}">{{ site.contact.email }}</a> or read our <a href="{{ '/legal/complaints/' | relative_url }}">Complaints and Disputes</a> policy.</p>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,29 @@
+{%- comment -%}
+  Commission calculator. Updates on every keystroke (continuous feedback).
+  Commission = 5% rounded down to the whole rupee; vendor receives the rest before any tax withheld by law.
+{%- endcomment -%}
+<div class="calculator" id="calculator" data-calculator>
+  <div class="calculator__input">
+    <label for="calc-price" class="field__label">Listing price</label>
+    <div class="money-field">
+      <span class="money-field__prefix" aria-hidden="true">Rs</span>
+      <input id="calc-price" class="field__input money-field__input" type="number" inputmode="numeric" min="1000" step="50" value="1200" aria-describedby="calc-hint">
+    </div>
+    <p id="calc-hint" class="field__hint" data-calc-hint>Listings start at Rs 1,000 and can be up to half of retail value.</p>
+  </div>
+  <dl class="calculator__split" aria-live="polite">
+    <div class="calculator__row">
+      <dt>NGO pays</dt>
+      <dd data-calc-total>Rs 1,200</dd>
+    </div>
+    <div class="calculator__row calculator__row--vendor">
+      <dt>You receive</dt>
+      <dd data-calc-vendor>Rs 1,140</dd>
+    </div>
+    <div class="calculator__row">
+      <dt>Rizq Rasan (5%)</dt>
+      <dd data-calc-fee>Rs 60</dd>
+    </div>
+  </dl>
+  <p class="calculator__note">Your share is before any tax the law requires us to withhold, which is shown line by line on your statement.</p>
+</div>

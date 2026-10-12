@@ -1,0 +1,22 @@
+{%- comment -%}
+  Sourced figures from _data/stats.yml, each with a numbered footnote. Param: home=true shows only Home figures.
+{%- endcomment -%}
+<div class="stats">
+  {%- assign n = 0 %}
+  {%- for s in site.data.stats %}
+    {%- if include.home %}{% unless s.home %}{% continue %}{% endunless %}{% endif %}
+    {%- assign n = n | plus: 1 %}
+  <figure class="stat">
+    <p class="stat__value">{{ s.value }}{% if s.of %}<span class="stat__of"> {{ s.of }}</span>{% endif %}{% if s.unit %}<span class="stat__unit"> {{ s.unit }}</span>{% endif %}</p>
+    <figcaption class="stat__label">{{ s.label }}<sup class="stat__ref"><a href="#source-{{ include.prefix | default: 'stat' }}-{{ n }}" aria-label="Source {{ n }}">{{ n }}</a></sup></figcaption>
+  </figure>
+  {%- endfor %}
+</div>
+<ol class="sources">
+  {%- assign n = 0 %}
+  {%- for s in site.data.stats %}
+    {%- if include.home %}{% unless s.home %}{% continue %}{% endunless %}{% endif %}
+    {%- assign n = n | plus: 1 %}
+  <li id="source-{{ include.prefix | default: 'stat' }}-{{ n }}"><a href="{{ s.url }}" rel="noopener">{{ s.source }}</a>, {{ s.year }}{% if s.detail %}. {{ s.detail }}{% endif %}</li>
+  {%- endfor %}
+</ol>

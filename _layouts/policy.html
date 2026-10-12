@@ -38,7 +38,7 @@ layout: default
     </nav>
 
     <div class="prose policy__body" data-toc-source>
-{{ content }}
+{{ content | replace: '<table>', '<div class="table-wrap"><table>' | replace: '</table>', '</table></div>' }}
       <hr>
       <p class="policy__questions">Questions about this policy? Email <a href="mailto:{{ site.contact.email }}">{{ site.contact.email }}</a> or read our <a href="{{ '/legal/complaints/' | relative_url }}">Complaints and Disputes</a> policy.</p>
     </div>

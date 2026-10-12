@@ -1,0 +1,27 @@
+---
+layout: null
+permalink: /sitemap.xml
+sitemap: false
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{%- assign lastmod = site.time | date_to_xmlschema %}
+{%- for p in site.pages %}
+  {%- if p.noindex or p.sitemap == false or p.url == "/404.html" %}{% continue %}{% endif %}
+  {%- assign last_char = p.url | slice: -1, 1 %}
+  {%- assign last_five = p.url | slice: -5, 5 %}
+  {%- if last_char == "/" or last_five == ".html" %}
+  <url>
+    <loc>{{ p.url | absolute_url | xml_escape }}</loc>
+    <lastmod>{{ lastmod }}</lastmod>
+  </url>
+  {%- endif %}
+{%- endfor %}
+{%- for p in site.policies %}
+  {%- if p.noindex or p.sitemap == false %}{% continue %}{% endif %}
+  <url>
+    <loc>{{ p.url | absolute_url | xml_escape }}</loc>
+    <lastmod>{{ lastmod }}</lastmod>
+  </url>
+{%- endfor %}
+</urlset>

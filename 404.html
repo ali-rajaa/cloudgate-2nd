@@ -1,0 +1,42 @@
+---
+title: Page not found
+permalink: /404.html
+layout: page
+noindex: true
+sitemap: false
+eyebrow: Page not found
+heading: We can't find that page
+lead: The page may have moved, or there may be a typo in the address. These links should help you find what you need.
+actions:
+  - title: Go to the home page
+    url: /
+  - title: Contact us
+    url: /contact/
+---
+<section class="section section--tight" aria-labelledby="useful-title">
+  <div class="container">
+    {% include section-head.html eyebrow="Useful pages" title="Try one of these" id="useful-title" %}
+    <div class="grid grid--4">
+      <a class="card card--link" href="{{ '/how-it-works/' | relative_url }}">
+        <span class="card__icon">{% include icon.html name="clock" size=22 %}</span>
+        <h3>How it works</h3>
+        <p>Every step from listing to pickup to payout.</p>
+      </a>
+      <a class="card card--link" href="{{ '/for-businesses/' | relative_url }}">
+        <span class="card__icon">{% include icon.html name="store" size=22 %}</span>
+        <h3>For businesses</h3>
+        <p>Recover part of your cost on good food you couldn't sell.</p>
+      </a>
+      <a class="card card--link" href="{{ '/for-ngos/' | relative_url }}">
+        <span class="card__icon">{% include icon.html name="heart" size=22 %}</span>
+        <h3>For NGOs</h3>
+        <p>Good food near you, at no more than half of retail.</p>
+      </a>
+      <a class="card card--link" href="{{ '/faq/' | relative_url }}">
+        <span class="card__icon">{% include icon.html name="chat" size=22 %}</span>
+        <h3>FAQ</h3>
+        <p>Answers about payments, safety, accounts and more.</p>
+      </a>
+    </div>
+  </div>
+</section>

@@ -4,10 +4,10 @@
       <div class="site-footer__brand">
         <a class="brand brand--on-dark" href="{{ '/' | relative_url }}">
           {% include logo.html size=40 %}
-          <span class="brand__name">{{ site.title }}</span>
+          <span class="brand__name notranslate" translate="no">{{ site.title }}</span>
         </a>
         <p class="site-footer__tagline">{{ site.tagline }}</p>
-        <p class="site-footer__urdu" lang="ur" dir="rtl">{{ site.urdu_name }}</p>
+        <p class="site-footer__urdu notranslate" lang="ur" dir="rtl" translate="no">{{ site.urdu_name }}</p>
       </div>
       <ul class="site-footer__contact">
         <li>{% include icon.html name="mail" size=18 %}<a href="mailto:{{ site.contact.email }}">{{ site.contact.email }}</a></li>

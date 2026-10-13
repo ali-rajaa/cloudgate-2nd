@@ -5,7 +5,7 @@ description: What personal data this website and the Rizq Rasan platform collect
 version: "0.1 (draft)"
 effective: from launch (22 March 2027)
 summary:
-  - This website sets no cookies and runs no analytics. Its forms only send your details to us so we can reply.
+  - This website sets no cookies and runs no analytics, unless you choose the automatic Urdu translation. Its forms only send your details to us so we can reply.
   - From launch, we collect what we need to verify organisations, run orders and pay vendors. We never see card, bank or wallet login details.
   - Other users see only what a pickup needs. CNICs, documents and bank details are seen only by our team, and vendors never see an NGO's address.
   - Platform data is stored outside Pakistan. Verification and payment records are kept for the life of the account plus 6 years.
@@ -33,6 +33,7 @@ This website is a set of information pages. It has no accounts and nothing to si
 
 - **No cookies and no tracking.** It sets no cookies and uses no analytics, advertising or tracking tools. Our [Cookie Policy]({{ '/legal/cookies/' | relative_url }}) explains what will change on the platform.
 - **Fonts.** Headings use a font loaded from Google Fonts. To send it, Google receives your IP address and basic details about your browser.
+- **Urdu translation.** If you press the "اردو" button, Google Translate translates the page. Google receives your IP address, browser details and the page text, and sets a `googtrans` cookie to remember your choice until you switch back to English. Nothing loads unless you press the button. The translation is automatic, and the English text is the official version.
 - **Hosting.** GitHub hosts this website. Like any web host, it receives your IP address when your browser asks for a page. We do not receive those records.
 
 ### The forms

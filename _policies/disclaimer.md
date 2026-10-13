@@ -80,6 +80,10 @@ This website links to other websites, such as the research behind our figures. F
 
 We don't control those websites. Their own terms and privacy policies apply, and we are not responsible for their content or whether they are available. A link to another website does not mean we endorse it or the organisation behind it.
 
-## 8. What this disclaimer doesn't do
+## 8. Automatic Urdu translation
+
+The "اردو" button translates pages into Urdu automatically using Google Translate. Machine translation can get words, numbers or meanings wrong, especially in legal and payment terms. The English text is the official version of every page and policy. If the Urdu and English say different things, the English applies.
+
+## 9. What this disclaimer doesn't do
 
 Nothing in this disclaimer removes rights that Pakistani law says cannot be removed, or limits our liability for our own negligence or fraud. The limits on our liability are in section 15 of our [Terms of Service]({{ '/legal/terms/' | relative_url }}) and will be reviewed by a Pakistani lawyer before launch.

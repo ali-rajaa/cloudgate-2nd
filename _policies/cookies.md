@@ -1,11 +1,11 @@
 ---
 title: Cookie Policy
 order: 12
-description: This website sets no cookies. From launch the platform will use essential cookies, analytics only if you agree, and never advertising trackers.
+description: This website sets no cookies unless you choose to read it in Urdu. From launch the platform will use essential cookies, analytics only if you agree, and never advertising trackers.
 version: "0.1 (draft)"
 effective: from launch (22 March 2027)
 summary:
-  - This website sets no cookies and runs no analytics or tracking tools.
+  - This website sets no cookies and runs no analytics or tracking tools. The only exception is the Urdu translation, and only if you ask for it.
   - Our pages load a typeface from Google Fonts, so Google receives your IP address.
   - From launch, the platform will use essential cookies to keep you signed in and to protect your account.
   - Analytics cookies will stay off unless you turn them on, and we will never use advertising trackers.
@@ -22,14 +22,17 @@ Cookies set by the site you are visiting are first-party cookies. Cookies set by
 
 This website is a set of plain pages hosted on GitHub Pages. It has no log in, no accounts and no payments.
 
-- **No cookies.** This website does not set any cookies or save anything in your browser's storage.
+- **No cookies by default.** This website does not set any cookies or save anything in your browser's storage. The one exception is if you choose to read it in Urdu (see section 3).
 - **No analytics or tracking.** We don't use visitor counters, analytics, advertising or social media tracking tools, so we don't know which pages you read.
-- **No cookie banner.** There is nothing to ask your permission for, so you won't see one.
+- **No cookie banner.** Nothing is set unless you press the Urdu button yourself, so you won't see one.
 - **Forms.** The contact, partner and "register your interest" forms don't set cookies either. When you send one, your email app opens with a pre-filled message to us or, once we connect a form service, your details reach us through that provider. Our [Privacy Policy]({{ '/legal/privacy/' | relative_url }}) explains what happens to them.
 
 Like any web host, GitHub receives your browser's request for each page, including your IP address, so that it can send the page back to you.
 
-## 3. Google Fonts
+## 3. Google Fonts and Google Translate
+
+### Fonts
+
 
 Our headings use a typeface called Fraunces. Your browser downloads it from Google Fonts when you open a page. To send the font, Google's servers receive:
 
@@ -40,6 +43,15 @@ Our headings use a typeface called Fraunces. Your browser downloads it from Goog
 We don't receive any of this from Google. Google handles what it receives under its own privacy policy.
 
 If you would rather your browser didn't contact Google, you can block fonts.googleapis.com and fonts.gstatic.com in your browser settings or with a content blocker. Every page still works, and the headings appear in a font already on your device.
+
+### Urdu translation
+
+The "اردو" button at the top of each page translates the page into Urdu using Google Translate. Nothing from Google Translate loads unless you press it. When you do:
+
+- your browser downloads Google's translation script, and Google receives your IP address, browser details and the text of the page so it can translate it;
+- Google Translate sets a cookie called `googtrans` that remembers you chose Urdu, so the next page also opens in Urdu. Pressing "English" deletes it.
+
+The translation is automatic and may contain mistakes. The English text is always the official version. Google handles what it receives under its own privacy policy.
 
 ## 4. The platform from launch
 
@@ -78,6 +90,7 @@ The first time you open the platform, a banner will ask whether you accept analy
 - **On this website,** blocking cookies changes nothing, because we don't set any.
 - **On the platform,** you can use the "Cookie settings" link to turn analytics on or off. If you block essential cookies, you won't be able to stay signed in and some screens won't work.
 - **Google Fonts** can be blocked as described in section 3.
+- **Google Translate** only loads if you press the Urdu button. Press "English" to switch back and delete its cookie.
 
 ## 6. Changes to this policy
 

@@ -53,6 +53,11 @@ impact:
 # Only show the NUST credit once NUST has given written permission.
 nust_credit: false
 
+# Shows an "اردو" button in the header. Tapping it translates the page into Urdu
+# automatically with Google Translate (loaded only when tapped) and switches
+# the layout to right to left. The English text stays the official version.
+translate_toggle: true
+
 # Urdu versions of the six main pages are translated by a person before launch.
 # Keep false until /ur/ pages exist, so the language switch never leads nowhere.
 urdu_enabled: false

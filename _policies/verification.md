@@ -32,7 +32,7 @@ Verification lowers the risk of dealing with a bad actor, but it cannot guarante
 
 Who can join:
 
-- **Vendors:** restaurants, bakeries, grocers and supermarkets, cafes, caterers and hotels in Islamabad. Home kitchens cannot join, because home-cooked food is never allowed. At launch each vendor lists from one pickup point.
+- **Vendors:** restaurants, bakeries, grocers and supermarkets, and cafes in Islamabad. Hotels and caterers will be able to join once our safety processes are proven. Home kitchens cannot join, because home-cooked food is never allowed. At launch each vendor lists from one pickup point.
 - **NGOs:** registered NGOs, shelters, community kitchens, food banks and orphanages in Islamabad that serve or give food to people for free and promise never to resell it.
 
 Neither the organisation nor anyone who signs for it may appear on the UN Security Council sanctions list or Pakistan's proscribed-organisations or Fourth Schedule lists.

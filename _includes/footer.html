@@ -50,7 +50,7 @@
         {%- if site.social.whatsapp_channel != "" %}<li><a href="{{ site.social.whatsapp_channel }}">WhatsApp channel</a></li>{% endif %}
       </ul>
       {%- endif %}
-      <p class="site-footer__legal">© {{ site.time | date: "%Y" }} {{ site.company.legal_name }}. All rights reserved.</p>
+      <p class="site-footer__legal">© {{ site.time | date: "%Y" }} {% if site.company.secp_number != "" %}{{ site.company.legal_name }}{% else %}{{ site.title }}{% endif %}. All rights reserved.</p>
     </div>
   </div>
 </footer>

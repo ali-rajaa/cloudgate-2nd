@@ -6,7 +6,7 @@
     - q: Who can list food on Rizq Rasan?
       home: true
       a: >-
-        Restaurants, bakeries, grocers, cafes, caterers and hotels in Islamabad with an NTN and an
+        Restaurants, bakeries, grocers and cafes in Islamabad with an NTN and an
         Islamabad Food Authority licence. Restaurants and cafes also need their Department of Tourist
         Services registration. We check every business before it can list.
     - q: How much do I earn from a listing?
@@ -17,8 +17,7 @@
     - q: When do I get paid?
       a: >-
         Payouts go out every Monday and Thursday by bank transfer to an account in your business name,
-        for orders that are complete and settled by the payment gateway. That is usually within
-        6 working days of pickup.
+        for orders that are complete and settled by the payment gateway. We promise payment within 6 working days of pickup.
     - q: What happens if nobody claims my food?
       a: >-
         The listing ends when its pickup window closes, and nothing is charged. We'll send you tips,
@@ -66,7 +65,7 @@
       home: true
       a: >-
         By Raast, approving the payment in your own banking app, or by JazzCash or Easypaisa wallet,
-        through our payment partner PayFast. Card payments come later.
+        through the payment gateway PayFast. Card payments come later.
     - q: Why can't we pay cash at pickup?
       a: >-
         Paying when you claim protects vendors from no-shows and lets the food be held for you. It also
@@ -101,7 +100,7 @@
     - q: Is the food halal?
       a: >-
         Vendors declare whether food is halal. Listings show "halal-certified" only when the vendor
-        has uploaded a halal certificate. Allergens and meat types are always shown.
+        has uploaded a halal certificate. Listings show any allergens and meat types the vendor declares.
 - group: Accounts
   id: accounts
   items:

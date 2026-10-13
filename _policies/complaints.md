@@ -59,7 +59,7 @@ To write to the grievance officer directly, email {{ site.contact.email }} with 
 
 In an order dispute, the other side has 24 hours to reply. If an NGO reports that a vendor was closed or the food was not ready, and the vendor does not reply within 2 hours, the NGO is refunded in full.
 
-Working days and working hours follow our office hours: {{ site.contact.hours }}. Most pickups happen in the evening, so a member of our team is also on call every evening for reports that a vendor was closed and for food-safety cases. We track our reply times against these targets.
+Working days and working hours follow our office hours: {{ site.contact.hours }}. We expect most pickups in the evening, so a member of our team is also on call every evening for reports that a vendor was closed and for food-safety cases. We track our reply times against these targets.
 
 ## 5. General complaints
 

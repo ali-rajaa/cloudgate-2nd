@@ -39,7 +39,15 @@ company:
 forms:
   endpoint: ""
 
-# The app is not live yet. When it is, set this and a "Log in" link appears.
+# The platform (NGO and business accounts) at /app/. Fill these in from your
+# Supabase project (Settings > API): the project URL and the anon public key.
+# Both are safe to publish; access is controlled by the database's rules.
+# While they are empty, /app/ explains that accounts open at launch.
+platform:
+  supabase_url: ""
+  supabase_anon_key: ""
+
+# When the platform is connected, set this to "/app/" and a "Log in" link appears.
 app_url: ""
 
 # Public impact numbers stay hidden until there is real, admin-published data.

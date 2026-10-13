@@ -1,0 +1,30 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+{% include head.html %}
+<link rel="stylesheet" href="{{ '/assets/css/app.css' | relative_url }}">
+</head>
+<body class="app-body">
+<a class="skip-link" href="#app-view">Skip to content</a>
+<header class="app-header">
+  <div class="app-header__bar">
+    <a class="brand" href="{{ '/' | relative_url }}" aria-label="{{ site.title }} website">
+      {% include logo.html size=30 %}
+      <span class="brand__name notranslate" translate="no">{{ site.title }}</span>
+    </a>
+    <nav class="app-nav" id="app-nav" aria-label="App"></nav>
+  </div>
+</header>
+<main class="app-main" id="app-view" tabindex="-1" aria-live="polite"></main>
+<footer class="app-footer">
+  <a href="{{ '/' | relative_url }}">Website</a>
+  <a href="{{ '/faq/' | relative_url }}">Help</a>
+  <a href="{{ '/contact/' | relative_url }}">Contact</a>
+  <a href="{{ '/legal/' | relative_url }}">Policies</a>
+</footer>
+<script type="application/json" id="app-config">{"supabaseUrl": {{ site.platform.supabase_url | jsonify }}, "supabaseAnonKey": {{ site.platform.supabase_anon_key | jsonify }}, "siteUrl": {{ '/' | relative_url | jsonify }}}</script>
+<script src="{{ '/assets/vendor/supabase-js-2.45.4/supabase.js' | relative_url }}"></script>
+<script type="module" src="{{ '/assets/app/main.js' | relative_url }}"></script>
+<script>document.documentElement.classList.replace('no-js', 'js');</script>
+</body>
+</html>

@@ -10,6 +10,8 @@ import { createClient } from '@supabase/supabase-js';
 import { createRequire } from 'node:module';
 import { execSync } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 const require = createRequire(import.meta.url);
 const { chromium } = require('/opt/node22/lib/node_modules/playwright');
@@ -25,7 +27,7 @@ if (!process.env.SUPABASE_ANON_KEY || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
 const URL_ = process.env.SUPABASE_URL || 'http://127.0.0.1:54321';
 const ANON = process.env.SUPABASE_ANON_KEY, SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const APP = process.env.APP_URL || 'http://127.0.0.1:4023/app/';
-const SHOTS = process.env.SHOTS_DIR || new URL('../../../../tmp/claude-0/-home-user/a3b53ec8-58ae-5e8d-ac3b-c3e65a0793c6/scratchpad/shots-admin/', import.meta.url).pathname;
+const SHOTS = (process.env.SHOTS_DIR || join(tmpdir(), 'rizq-admin-shots')) + '/';
 mkdirSync(SHOTS, { recursive: true });
 
 const opts = { auth: { persistSession: false, autoRefreshToken: false } };
@@ -155,9 +157,12 @@ try {
   ok(await p1.getByText('ICT-123').count() === 1, 'organisation page shows the details');
 
   const regDoc = p1.locator('li.app-doc', { hasText: 'Registration certificate' });
+  // Headless Chromium downloads PDFs instead of showing them, so watch the new tab's request.
+  const signedReq = p1.context().waitForEvent('request', { predicate: (r) => /\/object\/sign\/documents\//.test(r.url()), timeout: 8000 });
   const [popup] = await Promise.all([p1.waitForEvent('popup'), regDoc.getByRole('button', { name: 'View' }).click()]);
-  await popup.waitForURL(/\/storage\/v1\/object\/sign\/documents\//, { timeout: 8000 }).catch(() => {});
-  const signed = popup.url();
+  const req = await signedReq;
+  const signed = req.url();
+  ok(req.frame().page() === popup, 'the file opens in the new tab');
   ok(/\/object\/sign\/documents\/.+token=/.test(signed), 'View opens a signed document link in a new tab', signed);
   const fileRes = await fetch(signed);
   ok(fileRes.status === 200 && (await fileRes.text()).startsWith('%PDF'), 'the signed link serves the file');
@@ -260,7 +265,7 @@ try {
   ok(await noOverflow(p1), 'problems list has no horizontal scroll at 390px');
   await shot(p1, '04-disputes-390');
   await dRow.click();
-  await p1.getByRole('heading', { name: 'Food safety' }).waitFor();
+  await p1.getByRole('heading', { name: 'Food safety', exact: true }).waitFor();
   ok(await p1.getByText('several pieces had mould').count() === 1 && await p1.getByText('baked at 6 pm').count() === 1, 'both sides\' accounts are shown');
   ok(await p1.locator('.adm-target--alert').count() === 1, 'decision target is shown as urgent');
   await p1.getByLabel('Decision').fill('Upheld. The photos show mould. The business refunds part of the price and gets a strike.');
@@ -280,7 +285,7 @@ try {
   ok(refA.length === 1 && refA[0].amount_rs === 400 && refA[0].status === 'approved', 'Rs 400 refund created', refA);
   const lineA = await one(service.from('payout_lines').select('status, net_rs').eq('order_id', orderA).single());
   ok(lineA.status === 'eligible' && lineA.net_rs === 760, 'order completed; payout line is Rs 1,140 less the Rs 380 vendor share of the refund', lineA);
-  await p1.getByRole('heading', { name: 'Decision' }).waitFor();
+  await p1.getByRole('heading', { name: 'Decision', exact: true }).waitFor();
   ok(await p1.getByText('Rs 400').count() >= 1, 'decided report shows the refund');
 
   // Forgive the strike on the business's page.

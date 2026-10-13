@@ -123,7 +123,11 @@ const noOverflow = () => page.evaluate(() => document.documentElement.scrollWidt
 const view = page.locator('#app-view');
 const cardFor = (title) => page.locator('.ngo-card', { hasText: title });
 const dialogBox = page.locator('dialog.app-dialog');
-async function goto(hash) { await page.goto(APP + '#' + hash); await page.waitForSelector('#app-view > :not(.app-loading)'); }
+async function goto(hash) {
+  // Going to the page you're already on doesn't reload it, so reload explicitly.
+  if (page.url() === APP + '#' + hash) await page.reload(); else await page.goto(APP + '#' + hash);
+  await page.waitForSelector('#app-view > :not(.app-loading)');
+}
 async function waitText(text, timeout = 15000) { await view.getByText(text, { exact: false }).first().waitFor({ timeout }); return true; }
 async function claimFromCard(title) {
   await goto('/ngo');
@@ -159,7 +163,7 @@ await check('card shows vendor, distance, badge, price with retail struck throug
   const c = cardFor(T.naan);
   const text = await c.innerText();
   const okText = text.includes(`Tandoor House ${run}`) && /\d+\.\d km away/.test(text) && text.includes('Highly reliable') && text.includes('Rs 1,200')
-    && /Ends in .* \(\d{1,2}:\d\d [ap]m\)/.test(text) && text.includes('Vegetarian') && text.includes('Contains gluten') && text.includes('F-7 Markaz');
+    && /Ends in .* \(\d{1,2}:\d\d[\s ][ap]m\)/.test(text) && text.includes('Vegetarian') && text.includes('Contains gluten') && text.includes('F-7 Markaz');
   const struck = await c.locator('.app-card__retail').evaluate((e) => getComputedStyle(e).textDecorationLine.includes('line-through') && e.textContent.includes('Rs 2,400'));
   const img = await c.locator('img.app-card__photo').evaluate((e) => e.complete && e.naturalWidth > 0);
   if (!(okText && struck && img)) throw new Error(JSON.stringify({ okText, struck, img, text }));

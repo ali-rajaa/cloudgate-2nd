@@ -4,6 +4,9 @@
 {%- assign page_description = page.description | default: page.lead | default: site.description | strip_html | normalize_whitespace | truncate: 160 -%}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+{%- if site.translate_toggle %}
+<script>if (/(?:^|;\s*)googtrans=\/en\/ur(?:;|$)/.test(document.cookie)) document.documentElement.classList.add('lang-pending');</script>
+{%- endif %}
 <title>{{ page_title }}</title>
 <meta name="description" content="{{ page_description | escape }}">
 <link rel="canonical" href="{{ page.url | absolute_url }}">

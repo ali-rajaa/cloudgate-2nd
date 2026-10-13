@@ -713,81 +713,132 @@
   /* ---------------------------------------------------------------------------
      Language: English by default. The اردو button translates the page into
      Urdu with Google Translate, which is only loaded once someone asks for it.
-     The choice is remembered in Google's own "googtrans" cookie, so every page
-     opens in Urdu until the person switches back to English.
+     The choice is remembered in Google's "googtrans" cookie, so later pages
+     open in Urdu too. The switch is smooth: the page fades while Google works,
+     the layout flips to right to left only once the Urdu text has arrived, and
+     if Google can't be reached the page simply stays in English with a note.
   --------------------------------------------------------------------------- */
   (function () {
     var toggles = document.querySelectorAll('[data-lang-toggle]');
-    if (!toggles.length) return;
+    if (!toggles.length) {
+      root.classList.remove('lang-pending');
+      return;
+    }
 
-    var loaded = false;
+    var SCRIPTS = [
+      'https://translate.googleapis.com/translate_a/element.js?cb=rizqTranslateInit',
+      'https://translate.google.com/translate_a/element.js?cb=rizqTranslateInit'
+    ];
+    var TIMEOUT = 12000;
+    var started = false, finished = false, timer = 0;
 
     function wantsUrdu() { return /(?:^|;\s*)googtrans=\/en\/ur(?:;|$)/.test(document.cookie); }
 
-    // Google may set the cookie on the host and on the parent domain, so set and clear both.
-    function domains() {
+    // Google may store its cookie on the host, on ".host" and on parent domains.
+    function cookieDomains() {
       var host = location.hostname, list = [''];
       if (host.indexOf('.') > 0 && !/^\d+(\.\d+){3}$/.test(host)) {
-        list.push(host);
+        list.push(host, '.' + host);
         var parts = host.split('.');
         for (var i = 1; i < parts.length - 1; i++) list.push('.' + parts.slice(i).join('.'));
       }
       return list;
     }
-    function writeCookie(value, expires) {
-      domains().forEach(function (d) {
-        document.cookie = 'googtrans=' + value + '; path=/' + (d ? '; domain=' + d : '') + (expires ? '; expires=' + expires : '') + '; SameSite=Lax';
+    function setCookie(value) {
+      var expire = value ? '' : '; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      cookieDomains().forEach(function (d) {
+        document.cookie = 'googtrans=' + value + '; path=/' + (d ? '; domain=' + d : '') + expire + '; SameSite=Lax';
       });
     }
 
-    function setButtons(urdu, busy) {
+    function setButtons(state) {
+      // state: 'en' (showing English), 'loading', 'ur' (showing Urdu)
       Array.prototype.forEach.call(toggles, function (b) {
+        var urdu = state === 'ur';
         b.textContent = urdu ? 'English' : 'اردو';
         b.setAttribute('lang', urdu ? 'en' : 'ur');
         b.setAttribute('aria-label', urdu ? 'Read in English' : 'اردو میں پڑھیں، Read in Urdu');
         b.setAttribute('aria-pressed', urdu ? 'true' : 'false');
-        if (busy) b.setAttribute('aria-busy', 'true'); else b.removeAttribute('aria-busy');
+        if (state === 'loading') b.setAttribute('aria-busy', 'true'); else b.removeAttribute('aria-busy');
       });
     }
 
-    function urduLayout() {
+    function loadUrduFont() {
+      if (document.getElementById('urdu-font')) return;
+      var font = document.createElement('link');
+      font.id = 'urdu-font';
+      font.rel = 'stylesheet';
+      font.href = 'https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap';
+      document.head.appendChild(font);
+    }
+
+    function showNote(html, kind) {
+      var note = document.querySelector('.translate-note');
+      if (!note) {
+        note = document.createElement('p');
+        note.className = 'translate-note notranslate';
+        note.setAttribute('translate', 'no');
+        note.setAttribute('role', 'status');
+        var main = document.getElementById('main');
+        main.parentNode.insertBefore(note, main);
+      }
+      note.classList.toggle('translate-note--problem', kind === 'problem');
+      note.setAttribute('lang', kind === 'problem' ? 'en' : 'ur');
+      note.setAttribute('dir', kind === 'problem' ? 'ltr' : 'rtl');
+      note.innerHTML = html;
+      var back = note.querySelector('[data-lang-english]');
+      if (back) back.addEventListener('click', toEnglish);
+      var close = note.querySelector('[data-note-close]');
+      if (close) close.addEventListener('click', function () { note.remove(); });
+    }
+
+    // Google has finished: flip the layout and fade the page back in.
+    function urduReady() {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timer);
       root.setAttribute('lang', 'ur');
       root.setAttribute('dir', 'rtl');
       root.classList.add('lang-ur');
-      if (!document.getElementById('urdu-font')) {
-        var font = document.createElement('link');
-        font.id = 'urdu-font';
-        font.rel = 'stylesheet';
-        font.href = 'https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap';
-        document.head.appendChild(font);
-      }
-      if (!document.querySelector('.translate-note')) {
-        var note = document.createElement('p');
-        note.className = 'translate-note notranslate';
-        note.setAttribute('translate', 'no');
-        note.setAttribute('lang', 'ur');
-        note.setAttribute('dir', 'rtl');
-        note.innerHTML = 'یہ صفحہ خودکار طور پر اردو میں ترجمہ کیا گیا ہے۔ سرکاری متن انگریزی میں ہے۔' +
-          '<button type="button" lang="en" dir="ltr" data-lang-english>English</button>';
-        var main = document.getElementById('main');
-        main.parentNode.insertBefore(note, main);
-        note.querySelector('[data-lang-english]').addEventListener('click', toEnglish);
-      }
-      setButtons(true, !document.documentElement.classList.contains('translated-rtl'));
-      if (typeof window.__rizqTocRefresh === 'function') window.__rizqTocRefresh();
+      root.classList.remove('lang-pending', 'lang-loading');
+      setButtons('ur');
+      showNote('یہ صفحہ خودکار طور پر اردو میں ترجمہ کیا گیا ہے۔ سرکاری متن انگریزی میں ہے۔' +
+        '<button type="button" lang="en" dir="ltr" data-lang-english>English</button>', 'info');
+      window.dispatchEvent(new Event('resize'));
     }
 
-    // If Google's script can't load, open Google's hosted translation of this page instead.
-    function fallback() {
-      var host = location.hostname;
-      if (host.indexOf('.') < 0 || /^\d+(\.\d+){3}$/.test(host)) { toEnglish(); return; }
-      location.href = 'https://' + host.replace(/-/g, '--').replace(/\./g, '-') + '.translate.goog' +
-        location.pathname + '?_x_tr_sl=en&_x_tr_tl=ur&_x_tr_hl=ur' + location.hash;
+    // Google could not be reached: stay in English, no reload, and say why.
+    function urduFailed() {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timer);
+      setCookie('');
+      root.classList.remove('lang-pending', 'lang-loading', 'lang-ur');
+      root.setAttribute('lang', 'en');
+      root.setAttribute('dir', 'ltr');
+      setButtons('en');
+      showNote('Urdu translation couldn\'t load. Google Translate may be blocked by your network or an ad blocker. Please try again later.' +
+        '<button type="button" data-note-close>Close</button>', 'problem');
     }
+
+    function translated() {
+      var h1 = document.querySelector('h1');
+      return root.classList.contains('translated-rtl') && (!h1 || /[؀-ۿ]/.test(h1.textContent));
+    }
+
+    // Watch for Google's work landing in the page.
+    new MutationObserver(function () {
+      if (!finished && started && translated()) urduReady();
+    }).observe(root, { attributes: true, attributeFilter: ['class'], subtree: false });
+    var h1 = document.querySelector('h1');
+    if (h1) new MutationObserver(function () {
+      if (!finished && started && translated()) urduReady();
+    }).observe(h1, { childList: true, subtree: true, characterData: true });
 
     function pickUrdu() {
       var tries = 0;
       (function attempt() {
+        if (finished) return;
         var combo = document.querySelector('select.goog-te-combo');
         if (combo && combo.options.length > 1) {
           if (combo.value !== 'ur') {
@@ -796,52 +847,62 @@
           }
           return;
         }
-        if (++tries < 40) setTimeout(attempt, 100);
+        if (++tries < 60) setTimeout(attempt, 100);
       })();
     }
 
-    function loadTranslator() {
-      if (loaded) { pickUrdu(); return; }
-      loaded = true;
+    function loadScript(index) {
+      if (index >= SCRIPTS.length) { urduFailed(); return; }
+      var script = document.createElement('script');
+      script.src = SCRIPTS[index];
+      script.async = true;
+      script.onerror = function () { script.remove(); loadScript(index + 1); };
+      document.body.appendChild(script);
+    }
+
+    function startTranslation() {
+      if (started) { pickUrdu(); return; }
+      started = true;
+      finished = false;
+      setButtons('loading');
+      root.classList.add('lang-loading');
+      loadUrduFont();
+      timer = setTimeout(urduFailed, TIMEOUT);
       var holder = document.createElement('div');
       holder.id = 'google_translate_element';
       holder.hidden = true;
       document.body.appendChild(holder);
       window.rizqTranslateInit = function () {
-        new window.google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'ur', autoDisplay: false }, 'google_translate_element');
-        pickUrdu();
+        try {
+          new window.google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'ur', autoDisplay: false }, 'google_translate_element');
+          pickUrdu();
+        } catch (err) { urduFailed(); }
       };
-      var script = document.createElement('script');
-      script.src = 'https://translate.google.com/translate_a/element.js?cb=rizqTranslateInit';
-      script.async = true;
-      script.onerror = fallback;
-      document.body.appendChild(script);
-      setTimeout(function () {
-        if (!document.documentElement.classList.contains('translated-rtl') && !(window.google && window.google.translate)) fallback();
-      }, 10000);
+      loadScript(0);
     }
 
     function toUrdu() {
-      writeCookie('/en/ur');
-      urduLayout();
-      loadTranslator();
+      setCookie('/en/ur');
+      startTranslation();
     }
 
-    // Switching back reloads the page: it is the only reliable way to undo Google's changes.
+    // Undoing Google's changes reliably needs a fresh copy of the page.
+    // Fade out first so the reload feels like a page turn, not a crash.
     function toEnglish() {
-      writeCookie('', 'Thu, 01 Jan 1970 00:00:00 GMT');
-      location.reload();
+      setCookie('');
+      root.classList.add('lang-loading');
+      setTimeout(function () { location.reload(); }, reducedMotion() ? 0 : 160);
     }
 
     Array.prototype.forEach.call(toggles, function (b) {
-      b.addEventListener('click', function () { if (wantsUrdu()) toEnglish(); else toUrdu(); });
+      b.addEventListener('click', function () {
+        if (b.getAttribute('aria-busy') === 'true') return;
+        if (root.classList.contains('lang-ur') || wantsUrdu() && finished) toEnglish();
+        else toUrdu();
+      });
     });
 
-    // Google adds "translated-rtl" to <html> once the words are in Urdu.
-    new MutationObserver(function () {
-      if (document.documentElement.classList.contains('translated-rtl')) setButtons(true, false);
-    }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-
-    if (wantsUrdu()) { urduLayout(); loadTranslator(); }
+    if (wantsUrdu()) startTranslation();
+    else root.classList.remove('lang-pending');
   })();
 })();

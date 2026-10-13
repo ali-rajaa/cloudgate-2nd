@@ -1,0 +1,7 @@
+{
+  "name": "rizq-rasan-backend-tests",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "node flow.test.mjs" },
+  "dependencies": { "@supabase/supabase-js": "2.45.4" }
+}

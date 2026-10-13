@@ -105,3 +105,4 @@ exclude:
   - .bundle
   - node_modules
   - scripts
+  - supabase

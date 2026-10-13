@@ -44,7 +44,7 @@ forms:
 # Both are safe to publish; access is controlled by the database's rules.
 # While they are empty, /app/ explains that accounts open at launch.
 platform:
-  supabase_url: ""
+  supabase_url: "https://ldzxxujxlzjuptzuxdcc.supabase.co"
   supabase_anon_key: ""
 
 # When the platform is connected, set this to "/app/" and a "Log in" link appears.

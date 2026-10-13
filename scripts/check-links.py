@@ -3,9 +3,10 @@
 
 Usage: python3 scripts/check-links.py _site [baseurl]
 
-Fails (exit 1) if a link points at a page that wasn't built, or at an
-#anchor that doesn't exist on its page. External, mailto and tel links
-are not fetched.
+Fails (exit 1) if a link points at a page that wasn't built, at an
+#anchor that doesn't exist on its page, or if a page or script loads a
+file (script, stylesheet, image, module import) that isn't in the build.
+External, mailto and tel links are not fetched.
 """
 import html
 import os
@@ -58,7 +59,36 @@ for source, text in pages.items():
         elif fragment and fragment not in ids.get(target, set()):
             broken.append(f"{page}: {href} (no element with id '{fragment}')")
 
-print(f"Checked {checked} internal links on {len(pages)} pages.")
+# Files pages and scripts load: a missing one can break a page without any
+# visible broken link (a file left out of git still exists on your machine).
+EXTERNAL = ("http://", "https://", "//", "data:", "mailto:", "tel:", "#")
+assets = 0
+for source, text in pages.items():
+    refs = re.findall(r'<(?:script|img|source|iframe)\s[^>]*\bsrc="([^"]+)"', text)
+    refs += re.findall(r'<link\s[^>]*\bhref="([^"]+)"', text)
+    for ref in refs:
+        ref = html.unescape(ref)
+        if ref.startswith(EXTERNAL):
+            continue
+        assets += 1
+        target, _ = resolve(source, ref)
+        if not os.path.isfile(target):
+            broken.append(f"{os.path.relpath(source, root)}: loads {ref} (file not found)")
+
+for folder, _, files in os.walk(root):
+    for name in files:
+        if not name.endswith((".js", ".mjs")):
+            continue
+        path = os.path.join(folder, name)
+        with open(path, encoding="utf-8", errors="replace") as f:
+            code = f.read()
+        for ref in re.findall(r'(?:^|[;\s])(?:import|export)\s[^;]*?\sfrom\s*[\'"](\.{1,2}/[^\'"]+)[\'"]', code, re.M):
+            assets += 1
+            target = os.path.normpath(os.path.join(folder, ref))
+            if not os.path.isfile(target):
+                broken.append(f"{os.path.relpath(path, root)}: imports {ref} (file not found)")
+
+print(f"Checked {checked} internal links and {assets} loaded files on {len(pages)} pages.")
 if broken:
     print(f"{len(broken)} broken:")
     for line in broken:

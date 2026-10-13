@@ -3,6 +3,6 @@ _site/
 .jekyll-cache/
 .jekyll-metadata
 .bundle/
-vendor/
+/vendor/
 .DS_Store
 _config.local.yml

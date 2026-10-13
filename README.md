@@ -1,8 +1,11 @@
-# Rizq Rasan website
+# Rizq Rasan
 
-The public website for Rizq Rasan (رزق رسان), which connects Islamabad's food businesses that have good surplus food with verified NGOs that feed people.
+Rizq Rasan (رزق رسان) connects Islamabad's food businesses that have good surplus food with verified NGOs that feed people.
 
-This is a **static website only**. There is no app yet. Businesses and NGOs register their interest through forms, and accounts open at launch (22 March 2027). The site is built with [Jekyll](https://jekyllrb.com/) and deploys to GitHub Pages.
+This repository holds two things:
+
+- **The public website** (Jekyll, deployed to GitHub Pages): marketing pages, 16 policies, and "register your interest" forms.
+- **The platform** at `/app/`: accounts for businesses, NGOs and admins, listing and claiming food, payments, pickups and payouts. The screens are static files on the same site; the data, rules and timers live in [Supabase](https://supabase.com) (`supabase/`). Until a Supabase project is connected, `/app/` says accounts open at launch.
 
 ## What's in it
 
@@ -71,7 +74,75 @@ Everything below lives in `_config.yml` unless noted. The site already hides or 
 - [ ] **Name check**: check the "Rizq Rasan" name with a lawyer before printing anything.
 - [ ] **Urdu**: the six main pages should be translated by a person before an Urdu version is added. Keep `urdu_enabled: false` until then.
 
-When the app is built later, set `app_url` and a **Log in** link appears in the header and menu.
+Once the platform is connected (below), set `app_url: "/app/"` and a **Log in** link appears in the header and menu.
+
+## The platform: connect Supabase
+
+Everything the platform does is in `supabase/`:
+
+| Path | What it is |
+| --- | --- |
+| `migrations/` | Tables, the rules for every action (claim, pay, pickup code, refunds, payouts), access rules for each role, file storage, and the timers that run every minute |
+| `functions/payfast-checkout`, `functions/payfast-ipn` | PayFast payments: start a checkout, and receive PayFast's signed payment notification |
+| `functions/send-notifications` | Emails new notifications through Resend |
+| `tests/` | End-to-end tests run against a real Supabase (`flow.test.mjs` has 68 checks, `payfast.test.mjs` 9) |
+
+### One-time setup (about 20 minutes)
+
+1. **Create the project** at supabase.com: region **Singapore**, a strong database password (keep it safe).
+2. **Connect the website.** In Supabase, open **Project Settings > API**. Copy the **Project URL** and the **anon public** key into `_config.yml`:
+   ```yaml
+   platform:
+     supabase_url: "https://YOUR-REF.supabase.co"
+     supabase_anon_key: "eyJ..."
+   app_url: "/app/"
+   ```
+   Both are safe to publish: the database's access rules decide what each person can see.
+3. **Let GitHub deploy the backend.** In this repository: **Settings > Secrets and variables > Actions > New repository secret**, add:
+   - `SUPABASE_PROJECT_REF`: the part before `.supabase.co` in the Project URL
+   - `SUPABASE_DB_PASSWORD`: the database password from step 1
+   - `SUPABASE_ACCESS_TOKEN`: create one at supabase.com > Account > Access Tokens
+
+   Then open **Actions > Backend > Run workflow**. It runs the tests, then creates every table, rule and function in your project.
+4. **Sign-in settings.** In Supabase, open **Authentication > URL Configuration**. Set **Site URL** to `https://rizq.fixmypcperth.com/app/` and add the same address under **Redirect URLs**.
+5. **Email that actually arrives.** Supabase's built-in email only sends a few messages an hour. Create a free [Resend](https://resend.com) account, verify a sending domain, then:
+   - in Supabase, **Authentication > SMTP Settings**: host `smtp.resend.com`, port `465`, user `resend`, password = your Resend API key;
+   - in **Edge Functions > Secrets**, add `RESEND_API_KEY`, `EMAIL_FROM` (for example `Rizq Rasan <alerts@mail.yourdomain.pk>`) and `APP_URL` (`https://rizq.fixmypcperth.com/app/`);
+   - in the **SQL Editor**, run once so the scheduler can call the email function:
+     ```sql
+     select vault.create_secret('https://YOUR-REF.supabase.co', 'project_url');
+     select vault.create_secret('YOUR-SERVICE-ROLE-KEY', 'service_role_key');
+     ```
+6. **Make yourself an admin.** Sign up at `/app/` with your own email, then in the SQL Editor:
+   ```sql
+   insert into public.platform_admins (user_id)
+   select id from auth.users where email = 'you@example.com';
+   ```
+   Add a second admin the same way: payout batches and refunds over Rs 10,000 need a different admin to approve them.
+
+### Payments
+
+The platform starts in **direct mode** (the pilot): the NGO pays the business by Raast or bank transfer, and the business confirms in the app. No money passes through Rizq Rasan, and no commission is charged.
+
+When PayFast approves the merchant account:
+
+1. In **Edge Functions > Secrets**, add `PAYFAST_MERCHANT_ID`, `PAYFAST_SECURED_KEY`, `PAYFAST_MERCHANT_NAME`, and `PAYFAST_BASE_URL` (`https://ipguat.apps.net.pk` for PayFast's test server, `https://ipg1.apps.net.pk` for live).
+2. Give PayFast this notification address: `https://YOUR-REF.supabase.co/functions/v1/payfast-ipn`.
+3. Check the field names and the validation hash in `supabase/functions/_shared/payfast.ts` against the integration guide PayFast sends you, and make a test payment on their test server.
+4. In the app, **Admin > Settings**, switch **payment mode** to `payfast`.
+
+### Run the backend locally
+
+With Docker running:
+
+```sh
+npx supabase start            # local database, sign-in, storage and functions
+cd supabase/tests && npm ci
+eval "$(npx supabase status -o env | grep -E '^(ANON_KEY|SERVICE_ROLE_KEY|API_URL)=')"
+SUPABASE_URL=$API_URL SUPABASE_ANON_KEY=$ANON_KEY SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY node flow.test.mjs
+```
+
+To run the app against it, create `_config.local.yml` (not committed) with the local URL and anon key under `platform:`, then `bundle exec jekyll serve --config _config.yml,_config.local.yml`.
 
 ## How it's built
 

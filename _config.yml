@@ -45,10 +45,10 @@ forms:
 # While they are empty, /app/ explains that accounts open at launch.
 platform:
   supabase_url: "https://ldzxxujxlzjuptzuxdcc.supabase.co"
-  supabase_anon_key: ""
+  supabase_anon_key: "sb_publishable_oAL_pvsTv0oG1P89CsorOw_yHgEORpv"
 
 # When the platform is connected, set this to "/app/" and a "Log in" link appears.
-app_url: ""
+app_url: "/app/"
 
 # Public impact numbers stay hidden until there is real, admin-published data.
 impact:

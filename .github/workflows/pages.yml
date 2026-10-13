@@ -17,22 +17,56 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      pages_ready: ${{ steps.pages.outcome == 'success' }}
     steps:
       - uses: actions/checkout@v4
+
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.3"
           bundler-cache: true
+
+      # Reads the Pages settings (and the base path for project sites).
+      # If Pages is switched off, this tries to switch it on. When that isn't
+      # allowed, the site is still built and checked, and the deploy is skipped
+      # with a warning instead of failing the whole run.
       - id: pages
+        name: Check GitHub Pages
         uses: actions/configure-pages@v5
+        continue-on-error: true
+        with:
+          enablement: true
+
       - name: Build with Jekyll
         run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
         env:
           JEKYLL_ENV: production
-      - uses: actions/upload-pages-artifact@v3
+
+      - name: Check internal links
+        run: python3 scripts/check-links.py _site "${{ steps.pages.outputs.base_path }}"
+
+      - name: Upload site
+        if: steps.pages.outcome == 'success'
+        uses: actions/upload-pages-artifact@v3
+
+      - name: Explain why the site was not deployed
+        if: steps.pages.outcome != 'success'
+        run: |
+          echo "::warning title=Site built but not deployed::GitHub Pages is not switched on for this repository. Open Settings > Pages, set Source to GitHub Actions, then run this workflow again."
+          {
+            echo "## Site built and checked, not deployed"
+            echo ""
+            echo "The site built and every internal link works, but GitHub Pages is not switched on for this repository, so there is nowhere to deploy it yet."
+            echo ""
+            echo "1. Open **Settings > Pages** for this repository."
+            echo "2. Under **Build and deployment**, set **Source** to **GitHub Actions**."
+            echo "3. Come back to **Actions**, choose **Build and deploy site** and click **Run workflow**."
+          } >> "$GITHUB_STEP_SUMMARY"
 
   deploy:
     needs: build
+    if: needs.build.outputs.pages_ready == 'true'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

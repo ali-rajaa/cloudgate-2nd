@@ -34,7 +34,9 @@ Then open http://localhost:4000.
 ## Publish on GitHub Pages
 
 1. In the repository, go to **Settings → Pages**. Under **Build and deployment**, set **Source** to **GitHub Actions**. Don't choose "Deploy from a branch": GitHub's built-in Jekyll is older and can't compile this stylesheet.
-2. Every push to `main` builds and deploys the site through `.github/workflows/pages.yml`. To redeploy without a change, open the **Actions** tab, choose **Build and deploy site**, and click **Run workflow**.
+2. Every push to `main` builds the site, checks every internal link (`scripts/check-links.py`) and deploys it through `.github/workflows/pages.yml`. To redeploy without a change, open the **Actions** tab, choose **Build and deploy site**, and click **Run workflow**.
+
+   If Pages is switched off, the run still builds and checks the site and stays green, but skips the deploy. It shows a warning, "Site built but not deployed", with these same steps. Turn Pages on as in step 1, then run the workflow again.
 3. **Custom domain** (for example `rizqrasan.pk`):
    - add the domain under Settings → Pages;
    - set `url: "https://rizqrasan.pk"` in `_config.yml`;

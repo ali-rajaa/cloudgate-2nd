@@ -9,9 +9,16 @@ const cfgEl = document.getElementById('app-config');
 export const config = cfgEl ? JSON.parse(cfgEl.textContent) : {};
 export const configured = Boolean(config.supabaseUrl && config.supabaseAnonKey);
 
-export const db = configured
+// The sign-in library can be blocked by an extension or a bad connection.
+export const clientMissing = configured && !window.supabase;
+export const db = configured && !clientMissing
   ? window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey, {
-      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce' },
+      auth: {
+        persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce',
+        // The default cross-tab browser lock can wait forever when another tab is stuck,
+        // which leaves the app blank. Run auth steps directly instead.
+        lock: async (_name, _timeout, fn) => fn(),
+      },
     })
   : null;
 

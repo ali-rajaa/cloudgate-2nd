@@ -1,5 +1,5 @@
 // Rizq Rasan app: routing, the app header and start-up.
-import { db, configured, state, loadState, h, icon, spinner, empty, toast, friendly, go, link } from './core.js';
+import { db, configured, clientMissing, state, loadState, h, icon, spinner, empty, toast, friendly, go, link } from './core.js';
 import * as auth from './auth.js';
 import * as onboarding from './onboarding.js';
 import * as account from './account.js';
@@ -120,16 +120,33 @@ async function start() {
       h('p', h('a.btn.btn--primary', { href: '../join/' }, 'Register your interest'))));
     return;
   }
+  if (clientMissing) {
+    show(empty('The app didn\'t load', 'Part of the app was blocked from loading. Turn off any ad or script blocker for this site, then reload.',
+      h('button.btn.btn--secondary', { type: 'button', onclick: () => location.reload() }, 'Reload')));
+    return;
+  }
+  show(spinner());
   db.auth.onAuthStateChange((event) => {
     if (event === 'PASSWORD_RECOVERY') { go('/reset-password'); return; }
     if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') { realtime?.unsubscribe(); realtime = null; reload(); }
   });
-  await loadState();
-  await countUnread();
-  listen();
+  try {
+    await withTimeout(loadState(), 15000);
+    await countUnread().catch(() => {});
+    listen();
+  } catch (e) {
+    show(empty('We couldn\'t load your account', friendly(e),
+      h('button.btn.btn--secondary', { type: 'button', onclick: () => location.reload() }, 'Try again')));
+    return;
+  }
   window.addEventListener('hashchange', render);
   await render();
   window.addEventListener('rr:read', async () => { await countUnread(); renderNav(currentPath()); });
+}
+
+function withTimeout(promise, ms) {
+  return Promise.race([promise, new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('The server took too long to answer. Check your connection and try again.')), ms))]);
 }
 
 start();

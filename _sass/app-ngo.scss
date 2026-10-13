@@ -1,1 +1,121 @@
 // Styles for the ngo screens (assets/app/ngo.js).
+
+/* ---------- Shared bits ---------- */
+.ngo-back { margin-bottom: 1rem; }
+.ngo-back a { display: inline-flex; align-items: center; gap: 0.35rem; min-height: 2.75rem; color: var(--muted); font-weight: 600; text-decoration: none; }
+.ngo-back a:hover { color: var(--ink); }
+.ngo-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.25rem 0 0; padding: 0; list-style: none; }
+.ngo-vbadge { color: var(--success); font-weight: 600; }
+.ngo-nophoto { display: grid; place-items: center; color: rgba(255, 255, 255, 0.75); }
+
+/* ---------- Find food ---------- */
+.ngo-filters .field { flex: 1 1 9rem; margin: 0; }
+.ngo-filters .field__input { width: 100%; }
+.ngo-summary { margin: -0.5rem 0 1rem; min-height: 1.4em; }
+.ngo-results { min-height: 10rem; }
+.ngo-empty-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+.ngo-card .app-card__meta span { min-width: 0; }
+.ngo-when { color: var(--accent-text); font-weight: 600; }
+.ngo-card__cta { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--accent-text); font-weight: 700; }
+
+.ngo-active { margin-bottom: 1.5rem; }
+.ngo-active__list { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+.ngo-active__item {
+  display: flex; align-items: center; gap: 0.75rem; min-height: 3.25rem; padding: 0.75rem 1rem;
+  border-radius: 1rem; background: var(--surface); box-shadow: var(--shadow-sm), inset 3px 0 0 var(--accent);
+  color: var(--text); text-decoration: none;
+}
+.ngo-active__item:hover { box-shadow: var(--shadow-md), inset 3px 0 0 var(--accent); }
+.ngo-active__title { flex: 1; min-width: 0; font-weight: 650; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ngo-active__next { color: var(--accent-text); font-size: 0.875rem; font-weight: 600; white-space: nowrap; }
+@media (max-width: 480px) {
+  .ngo-active__item { flex-wrap: wrap; gap: 0.15rem 0.75rem; }
+  .ngo-active__title { flex-basis: calc(100% - 2rem); }
+  .ngo-active__item .icon { display: none; }
+}
+
+/* ---------- Listing detail ---------- */
+.ngo-gallery { display: grid; gap: 0.5rem; margin-bottom: 1.25rem; border-radius: 1.25rem; overflow: hidden; }
+.ngo-gallery img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; background: var(--surface-sunk); }
+.ngo-gallery--multi { grid-auto-flow: column; grid-auto-columns: 88%; overflow-x: auto; scroll-snap-type: x mandatory; border-radius: 0; }
+.ngo-gallery--multi img { scroll-snap-align: start; border-radius: 1.25rem; }
+.ngo-gallery.ngo-nophoto { aspect-ratio: 16 / 7; background: linear-gradient(135deg, #8a5a2b, #5e3b1d); }
+.ngo-listing__head { display: grid; gap: 0.5rem; margin-bottom: 1rem; }
+.ngo-when-box {
+  display: flex; gap: 0.75rem; align-items: flex-start; margin: 1rem 0; padding: 1rem 1.15rem;
+  border-radius: 1rem; background: var(--surface); box-shadow: var(--shadow-sm); color: var(--accent-text);
+}
+.ngo-when-box__main { font-weight: 700; font-size: 1.0625rem; color: var(--text); }
+.ngo-desc { margin: 0.75rem 0; }
+.ngo-facts { margin-top: 1.25rem; }
+.ngo-claim-box { display: grid; gap: 1rem; }
+.ngo-claim-btn { min-height: 3.5rem; font-size: 1.125rem; }
+.ngo-claim-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.ngo-claim-note { margin-top: -0.25rem; }
+.ngo-claim-error {
+  display: flex; gap: 0.75rem; align-items: flex-start; padding: 1rem 1.15rem; border-radius: 1rem;
+  background: var(--danger-bg); color: var(--danger); font-weight: 600;
+}
+.ngo-claim-error[hidden] { display: none; }
+.ngo-claim-error p + p { margin-top: 0.4rem; }
+.ngo-claim-error a { color: inherit; }
+
+/* ---------- Claim page ---------- */
+.ngo-claim > * + * { margin-top: 1rem; }
+.ngo-claim .app-page-head { margin-bottom: 0.5rem; }
+.ngo-countdown { position: relative; }
+.ngo-countdown__label { font-weight: 700; }
+.ngo-countdown__sub { font-size: 0.875rem; font-weight: 600; opacity: 0.85; }
+.ngo-countdown .app-countdown__value { font-size: 2rem; }
+.ngo-countdown--warn { background: var(--warning-bg); color: var(--warning); }
+.ngo-countdown--critical { background: var(--danger-bg); color: var(--danger); }
+
+.ngo-pay { display: grid; gap: 1rem; }
+.ngo-pay__card { display: grid; gap: 0.75rem; padding: clamp(1.25rem, 3vw, 1.75rem); }
+.ngo-pay__amount { font-size: 2.25rem; font-weight: 750; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.ngo-pay__list { display: grid; gap: 0; margin: 0; border-radius: 1rem; background: var(--surface-sunk); overflow: hidden; }
+.ngo-pay__row { display: grid; gap: 0.15rem; padding: 0.75rem 1rem; }
+.ngo-pay__row + .ngo-pay__row { border-top: 1px solid var(--divider); }
+.ngo-pay__row dt { font-size: 0.8125rem; font-weight: 650; color: var(--muted); }
+.ngo-pay__row dd { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin: 0; }
+.ngo-pay__value { font-weight: 700; font-size: 1.0625rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; min-width: 0; }
+.ngo-copy { flex-shrink: 0; min-width: 5rem; }
+
+.ngo-wait {
+  display: flex; gap: 1rem; align-items: flex-start; padding: 1.25rem; border-radius: 1.25rem;
+  background: var(--info-bg); color: var(--text);
+}
+.ngo-wait .app-spinner { flex-shrink: 0; width: 1.6rem; height: 1.6rem; border-top-color: var(--info); }
+.ngo-wait__title { font-weight: 700; font-size: 1.125rem; margin-bottom: 0.25rem; color: var(--info); }
+
+.ngo-code { padding: 1.75rem 1.25rem; }
+.ngo-code .app-code__value { font-size: clamp(3.5rem, 18vw, 5rem); }
+.ngo-code__hint { font-size: 0.875rem; opacity: 0.85; max-width: 22rem; }
+.ngo-where__card { display: grid; gap: 0.4rem; padding: 1.25rem; }
+.ngo-where__name { font-weight: 700; font-size: 1.0625rem; }
+.ngo-where__address { font-size: 1.0625rem; }
+.ngo-where__actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+.ngo-where__actions .btn { min-height: 2.75rem; gap: 0.4rem; }
+.ngo-collector p { margin-bottom: 0.75rem; }
+.ngo-wa { min-height: 2.75rem; }
+.ngo-received { display: grid; gap: 0.75rem; padding: 1.25rem; }
+.ngo-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.ngo-actions .btn { min-height: 2.75rem; }
+
+/* ---------- My claims ---------- */
+.ngo-claims > li { display: block; }
+.ngo-claim-row { color: var(--text); text-decoration: none; min-height: 3.5rem; }
+.ngo-claim-row > div { min-width: 0; }
+.ngo-claim-row:hover { box-shadow: var(--shadow-md); }
+@media (max-width: 480px) {
+  .ngo-claim-row { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+}
+
+/* ---------- Collectors ---------- */
+.ngo-collector.is-inactive { opacity: 0.75; }
+.ngo-collector__actions { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: flex-end; }
+.ngo-collector__actions .btn { min-height: 2.75rem; }
+@media (max-width: 480px) {
+  .ngo-collector { flex-direction: column; align-items: stretch; }
+  .ngo-collector__actions { justify-content: flex-start; }
+}

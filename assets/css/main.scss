@@ -524,7 +524,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-sp
 
 /* ---------- Policies ---------- */
 .policy { padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(3rem, 7vw, 6rem); }
-.policy__layout { display: grid; gap: 2rem; max-width: calc(68rem + 2 * var(--gutter)); }
+.policy__layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem; max-width: calc(68rem + 2 * var(--gutter)); }
 @media (min-width: 1040px) {
   .policy__layout { grid-template-columns: 15rem minmax(0, 1fr); column-gap: 4rem; }
   .policy__header { grid-column: 2; }

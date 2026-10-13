@@ -13,7 +13,7 @@ lang: en
 locale: en_PK
 
 # Set url to the live domain once it is chosen, e.g. https://rizqrasan.pk
-url: ""
+url: "https://rizq.fixmypcperth.com"
 # Leave baseurl empty for a custom domain. For a GitHub Pages project URL
 # (https://<user>.github.io/<repo>/) set it to "/<repo>".
 baseurl: ""

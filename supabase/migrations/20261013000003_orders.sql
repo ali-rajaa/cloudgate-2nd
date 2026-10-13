@@ -265,7 +265,7 @@ begin
   select * into o from public.orders where id = p_order;
   if o.id is null then raise exception 'Order not found.'; end if;
   perform public.require_member(o.ngo_id);
-  return query select o.id, o.price_rs, l.title, o.payment_deadline, o.status, (select email from auth.users where id = auth.uid())
+  return query select o.id, o.price_rs, l.title, o.payment_deadline, o.status, (select u.email::text from auth.users u where u.id = auth.uid())
   from public.listings l where l.id = o.listing_id;
 end $$;
 

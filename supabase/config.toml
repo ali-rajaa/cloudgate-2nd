@@ -417,3 +417,7 @@ enabled = true
 # PayFast calls this function directly, without a Supabase sign-in token.
 [functions.payfast-ipn]
 verify_jwt = false
+
+# Called by the database scheduler with the service role key, not a user sign-in.
+[functions.send-notifications]
+verify_jwt = false

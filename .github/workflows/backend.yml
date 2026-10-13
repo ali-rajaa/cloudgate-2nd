@@ -1,0 +1,85 @@
+name: Backend
+
+# Tests the database rules on every backend change, then deploys them to the
+# Supabase project. Deploying needs three repository secrets (Settings >
+# Secrets and variables > Actions): SUPABASE_ACCESS_TOKEN, SUPABASE_PROJECT_REF
+# and SUPABASE_DB_PASSWORD. Without them the tests still run and the deploy is
+# skipped with a note.
+
+on:
+  push:
+    branches: [main]
+    paths: ['supabase/**', '.github/workflows/backend.yml']
+  workflow_dispatch:
+
+concurrency:
+  group: backend
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.120.0
+
+      - name: Start a local Supabase with all migrations
+        run: supabase start -x studio,logflare,vector,imgproxy,supavisor,postgres-meta
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install test dependencies
+        working-directory: supabase/tests
+        run: npm ci
+
+      - name: Run the end-to-end backend test
+        working-directory: supabase/tests
+        run: |
+          eval "$(supabase status -o env | grep -E '^(ANON_KEY|SERVICE_ROLE_KEY|API_URL)=')"
+          SUPABASE_URL="$API_URL" SUPABASE_ANON_KEY="$ANON_KEY" SUPABASE_SERVICE_ROLE_KEY="$SERVICE_ROLE_KEY" node flow.test.mjs
+
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+    steps:
+      - id: secrets
+        name: Check the Supabase secrets are set
+        run: |
+          if [ -n "$SUPABASE_ACCESS_TOKEN" ] && [ -n "$SUPABASE_DB_PASSWORD" ] && [ -n "$SUPABASE_PROJECT_REF" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::warning title=Backend not deployed::Add SUPABASE_ACCESS_TOKEN, SUPABASE_PROJECT_REF and SUPABASE_DB_PASSWORD as repository secrets to deploy the database and functions."
+            echo "## Tests passed, deploy skipped" >> "$GITHUB_STEP_SUMMARY"
+            echo "Add the three Supabase secrets under Settings > Secrets and variables > Actions, then run this workflow again." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - if: steps.secrets.outputs.ready == 'true'
+        uses: actions/checkout@v4
+
+      - if: steps.secrets.outputs.ready == 'true'
+        uses: supabase/setup-cli@v1
+        with:
+          version: 2.120.0
+
+      - name: Link the project
+        if: steps.secrets.outputs.ready == 'true'
+        run: supabase link --project-ref "$SUPABASE_PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"
+
+      - name: Apply new database migrations
+        if: steps.secrets.outputs.ready == 'true'
+        run: supabase db push --password "$SUPABASE_DB_PASSWORD"
+
+      - name: Deploy Edge Functions
+        if: steps.secrets.outputs.ready == 'true'
+        run: supabase functions deploy --project-ref "$SUPABASE_PROJECT_REF"

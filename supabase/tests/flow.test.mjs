@@ -128,6 +128,7 @@ await must(vendorU.client, 'add_listing_photo', { p_listing: listing1, p_path: p
 
 // ---------------------------------------------------------------------------
 console.log('\n4. Finding and claiming food (direct payment mode)');
+await setSetting('payment_mode', 'direct');
 r = await rpc(anon, 'search_listings', { p_ngo: ngo });
 ok(!!r.error, 'logged-out visitors cannot browse listings');
 r = await ngoU.client.from('listings').select('id').eq('id', listing1);
@@ -217,13 +218,13 @@ ok(det.payment_mode === 'payfast' && det.commission_rs === 100 && det.vendor_sha
 r = await rpc(ngoU.client, 'record_gateway_payment', { p_order: order2, p_reference: 'x', p_amount: 2000, p_method: 'raast', p_event_id: 'e', p_body: {}, p_signature_valid: true, p_success: true });
 ok(!!r.error, 'only the server can record a gateway payment');
 const ev = `evt-${run}`;
-r = await must(service, 'record_gateway_payment', { p_order: order2, p_reference: 'PF-1', p_amount: 1999, p_method: 'raast', p_event_id: ev + '-bad', p_body: {}, p_signature_valid: true, p_success: true });
+r = await must(service, 'record_gateway_payment', { p_order: order2, p_reference: `PF-${run}-1`, p_amount: 1999, p_method: 'raast', p_event_id: ev + '-bad', p_body: {}, p_signature_valid: true, p_success: true });
 ok(r === 'amount_mismatch', 'a payment for the wrong amount is not accepted', r);
-r = await must(service, 'record_gateway_payment', { p_order: order2, p_reference: 'PF-2', p_amount: 2000, p_method: 'raast', p_event_id: ev + '-sig', p_body: {}, p_signature_valid: false, p_success: true });
+r = await must(service, 'record_gateway_payment', { p_order: order2, p_reference: `PF-${run}-2`, p_amount: 2000, p_method: 'raast', p_event_id: ev + '-sig', p_body: {}, p_signature_valid: false, p_success: true });
 ok(r === 'bad_signature', 'an unsigned notification is ignored', r);
-r = await must(service, 'record_gateway_payment', { p_order: order2, p_reference: 'PF-3', p_amount: 2000, p_method: 'raast', p_event_id: ev, p_body: {}, p_signature_valid: true, p_success: true });
+r = await must(service, 'record_gateway_payment', { p_order: order2, p_reference: `PF-${run}-3`, p_amount: 2000, p_method: 'raast', p_event_id: ev, p_body: {}, p_signature_valid: true, p_success: true });
 ok(r === 'paid', 'a valid notification marks the order paid', r);
-r = await must(service, 'record_gateway_payment', { p_order: order2, p_reference: 'PF-3', p_amount: 2000, p_method: 'raast', p_event_id: ev, p_body: {}, p_signature_valid: true, p_success: true });
+r = await must(service, 'record_gateway_payment', { p_order: order2, p_reference: `PF-${run}-3`, p_amount: 2000, p_method: 'raast', p_event_id: ev, p_body: {}, p_signature_valid: true, p_success: true });
 ok(r === 'duplicate', 'the same notification twice changes nothing', r);
 det = await must(ngoU.client, 'order_details', { p_order: order2 });
 await must(vendorU.client, 'verify_pickup_code', { p_vendor: vendor, p_code: det.pickup_code });
@@ -248,7 +249,7 @@ console.log('\n8. Cancellations, refunds and strikes');
 // NGO cancels in good time: full refund, listing goes live again.
 const listing3 = await must(vendorU.client, 'create_listing', listingArgs(vendor, { p_title: 'Mithai box', p_category: 'mithai', p_pickup_start: minutes(140), p_pickup_end: minutes(200) }));
 const order3 = await must(ngoU.client, 'claim_listing', { p_ngo: ngo, p_listing: listing3 });
-await must(service, 'record_gateway_payment', { p_order: order3, p_reference: 'PF-4', p_amount: 1200, p_method: 'raast', p_event_id: ev + '-3', p_body: {}, p_signature_valid: true, p_success: true });
+await must(service, 'record_gateway_payment', { p_order: order3, p_reference: `PF-${run}-4`, p_amount: 1200, p_method: 'raast', p_event_id: ev + '-3', p_body: {}, p_signature_valid: true, p_success: true });
 r = await must(ngoU.client, 'ngo_cancel_order', { p_order: order3 });
 ok(r === 'cancelled_refunded', 'NGO cancels 60+ minutes before pickup: full refund', r);
 const ref3 = (await ngoU.client.from('refunds').select('amount_rs').eq('order_id', order3)).data;
@@ -258,7 +259,7 @@ ok(l3.status === 'live', 'listing goes back on sale');
 
 // Vendor cancels after payment: refund + vendor strike.
 const order4 = await must(ngo2U.client, 'claim_listing', { p_ngo: ngo2, p_listing: listing3 });
-await must(service, 'record_gateway_payment', { p_order: order4, p_reference: 'PF-5', p_amount: 1200, p_method: 'raast', p_event_id: ev + '-4', p_body: {}, p_signature_valid: true, p_success: true });
+await must(service, 'record_gateway_payment', { p_order: order4, p_reference: `PF-${run}-5`, p_amount: 1200, p_method: 'raast', p_event_id: ev + '-4', p_body: {}, p_signature_valid: true, p_success: true });
 await must(vendorU.client, 'vendor_cancel_order', { p_order: order4, p_reason: 'Sold out' });
 const strikes = (await vendorU.client.from('strikes').select('reason')).data;
 ok(strikes.length === 1, 'business gets a strike for cancelling after payment', strikes);
@@ -266,7 +267,7 @@ ok(strikes.length === 1, 'business gets a strike for cancelling after payment', 
 // NGO cancels late: counts as a no-show.
 const listing5 = await must(vendorU.client, 'create_listing', listingArgs(vendor, { p_title: 'Rusk packs', p_category: 'plain_bakery', p_pickup_start: minutes(20), p_pickup_end: minutes(90) }));
 const order5 = await must(ngo2U.client, 'claim_listing', { p_ngo: ngo2, p_listing: listing5 });
-await must(service, 'record_gateway_payment', { p_order: order5, p_reference: 'PF-6', p_amount: 1200, p_method: 'raast', p_event_id: ev + '-5', p_body: {}, p_signature_valid: true, p_success: true });
+await must(service, 'record_gateway_payment', { p_order: order5, p_reference: `PF-${run}-6`, p_amount: 1200, p_method: 'raast', p_event_id: ev + '-5', p_body: {}, p_signature_valid: true, p_success: true });
 r = await must(ngo2U.client, 'ngo_cancel_order', { p_order: order5 });
 ok(r === 'cancelled_no_refund', 'NGO cancelling within 60 minutes of pickup: no refund', r);
 const s2 = (await ngo2U.client.from('strikes').select('id')).data;
@@ -274,11 +275,15 @@ ok(s2.length === 1, 'late cancellation gives the NGO a strike');
 
 // ---------------------------------------------------------------------------
 console.log('\n9. Automatic timers');
+// A fresh NGO, so earlier steps' reliability effects can't change its limits.
+const timerU = await user('timers');
+const timerNgo = await makeOrg(timerU, 'ngo', 'Timer Test Kitchen', { lat: 33.69, lng: 73.03 });
+await must(admin1.client, 'admin_set_org_status', { p_org: timerNgo, p_status: 'approved', p_tier: 'A' });
 const listing6 = await must(vendorU.client, 'create_listing', listingArgs(vendor, { p_title: 'Fruit crate', p_category: 'fruit_veg', p_pickup_start: minutes(100), p_pickup_end: minutes(240) }));
-const order6 = await must(ngoU.client, 'claim_listing', { p_ngo: ngo, p_listing: listing6 });
+const order6 = await must(timerU.client, 'claim_listing', { p_ngo: timerNgo, p_listing: listing6 });
 await service.from('orders').update({ payment_deadline: minutes(-1) }).eq('id', order6);
 const tick = await must(service, 'run_timers', {});
-const o6 = (await ngoU.client.from('orders').select('status').eq('id', order6).single()).data;
+const o6 = (await timerU.client.from('orders').select('status').eq('id', order6).single()).data;
 const l6 = (await vendorU.client.from('listings').select('status').eq('id', listing6).single()).data;
 ok(o6.status === 'expired_unpaid' && l6.status === 'live', 'unpaid claim expires and the food goes back on sale', { o6, l6, tick });
 await service.from('listings').update({ pickup_end: minutes(-1), pickup_start: minutes(-40) }).eq('id', listing6);
@@ -288,8 +293,8 @@ ok(l6b.status === 'expired', 'listing ends when its pickup window closes');
 
 // Paid but never collected: vendor is asked, then says "not collected".
 const listing7 = await must(vendorU.client, 'create_listing', listingArgs(vendor, { p_title: 'Bread bags', p_category: 'plain_bakery' }));
-const order7 = await must(ngoU.client, 'claim_listing', { p_ngo: ngo, p_listing: listing7 });
-await must(service, 'record_gateway_payment', { p_order: order7, p_reference: 'PF-7', p_amount: 1200, p_method: 'raast', p_event_id: ev + '-7', p_body: {}, p_signature_valid: true, p_success: true });
+const order7 = await must(timerU.client, 'claim_listing', { p_ngo: timerNgo, p_listing: listing7 });
+await must(service, 'record_gateway_payment', { p_order: order7, p_reference: `PF-${run}-7`, p_amount: 1200, p_method: 'raast', p_event_id: ev + '-7', p_body: {}, p_signature_valid: true, p_success: true });
 await service.from('listings').update({ pickup_start: minutes(-90), pickup_end: minutes(-31) }).eq('id', listing7);
 await must(service, 'run_timers', {});
 let o7 = (await vendorU.client.from('orders').select('status').eq('id', order7).single()).data;
@@ -300,16 +305,25 @@ const line7 = (await vendorU.client.from('payout_lines').select('net_rs').eq('or
 ok(o7.status === 'no_show' && line7.length === 1, 'no-show: business is still paid', { o7, line7 });
 
 // Three unpaid expiries in 7 days pause claiming for 24 hours (not a strike).
-const pauseNgoStrikesBefore = (await ngoU.client.from('strikes').select('id')).data.length;
-for (let i = 0; i < 2; i++) {
+// A fresh NGO keeps this independent of which NGO won the race above.
+const pauserU = await user('pauser');
+const pauser = await makeOrg(pauserU, 'ngo', 'Pause Test Kitchen', { lat: 33.7, lng: 73.03 });
+await must(admin1.client, 'admin_set_org_status', { p_org: pauser, p_status: 'approved', p_tier: 'A' });
+for (let i = 0; i < 3; i++) {
   const li = await must(vendorU.client, 'create_listing', listingArgs(vendor, { p_title: 'Expiry test ' + i, p_category: 'mithai' }));
-  const oi = await must(ngoU.client, 'claim_listing', { p_ngo: ngo, p_listing: li });
+  const oi = await must(pauserU.client, 'claim_listing', { p_ngo: pauser, p_listing: li });
   await service.from('orders').update({ payment_deadline: minutes(-1) }).eq('id', oi);
   await must(service, 'run_timers', {});
+  // Spread the claims over earlier days, as a real NGO's would be (daily limits count today's claims).
+  await service.from('orders').update({ created_at: minutes(-(i + 1) * 24 * 60) }).eq('id', oi);
 }
-const paused = (await ngoU.client.from('organisations').select('claims_paused_until').eq('id', ngo).single()).data;
+const paused = (await pauserU.client.from('organisations').select('claims_paused_until').eq('id', pauser).single()).data;
 ok(paused.claims_paused_until && new Date(paused.claims_paused_until) > new Date(), '3 unpaid expiries in 7 days pause claiming', paused);
-ok((await ngoU.client.from('strikes').select('id')).data.length === pauseNgoStrikesBefore, 'the pause is not a strike');
+ok((await pauserU.client.from('strikes').select('id')).data.length === 0, 'the pause is not a strike');
+
+// Low reliability brings back Tier C limits, whatever the tier.
+const before = (await ngoU.client.rpc('reliability_score', { p_org: ngo })).data;
+ok(typeof before === 'number' && before >= 0 && before <= 100, 'reliability score is worked out from recent orders', before);
 
 // ---------------------------------------------------------------------------
 console.log('\n10. Ledger stays balanced');

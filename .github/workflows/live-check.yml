@@ -1,0 +1,42 @@
+name: Live check
+
+# After each deploy, opens the live site in a real browser and checks the app
+# starts and can reach Supabase. Run it by hand from the Actions tab any time.
+
+on:
+  workflow_run:
+    workflows: ["Build and deploy site"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: scripts/live-check
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install the browser
+        run: npm install --no-audit --no-fund && npx playwright install --with-deps chromium
+      - name: Give the new version a moment to reach GitHub's servers
+        if: github.event_name == 'workflow_run'
+        run: sleep 45
+      - name: Check the live site
+        run: node check.mjs
+        env:
+          SITE_URL: https://rizq.fixmypcperth.com
+      - name: Keep a screenshot of the app
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-app-screenshot
+          path: scripts/live-check/app.png
+          if-no-files-found: ignore

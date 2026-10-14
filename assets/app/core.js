@@ -118,12 +118,7 @@ export function phoneDisplay(p) {
   const local = d.startsWith('92') ? '0' + d.slice(2) : d;
   return local.length === 11 ? `${local.slice(0, 4)} ${local.slice(4)}` : p || '';
 }
-export function normalisePhone(value) {
-  let d = String(value || '').replace(/[^\d+]/g, '').replace(/^\+/, '').replace(/^0092/, '92');
-  if (/^92/.test(d) && d.length === 12) d = d.slice(2);
-  else if (/^0/.test(d) && d.length === 11) d = d.slice(1);
-  return /^3\d{9}$/.test(d) ? '+92' + d : null;
-}
+export { normalisePhone } from './validate.js';
 // datetime-local input value in Pakistan time <-> ISO
 export function toLocalInput(t) {
   const d = new Date(new Date(t).getTime() + 5 * 3600 * 1000);
@@ -194,6 +189,8 @@ export function icon(name, size = 20) {
     receipt: '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>', users: '<circle cx="9" cy="9" r="3.5"/><path d="M3 19c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M16 5.5a3.5 3.5 0 010 7M18 14c2 .7 3 2.6 3 5"/>',
     arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>', back: '<path d="M19 12H5M11 6l-6 6 6 6"/>', doc: '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/>',
     leaf: '<path d="M5 19c0-8 5-13 14-14 0 9-5 14-13 14z"/><path d="M5 19l7-7"/>', shield: '<path d="M12 3l7 3v5.5c0 4.4-3 8-7 9.5-4-1.5-7-5.1-7-9.5V6z"/>',
+    mail: '<rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M4.5 7.5l7.5 5.5 7.5-5.5"/>',
+    lock: '<rect x="5" y="10.5" width="14" height="9.5" rx="2.2"/><path d="M8.5 10.5V8a3.5 3.5 0 017 0v2.5"/>',
   };
   const span = document.createElement('span');
   span.innerHTML = `<svg class="icon" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${paths[name] || ''}</svg>`;
@@ -300,18 +297,20 @@ export function field(f) {
 }
 
 // Disable a button while an async action runs, showing errors as toasts.
-export async function busy(button, fn) {
-  if (button.disabled) return;
+// The button shows a spinner (and `working` text, if given) and ignores
+// further presses until the action finishes. It stays focusable, so keyboard
+// and screen reader users don't lose their place.
+export async function busy(button, fn, { working } = {}) {
+  if (button.disabled || button.getAttribute('aria-busy') === 'true') return undefined;
   const label = button.innerHTML;
-  const hadFocus = document.activeElement === button;
-  button.disabled = true;
   button.setAttribute('aria-busy', 'true');
+  button.setAttribute('aria-disabled', 'true');
+  if (working) button.textContent = working;
   try { return await fn(); }
   catch (e) { toast(friendly(e), 'error'); return undefined; }
   finally {
-    button.disabled = false; button.removeAttribute('aria-busy'); button.innerHTML = label;
-    // Disabling the button dropped focus to the page; put it back.
-    if (hadFocus && button.isConnected && document.activeElement === document.body) button.focus();
+    button.removeAttribute('aria-busy'); button.removeAttribute('aria-disabled');
+    if (button.isConnected) button.innerHTML = label;
   }
 }
 

@@ -46,6 +46,22 @@ jobs:
       - name: Check internal links
         run: python3 scripts/check-links.py _site "${{ steps.pages.outputs.base_path }}"
 
+      # The sign-in screens are tested in a real browser with Supabase faked,
+      # plus unit tests for the form checks. A failure stops the deploy.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Test the sign-in screens
+        working-directory: scripts/tests
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+          node --test
+        env:
+          SITE_DIR: ${{ github.workspace }}/_site
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+
       - name: Upload site
         if: steps.pages.outcome == 'success'
         uses: actions/upload-pages-artifact@v3

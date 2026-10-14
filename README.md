@@ -144,6 +144,35 @@ SUPABASE_URL=$API_URL SUPABASE_ANON_KEY=$ANON_KEY SUPABASE_SERVICE_ROLE_KEY=$SER
 
 To run the app against it, create `_config.local.yml` (not committed) with the local URL and anon key under `platform:`, then `bundle exec jekyll serve --config _config.yml,_config.local.yml`.
 
+### Sign-in screens: behaviour and tests
+
+The log in, sign up, forgot password and reset screens live in `assets/app/auth.js`. The checks they use are in `assets/app/validate.js`, plain functions with no page access.
+
+- **Checking as you type.** A box is checked when you leave it. Once it shows a problem, it's checked again as you type, so errors appear late and clear early. Submitting checks everything and moves to the first problem.
+- **Help in the boxes.** A "Did you mean name@gmail.com?" suggestion appears for slips in well-known addresses. A new password gets a strength meter, and the check refuses common passwords and your own name or email. There's a confirm box revealed by the same Show button, and a Caps Lock warning.
+- **While waiting.** The button shows a spinner and ignores more presses. After 6 seconds a note says the connection seems slow; after 30 seconds the screen stops waiting and says so. Offline, too many attempts, wrong password and expired links each get a plain message.
+- **Two kinds of account.** Sign up starts with "Food business" or "NGO or charity". The name label, the agreement and a short note change to match.
+
+Every deploy runs two sets of tests before publishing (`.github/workflows/pages.yml`):
+
+- `scripts/tests/validate.test.mjs`: unit tests for the checks.
+- `scripts/tests/auth-ui.test.mjs`: Chromium tests against the built site with Supabase faked. They cover wrong password, slow network, offline, rate limits, unconfirmed email and resend, sign up, reset, keyboard order and layout from 320px to 1920px.
+
+To run them yourself:
+
+```sh
+bundle exec jekyll build
+cd scripts/tests && npm install && npx playwright install chromium
+SITE_DIR=../../_site node --test
+```
+
+Check these by hand before launch, because a test browser can't do them:
+
+- password-manager autofill on Chrome, Safari and Firefox (no yellow or blue box, values kept);
+- a real sign up with email confirmation and the resend button;
+- a password reset from the email link;
+- VoiceOver on an iPhone and TalkBack on Android.
+
 ## How it's built
 
 The look and feel follows Apple's interface guidelines, translated for the web:

@@ -56,7 +56,8 @@ for source, text in pages.items():
         page = os.path.relpath(source, root)
         if not os.path.exists(target):
             broken.append(f"{page}: {href} (page not found)")
-        elif fragment and fragment not in ids.get(target, set()):
+        # "#/logout" and the like are screens inside the app, not anchors.
+        elif fragment and not fragment.startswith("/") and fragment not in ids.get(target, set()):
             broken.append(f"{page}: {href} (no element with id '{fragment}')")
 
 # Files pages and scripts load: a missing one can break a page without any

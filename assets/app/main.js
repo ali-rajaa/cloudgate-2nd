@@ -1,5 +1,5 @@
 // Rizq Rasan app: routing, the app header and start-up.
-import { db, configured, clientMissing, state, loadState, h, icon, spinner, empty, toast, friendly, go, link } from './core.js';
+import { db, config, configured, clientMissing, state, loadState, h, icon, spinner, empty, toast, friendly, go, link } from './core.js';
 import * as auth from './auth.js';
 import * as onboarding from './onboarding.js';
 import * as account from './account.js';
@@ -53,8 +53,54 @@ function renderNav(current) {
   }
   const bell = h('a.app-bell', { href: '#/notifications', 'aria-label': unread ? `Notifications, ${unread} unread` : 'Notifications' },
     icon('bell', 22), unread ? h('span.app-bell__count', unread > 9 ? '9+' : String(unread)) : null);
-  const me = h('a.app-me', { href: '#/account' }, h('span.app-me__name', state.profile?.full_name || state.user.email), state.org ? h('span.app-me__org', state.org.name) : null);
-  nav.append(list, h('div.app-nav__end', bell, me));
+  nav.append(list, h('div.app-nav__end', bell, accountMenu()));
+}
+
+// The avatar button and its menu: who you are, your account, the website, log out.
+// Same look as the website header's account menu (styles in main.scss).
+function accountMenu() {
+  const name = (state.profile?.full_name || '').trim() || state.user.email.split('@')[0];
+  const words = name.split(/\s+/);
+  const initials = (words[0][0] + (words.length > 1 ? words[words.length - 1][0] : '')).toUpperCase();
+  const role = state.admin && !state.org ? 'Admin' : state.org ? `${state.org.name} · ${state.membershipRole === 'owner' ? 'Owner' : 'Staff'}` : state.user.email;
+  const item = (href, text) => h('li', h('a.account__link', { href }, text, icon('chevron-right', 16)));
+  const menu = h('div#app-account-menu.account__menu', { hidden: true },
+    h('div.account__who',
+      h('span.account__avatar.account__avatar--lg', { 'aria-hidden': 'true' }, initials),
+      h('span.account__ident', h('span.account__name', name), h('span.account__email', role))),
+    h('ul.account__links',
+      item('#/account', 'Account settings'),
+      state.org ? item('#/onboarding', 'Organisation details') : null,
+      item('#/notifications', 'Notifications'),
+      item(config.siteUrl || '../', 'Rizq Rasan website')),
+    h('a.account__out', { href: '#/logout' }, 'Log out'));
+  const button = h('button.account__button', { type: 'button', 'aria-expanded': 'false', 'aria-controls': 'app-account-menu' },
+    h('span.account__avatar', { 'aria-hidden': 'true' }, initials),
+    h('span.account__label', h('span.visually-hidden', 'Your account: '), words[0]),
+    icon('chevron-down', 16));
+  const wrap = h('div.account', button, menu);
+  const outside = (e) => { if (!wrap.contains(e.target)) close(false); };
+  const onKey = (e) => { if (e.key === 'Escape') close(true); };
+  function open() {
+    menu.hidden = false;
+    button.setAttribute('aria-expanded', 'true');
+    requestAnimationFrame(() => menu.classList.add('is-open'));
+    document.addEventListener('pointerdown', outside, true);
+    document.addEventListener('keydown', onKey);
+  }
+  function close(returnFocus) {
+    if (menu.hidden) return;
+    menu.classList.remove('is-open');
+    menu.hidden = true;
+    button.setAttribute('aria-expanded', 'false');
+    document.removeEventListener('pointerdown', outside, true);
+    document.removeEventListener('keydown', onKey);
+    if (returnFocus) button.focus();
+  }
+  button.addEventListener('click', () => (menu.hidden ? open() : close(false)));
+  wrap.addEventListener('focusout', (e) => { if (e.relatedTarget && !wrap.contains(e.relatedTarget)) close(false); });
+  menu.addEventListener('click', (e) => { if (e.target.closest('a')) close(false); });
+  return wrap;
 }
 
 async function countUnread() {

@@ -7,6 +7,12 @@
 {%- if site.translate_toggle %}
 <script>if (/(?:^|;\s*)googtrans=\/en\/ur(?:;|$)/.test(document.cookie)) document.documentElement.classList.add('lang-pending');</script>
 {%- endif %}
+{%- if site.app_url != "" %}
+<script>
+  /* Signed in to the app on this device? Show the account menu instead of Log in and Join, before anything draws. */
+  try { if (Object.keys(localStorage).some(function (k) { return /^sb-.+-auth-token$/.test(k) && /"refresh_token":"[^"]/.test(localStorage.getItem(k) || ''); })) document.documentElement.classList.add('signed-in'); } catch (e) {}
+</script>
+{%- endif %}
 <title>{{ page_title }}</title>
 <meta name="description" content="{{ page_description | escape }}">
 <link rel="canonical" href="{{ page.url | absolute_url }}">

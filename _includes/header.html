@@ -21,9 +21,30 @@
       <button class="lang-toggle notranslate" type="button" translate="no" lang="ur" aria-label="اردو میں پڑھیں، Read in Urdu" aria-pressed="false" data-lang-toggle>اردو</button>
       {%- endif %}
       {%- if site.app_url != "" %}
-      <a class="site-header__login" href="{{ site.app_url }}">Log in</a>
+      <a class="site-header__login guest-only" href="{{ site.app_url }}">Log in</a>
       {%- endif %}
-      <a class="btn btn--primary btn--sm site-header__join" href="{{ '/join/' | relative_url }}">Join</a>
+      <a class="btn btn--primary btn--sm site-header__join guest-only" href="{{ '/join/' | relative_url }}">Join</a>
+      {%- if site.app_url != "" %}
+      <div class="account signed-in-only" data-account>
+        <button class="account__button" type="button" aria-expanded="false" aria-controls="account-menu" data-account-toggle>
+          <span class="account__avatar" aria-hidden="true" data-account-initials></span>
+          <span class="account__label"><span class="visually-hidden">Your account: </span><span data-account-first>Account</span></span>
+          {% include icon.html name="chevron-down" size=16 %}
+        </button>
+        <div class="account__menu" id="account-menu" data-account-menu hidden>
+          <div class="account__who">
+            <span class="account__avatar account__avatar--lg" aria-hidden="true" data-account-initials></span>
+            <span class="account__ident"><span class="account__name" data-account-name></span><span class="account__email" data-account-email></span></span>
+          </div>
+          <ul class="account__links">
+            <li><a class="account__link" href="{{ site.app_url }}#/">Your dashboard{% include icon.html name="chevron-right" size=16 %}</a></li>
+            <li><a class="account__link" href="{{ site.app_url }}#/notifications">Notifications{% include icon.html name="chevron-right" size=16 %}</a></li>
+            <li><a class="account__link" href="{{ site.app_url }}#/account">Account settings{% include icon.html name="chevron-right" size=16 %}</a></li>
+          </ul>
+          <a class="account__out" href="{{ site.app_url }}#/logout">Log out</a>
+        </div>
+      </div>
+      {%- endif %}
       <button class="menu-button" type="button" aria-expanded="false" aria-controls="menu-sheet" data-menu-open>
         {% include icon.html name="menu" size=22 %}
         <span class="visually-hidden">Open menu</span>
@@ -52,7 +73,18 @@
         {%- endfor %}
       </ul>
     </nav>
-    <div class="menu-sheet__actions">
+    {%- if site.app_url != "" %}
+    <div class="menu-sheet__account signed-in-only">
+      <div class="account__who">
+        <span class="account__avatar account__avatar--lg" aria-hidden="true" data-account-initials></span>
+        <span class="account__ident"><span class="account__name" data-account-name></span><span class="account__email" data-account-email></span></span>
+      </div>
+      <a class="btn btn--primary btn--block" href="{{ site.app_url }}#/">Your dashboard</a>
+      <a class="btn btn--secondary btn--block" href="{{ site.app_url }}#/account">Account settings</a>
+      <a class="menu-sheet__secondary" href="{{ site.app_url }}#/logout">Log out</a>
+    </div>
+    {%- endif %}
+    <div class="menu-sheet__actions guest-only">
       <a class="btn btn--primary btn--block" href="{{ '/for-businesses/#register' | relative_url }}">I have surplus food</a>
       <a class="btn btn--secondary btn--block" href="{{ '/for-ngos/#register' | relative_url }}">I feed people</a>
       {%- if site.app_url != "" %}
@@ -67,3 +99,29 @@
     <div class="menu-sheet__grabber" data-menu-grabber aria-hidden="true"><span></span></div>
   </div>
 </div>
+{%- if site.app_url != "" %}
+<script>
+  /* Fill in the account menu from the app's saved sign-in on this device (name and email only). */
+  (function () {
+    var session = null;
+    try {
+      Object.keys(localStorage).some(function (k) {
+        if (!/^sb-.+-auth-token$/.test(k)) return false;
+        session = JSON.parse(localStorage.getItem(k));
+        return true;
+      });
+    } catch (e) { return; }
+    var user = session && session.user;
+    if (!user) return;
+    var name = ((user.user_metadata && user.user_metadata.full_name) || '').trim();
+    var email = user.email || '';
+    var words = name ? name.split(/\s+/) : [];
+    var initials = (words.length ? words[0].charAt(0) + (words.length > 1 ? words[words.length - 1].charAt(0) : '') : email.charAt(0)).toUpperCase() || '?';
+    var fill = function (attr, text) { Array.prototype.forEach.call(document.querySelectorAll('[' + attr + ']'), function (el) { el.textContent = text; }); };
+    fill('data-account-initials', initials);
+    fill('data-account-first', words[0] || email.split('@')[0] || 'Account');
+    fill('data-account-name', name || email.split('@')[0]);
+    fill('data-account-email', email);
+  })();
+</script>
+{%- endif %}

@@ -23,6 +23,7 @@ export function routes(register) {
   register('/check-email', { ...auth, title: 'Check your email', render: checkEmail });
   register('/forgot-password', { ...auth, title: 'Reset your password', render: forgot });
   register('/reset-password', { ...auth, title: 'Choose a new password', render: reset });
+  register('/logout', { ...auth, title: 'Log out', render: logout });
 }
 
 const redirectBase = () => location.href.split('#')[0];
@@ -429,6 +430,23 @@ function checkEmail() {
     body,
     foot: h('p', link('/login', 'Back to log in')),
   });
+}
+
+// ---------------------------------------------------------------------------
+// Log out (linked from the account menus on the website and in the app):
+// end this device's session, then go back to the website.
+// ---------------------------------------------------------------------------
+let leaving = false;
+async function logout() {
+  const waiting = h('div.app-loading', { role: 'status' }, h('span.app-spinner'), h('span.visually-hidden', 'Logging out'));
+  if (leaving) return waiting; // signing out re-renders this route once more
+  leaving = true;
+  if (state.user) {
+    try { await db.auth.signOut({ scope: 'local' }); } catch { /* the saved session is cleared either way */ }
+  }
+  sessionStorage.removeItem('rr-after-login');
+  location.replace(site());
+  return waiting;
 }
 
 // ---------------------------------------------------------------------------

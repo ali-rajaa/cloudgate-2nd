@@ -28,15 +28,10 @@
   position: absolute; top: 0.2rem; inset-inline-end: 0.15rem; min-width: 1.15rem; height: 1.15rem; padding: 0 0.25rem;
   border-radius: 1rem; background: var(--accent); color: #fff; font-size: 0.7rem; font-weight: 700; line-height: 1.15rem; text-align: center;
 }
-.app-me { display: flex; flex-direction: column; max-width: 11rem; padding: 0.2rem 0.6rem; border-radius: 0.75rem; color: var(--text); text-decoration: none; line-height: 1.25; }
-.app-me:hover { background: rgba(46, 69, 55, 0.07); }
-.app-me__name { font-weight: 650; font-size: 0.875rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.app-me__org { font-size: 0.75rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @media (max-width: 760px) {
   .app-header__bar { flex-wrap: wrap; gap: 0.25rem 0.75rem; padding-block: 0.4rem; }
   .app-nav { order: 3; flex-basis: 100%; }
   .app-nav__end { position: absolute; top: 0.4rem; inset-inline-end: var(--gutter); }
-  .app-me { display: none; }
   .app-header__bar { position: relative; }
   .app-nav__list { margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); }
 }

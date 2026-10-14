@@ -418,3 +418,93 @@ test('details: the selectors the other browser tests rely on still find exactly 
   assert.equal(await page.locator('#app-view form').count(), 1);
   await close();
 });
+
+// ---------------------------------------------------------------------------
+// Signed in: the account menu on the website and in the app, and log out
+// ---------------------------------------------------------------------------
+// supabase-js saves the sign-in under sb-<project ref>-auth-token.
+async function storageKey() {
+  const html = await readFile(path.join(SITE, 'app', 'index.html'), 'utf8');
+  const ref = /"supabaseUrl":\s*"https:\/\/([^.]+)\./.exec(html)?.[1] || 'local';
+  return `sb-${ref}-auth-token`;
+}
+
+async function signedIn(pathAndHash, { viewport = { width: 1280, height: 900 } } = {}) {
+  const context = await browser.newContext({ viewport });
+  const key = await storageKey();
+  // Seed the saved sign-in once; later page loads see whatever the app left.
+  await context.addInitScript(([key, value]) => {
+    if (!sessionStorage.getItem('seeded')) { sessionStorage.setItem('seeded', '1'); localStorage.setItem(key, value); }
+  }, [key, JSON.stringify({ ...SESSION, user: { ...USER, user_metadata: { full_name: 'Ali Rajaa' } } })]);
+  const page = await context.newPage();
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
+  await page.routeWebSocket(/realtime/, () => {});
+  await page.route(/supabase\.co\/auth\/v1\//, (route) => route.fulfill({ status: 204, body: '' }));
+  await page.route(/supabase\.co\/rest\/v1\//, (route) => {
+    const url = route.request().url();
+    if (route.request().method() === 'HEAD') return route.fulfill({ status: 200, headers: { 'content-range': '*/0' }, body: '' });
+    if (/rpc\/is_admin/.test(url)) return json(route, 200, false);
+    if (/\/profiles/.test(url)) return json(route, 200, { id: USER.id, full_name: 'Ali Rajaa', phone: '+923001234567' });
+    if (/\/memberships/.test(url)) return json(route, 200, { role: 'owner', organisation_id: 'o1', organisations: { id: 'o1', type: 'vendor', name: 'Rajaa Bakery', status: 'approved' } });
+    return json(route, 200, []);
+  });
+  await page.goto(`${base}${BASE_PATH}${pathAndHash}`);
+  return { page, errors, close: () => context.close() };
+}
+
+test('website: guests see Log in and Join; nobody sees the account menu', async () => {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
+  await page.goto(`${base}${BASE_PATH}/`);
+  assert.ok(await page.locator('.site-header__login').isVisible());
+  assert.ok(await page.locator('.site-header__join').isVisible());
+  assert.equal(await page.locator('[data-account]').isVisible(), false);
+  await context.close();
+});
+
+test('website: signed in, the header shows your account instead of Log in and Join', async () => {
+  const { page, errors, close } = await signedIn('/');
+  assert.equal(await page.locator('.site-header__login').isVisible(), false);
+  assert.equal(await page.locator('.site-header__join').isVisible(), false);
+  const button = page.getByRole('button', { name: 'Your account: Ali' });
+  assert.equal((await button.locator('.account__avatar').textContent()).trim(), 'AR');
+  await button.click();
+  assert.equal(await button.getAttribute('aria-expanded'), 'true');
+  const menu = page.locator('#account-menu');
+  assert.ok(await menu.getByText('ali@gmail.com').isVisible());
+  assert.match(await menu.getByRole('link', { name: 'Your dashboard' }).getAttribute('href'), /\/app\/#\/$/);
+  assert.match(await menu.getByRole('link', { name: 'Log out' }).getAttribute('href'), /\/app\/#\/logout$/);
+  await page.keyboard.press('Escape');
+  assert.ok(await menu.isHidden());
+  assert.equal(await button.evaluate((b) => b === document.activeElement), true, 'focus returns to the button');
+  assert.deepEqual(errors, []);
+  await close();
+});
+
+test('website: on phones the menu sheet offers your dashboard and log out instead of the join buttons', async () => {
+  const { page, close } = await signedIn('/', { viewport: { width: 390, height: 844 } });
+  await page.locator('[data-menu-open]').click();
+  const sheet = page.locator('#menu-sheet');
+  await sheet.getByRole('link', { name: 'Your dashboard' }).waitFor();
+  assert.equal(await sheet.getByRole('link', { name: 'I have surplus food' }).isVisible(), false);
+  assert.ok(await sheet.getByText('Ali Rajaa').isVisible());
+  await close();
+});
+
+test('app: the header has the same account menu, and Log out returns to the website signed out', async () => {
+  const { page, errors, close } = await signedIn('/app/#/vendor');
+  const button = page.locator('.app-header .account__button');
+  await button.waitFor();
+  await button.click();
+  const menu = page.locator('#app-account-menu');
+  assert.ok(await menu.getByText('Rajaa Bakery · Owner').isVisible());
+  await menu.getByRole('link', { name: 'Log out' }).click();
+  await page.waitForFunction((root) => location.pathname === root && document.readyState === 'complete', `${BASE_PATH}/`);
+  assert.equal(await page.evaluate(() => Object.keys(localStorage).some((k) => /auth-token/.test(k))), false, 'saved sign-in removed');
+  assert.ok(await page.locator('.site-header__join').isVisible());
+  assert.deepEqual(errors, []);
+  await close();
+});

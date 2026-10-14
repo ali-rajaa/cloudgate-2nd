@@ -25,6 +25,37 @@
   function clamp(v, min, max) { return Math.min(max, Math.max(min, v)); }
 
   /* ---------------------------------------------------------------------------
+     Account menu, shown instead of Log in and Join when signed in. A button
+     that shows and hides a short list of links; Escape, a tap outside or
+     moving focus away closes it.
+  --------------------------------------------------------------------------- */
+  each('[data-account]', function (wrap) {
+    var button = wrap.querySelector('[data-account-toggle]');
+    var menu = wrap.querySelector('[data-account-menu]');
+    if (!button || !menu) return;
+    function outside(e) { if (!wrap.contains(e.target)) close(false); }
+    function onKey(e) { if (e.key === 'Escape') close(true); }
+    function open() {
+      menu.hidden = false;
+      button.setAttribute('aria-expanded', 'true');
+      requestAnimationFrame(function () { menu.classList.add('is-open'); });
+      document.addEventListener('pointerdown', outside, true);
+      document.addEventListener('keydown', onKey);
+    }
+    function close(returnFocus) {
+      if (menu.hidden) return;
+      menu.classList.remove('is-open');
+      menu.hidden = true;
+      button.setAttribute('aria-expanded', 'false');
+      document.removeEventListener('pointerdown', outside, true);
+      document.removeEventListener('keydown', onKey);
+      if (returnFocus) button.focus();
+    }
+    button.addEventListener('click', function () { if (menu.hidden) open(); else close(false); });
+    wrap.addEventListener('focusout', function (e) { if (e.relatedTarget && !wrap.contains(e.relatedTarget)) close(false); });
+  });
+
+  /* ---------------------------------------------------------------------------
      Spring, described by damping ratio and response (seconds), as on Apple platforms.
      1.0 damping settles with no overshoot; below 1.0 it bounces.
      Re-targeting keeps the current value and velocity, so motion never jumps.

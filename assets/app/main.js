@@ -78,7 +78,7 @@ async function render() {
   if (path === '/' || path === '') { go(homeFor()); return; }
   const match = routes.map((r) => ({ r, m: r.re.exec(path) })).find((x) => x.m);
   renderNav(path);
-  if (!match) { show(empty('Page not found', 'This page doesn\'t exist in the app.', link(homeFor(), 'Go to your home page'))); return; }
+  if (!match) { document.body.dataset.layout = ''; show(empty('Page not found', 'This page doesn\'t exist in the app.', link(homeFor(), 'Go to your home page'))); return; }
   const { r, m } = match;
 
   // Access rules for screens (the database enforces the real rules).
@@ -90,6 +90,8 @@ async function render() {
   }
 
   document.title = `${r.title || 'Rizq Rasan'} · Rizq Rasan`;
+  // Sign-in screens fill the window and bring their own brand panel.
+  document.body.dataset.layout = r.layout || '';
   const params = Object.fromEntries(r.keys.map((k, i) => [k, decodeURIComponent(m[i + 1])]));
   const query = Object.fromEntries(new URLSearchParams(qs || ''));
   show(spinner());

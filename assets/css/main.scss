@@ -477,6 +477,7 @@ textarea.field__input { min-height: 7rem; resize: vertical; }
 .field__error { font-size: 0.875rem; font-weight: 600; color: var(--danger); }
 .field__hint--warning { color: var(--warning); font-weight: 600; }
 .field--check { grid-template-columns: auto 1fr; align-items: start; gap: 0.75rem; font-size: 0.9375rem; }
+.field--check .field__error { grid-column: 2; }
 .check { width: 1.375rem; height: 1.375rem; margin: 0.1rem 0 0; accent-color: var(--ink); }
 .phone-field, .money-field { position: relative; display: flex; align-items: center; }
 .phone-field__prefix, .money-field__prefix { position: absolute; left: 0.9rem; font-weight: 650; color: var(--muted); pointer-events: none; }

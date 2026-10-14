@@ -20,7 +20,7 @@ This repository holds two things:
 | `_includes/` | Reusable parts: header, footer, forms, calculator, example listing card, FAQ list and icons |
 | `_layouts/` | `default`, `page` (marketing pages) and `policy` (legal pages with an "On this page" list) |
 | `_policies/` | One Markdown file per policy |
-| `assets/css/main.scss` | The design system: colour tokens with dark mode, type scale, components, and the reduced-motion and contrast settings |
+| `assets/css/main.scss` | The design system: colour tokens (always light), type scale, components, and the reduced-motion and contrast settings |
 | `assets/js/site.js` | All behaviour, with no libraries (see below) |
 
 ## Run it locally
@@ -185,7 +185,7 @@ The look and feel follows Apple's interface guidelines, translated for the web:
   - The menu sheet drops from the top, next to the menu button, and leaves the same way.
 - **Typography.** Fraunces for headings, with tracking and line height tuned per size. The system font is used for body text.
 - **Accessibility.**
-  - It respects reduced motion (movement becomes a fade or an instant change), reduced transparency, higher contrast, forced colours and dark mode.
+  - It respects reduced motion (movement becomes a fade or an instant change), reduced transparency, higher contrast and forced colours. The site is always light.
   - Tap targets are 48 px and focus states are visible.
   - Forms have inline errors and an error summary.
 - **Works without JavaScript.** Everything still reads and every link works; only the motion is lost.

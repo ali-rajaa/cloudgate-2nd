@@ -42,6 +42,7 @@ function brand() {
     h('div.auth-brand__body',
       h('p.auth-brand__urdu', { lang: 'ur', dir: 'rtl', translate: 'no' }, 'رزق رسان'),
       h('p.auth-brand__headline', 'From surplus to sustenance.'),
+      h('p.auth-brand__lead', 'Restaurants, bakeries and grocers list good food left at the end of the day. Verified NGOs claim it, and it gets eaten instead of thrown away.'),
       h('ol.auth-brand__steps',
         step('01', 'List.', 'Businesses list good food left at the end of the day.'),
         step('02', 'Claim.', 'Verified NGOs claim it and pay no more than half of retail.'),

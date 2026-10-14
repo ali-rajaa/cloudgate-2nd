@@ -1,12 +1,11 @@
-# Header links (logged out). Keep to five so the bar never wraps.
+# Header links. Four, short, one line at every width. Everything else is in
+# the footer (and the phone menu's "More" row).
 main:
   - title: How it works
     url: /how-it-works/
-  - title: For businesses
+  - title: Businesses
     url: /for-businesses/
-  - title: For NGOs
+  - title: NGOs
     url: /for-ngos/
   - title: Pricing
     url: /pricing/
-  - title: Impact
-    url: /impact/

@@ -7,7 +7,8 @@
     </a>
 
     <nav class="site-nav" aria-label="Main">
-      <ul class="site-nav__list">
+      <ul class="site-nav__list" data-nav>
+        <li class="site-nav__indicator" aria-hidden="true" data-nav-indicator></li>
         {%- for link in site.data.navigation.main %}
         {%- assign active = false -%}
         {%- if page.url == link.url -%}{%- assign active = true -%}{%- endif %}
@@ -92,6 +93,10 @@
       {%- endif %}
     </div>
     <ul class="menu-sheet__more">
+      {%- if site.translate_toggle %}
+      <li class="menu-sheet__lang"><button class="lang-toggle notranslate" type="button" translate="no" lang="ur" aria-label="اردو میں پڑھیں، Read in Urdu" aria-pressed="false" data-lang-toggle>اردو</button></li>
+      {%- endif %}
+      <li><a href="{{ '/impact/' | relative_url }}">Impact</a></li>
       <li><a href="{{ '/about/' | relative_url }}">About us</a></li>
       <li><a href="{{ '/faq/' | relative_url }}">FAQ</a></li>
       <li><a href="{{ '/contact/' | relative_url }}">Contact</a></li>

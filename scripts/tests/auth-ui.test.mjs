@@ -508,3 +508,63 @@ test('app: the header has the same account menu, and Log out returns to the webs
   assert.deepEqual(errors, []);
   await close();
 });
+
+// ---------------------------------------------------------------------------
+// Website header: four links, a highlight on the current page, and a header
+// that tucks away when scrolling down and returns when scrolling up
+// ---------------------------------------------------------------------------
+async function sitePage(pathname, viewport) {
+  const context = await browser.newContext({ viewport });
+  const page = await context.newPage();
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.route(/fonts\.(googleapis|gstatic)\.com|translate\.google/, (r) => r.abort());
+  await page.goto(`${base}${BASE_PATH}${pathname}`);
+  await page.waitForLoadState('load');
+  return { page, errors, close: () => context.close() };
+}
+
+test('header: four short links, and the highlight rests on the current page then follows the pointer', async () => {
+  const { page, errors, close } = await sitePage('/pricing/', { width: 1280, height: 800 });
+  const labels = await page.locator('.site-nav__link').allTextContents();
+  assert.deepEqual(labels.map((t) => t.trim()), ['How it works', 'Businesses', 'NGOs', 'Pricing']);
+  const box = (loc) => loc.evaluate((el) => { const r = el.getBoundingClientRect(); return [Math.round(r.left), Math.round(r.width)]; });
+  const pill = page.locator('[data-nav-indicator]');
+  const pricing = page.locator('.site-nav__link', { hasText: 'Pricing' });
+  assert.deepEqual(await box(pill), await box(pricing));
+  const ngos = page.locator('.site-nav__link', { hasText: 'NGOs' });
+  await ngos.hover();
+  await page.waitForTimeout(700);
+  assert.deepEqual(await box(pill), await box(ngos));
+  await page.mouse.move(640, 500);
+  await page.waitForTimeout(700);
+  assert.deepEqual(await box(pill), await box(pricing), 'back on the current page');
+  assert.deepEqual(errors, []);
+  await close();
+});
+
+test('header: tucks away when scrolling down, returns on scroll up and when it gets focus', async () => {
+  const { page, close } = await sitePage('/for-businesses/', { width: 1280, height: 800 });
+  const header = page.locator('[data-header]');
+  const tucked = async () => (await header.getAttribute('class')).includes('is-tucked');
+  await page.mouse.move(640, 500);
+  await page.mouse.wheel(0, 1400);
+  await page.waitForFunction(() => document.querySelector('[data-header]').classList.contains('is-tucked'));
+  await page.mouse.wheel(0, -80);
+  await page.waitForFunction(() => !document.querySelector('[data-header]').classList.contains('is-tucked'));
+  await page.mouse.wheel(0, 600);
+  await page.waitForFunction(() => document.querySelector('[data-header]').classList.contains('is-tucked'));
+  await page.locator('.site-header__join').focus();
+  assert.equal(await tucked(), false, 'focus brings it back');
+  await close();
+});
+
+test('header: on phones the bar is just logo, Join and menu; the Urdu switch is in the menu', async () => {
+  const { page, close } = await sitePage('/', { width: 390, height: 800 });
+  assert.equal(await page.locator('.site-header .lang-toggle').isVisible(), false);
+  assert.ok(await page.locator('.site-header__join').isVisible());
+  await page.locator('[data-menu-open]').click();
+  await page.locator('#menu-sheet .lang-toggle').waitFor();
+  assert.ok(await page.locator('#menu-sheet').getByRole('link', { name: 'Impact' }).isVisible());
+  await close();
+});

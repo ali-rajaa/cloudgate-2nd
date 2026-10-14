@@ -188,20 +188,71 @@
   }, { passive: true });
 
   /* ---------------------------------------------------------------------------
-     Header: the scroll-edge fade appears only once content is underneath it.
+     Header.
+     - The scroll-edge fade appears only once content is underneath it.
+     - Scrolling down tucks it away; any scroll up (or focus inside it) brings it
+       straight back. It never tucks while the menu or account menu is open.
   --------------------------------------------------------------------------- */
   var header = document.querySelector('[data-header]');
   if (header) {
     var ticking = false;
+    var lastY = window.scrollY;
+    var setTucked = function (on) { header.classList.toggle('is-tucked', on); };
     var updateHeader = function () {
-      header.classList.toggle('is-scrolled', window.scrollY > 4);
+      var y = Math.max(0, window.scrollY);
+      var delta = y - lastY;
+      header.classList.toggle('is-scrolled', y > 4);
+      var busy = header.contains(document.activeElement) || header.querySelector('[aria-expanded="true"]') || root.classList.contains('has-sheet');
+      if (busy || y < header.offsetHeight * 2) setTucked(false);
+      else if (delta > 6) setTucked(true);
+      else if (delta < -6) setTucked(false);
+      if (Math.abs(delta) > 6 || y < header.offsetHeight * 2) lastY = y;
       ticking = false;
     };
     window.addEventListener('scroll', function () {
       if (!ticking) { ticking = true; requestAnimationFrame(updateHeader); }
     }, { passive: true });
+    header.addEventListener('focusin', function () { setTucked(false); });
     updateHeader();
   }
+
+  /* ---------------------------------------------------------------------------
+     Header links: one highlight slides (on springs, so it can be caught and
+     redirected mid-move) to the link under the pointer or keyboard focus, and
+     settles back on the current page when the pointer leaves.
+  --------------------------------------------------------------------------- */
+  each('[data-nav]', function (list) {
+    var pill = list.querySelector('[data-nav-indicator]');
+    if (!pill) return;
+    var links = list.querySelectorAll('.site-nav__link');
+    var current = list.querySelector('.site-nav__link[aria-current="page"]');
+    var x = new Spring({ response: 0.32, onUpdate: function () { draw(); } });
+    var w = new Spring({ response: 0.32, onUpdate: function () { draw(); } });
+    var shown = false;
+    function draw() { pill.style.transform = 'translateX(' + x.value.toFixed(2) + 'px)'; pill.style.width = w.value.toFixed(2) + 'px'; }
+    function moveTo(link, instant) {
+      if (!link) { pill.style.opacity = '0'; shown = false; return; }
+      var box = link.getBoundingClientRect();
+      var left = box.left - list.getBoundingClientRect().left;
+      var width = box.width;
+      if (!shown || instant) { x.set(left); w.set(width); }
+      else { x.to(left); w.to(width); }
+      pill.style.opacity = '1';
+      shown = true;
+    }
+    list.classList.add('has-indicator');
+    moveTo(current, true);
+    Array.prototype.forEach.call(links, function (link) {
+      link.addEventListener('pointerenter', function () { moveTo(link); });
+      link.addEventListener('focus', function () { moveTo(link); });
+    });
+    list.addEventListener('pointerleave', function () { moveTo(current); });
+    list.addEventListener('focusout', function (e) { if (!list.contains(e.relatedTarget)) moveTo(current); });
+    // Fonts arriving or a resize move the links: snap the highlight to its link.
+    var resnap = function () { moveTo(current, true); };
+    window.addEventListener('resize', resnap);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(resnap);
+  });
 
   /* ---------------------------------------------------------------------------
      Menu sheet. Drops from the top, anchored to the menu button, and leaves the

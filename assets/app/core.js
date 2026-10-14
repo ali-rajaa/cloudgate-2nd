@@ -279,15 +279,21 @@ export function field(f) {
     input = h('input.field__input', { id, name: f.name, type: f.type || 'text', required: f.required, value: f.value ?? '',
       placeholder: f.placeholder || '', inputmode: f.inputmode, autocomplete: f.autocomplete, min: f.min, max: f.max, step: f.step, accept: f.accept });
   }
-  const err = h('p.field__error', { hidden: true });
-  const hint = f.hint ? h('p.field__hint', f.hint) : null;
+  const err = h('p.field__error', { id: id + '-error', hidden: true });
+  const hint = f.hint ? h('p.field__hint', { id: id + '-hint' }, f.hint) : null;
+  // Screen readers read the error when there is one, otherwise the hint.
+  const describe = (bad) => {
+    const ref = bad ? err.id : hint?.id;
+    if (ref) input.setAttribute('aria-describedby', ref); else input.removeAttribute('aria-describedby');
+  };
+  describe(false);
   const wrap = f.type === 'checkbox'
     ? h('div.field.field--check', { class: f.full ? 'field--full' : '' }, input, h('label', { for: id }, f.label), err)
     : h('div.field', { class: f.full ? 'field--full' : '' }, h('label.field__label', { for: id }, f.label, f.required ? null : h('span.field__optional', ' (optional)')), input, hint, err);
   const api = {
     f, wrap, input,
     value: () => f.type === 'checkbox' ? input.checked : f.type === 'number' ? (input.value === '' ? '' : Number(input.value)) : f.type === 'file' ? input.files : input.value.trim(),
-    error: (m) => { err.textContent = m || ''; err.hidden = !m; input.setAttribute('aria-invalid', m ? 'true' : 'false'); },
+    error: (m) => { err.textContent = m || ''; err.hidden = !m; input.setAttribute('aria-invalid', m ? 'true' : 'false'); describe(Boolean(m)); },
   };
   input.addEventListener('input', () => api.error(''));
   return api;
@@ -297,11 +303,16 @@ export function field(f) {
 export async function busy(button, fn) {
   if (button.disabled) return;
   const label = button.innerHTML;
+  const hadFocus = document.activeElement === button;
   button.disabled = true;
   button.setAttribute('aria-busy', 'true');
   try { return await fn(); }
   catch (e) { toast(friendly(e), 'error'); return undefined; }
-  finally { button.disabled = false; button.removeAttribute('aria-busy'); button.innerHTML = label; }
+  finally {
+    button.disabled = false; button.removeAttribute('aria-busy'); button.innerHTML = label;
+    // Disabling the button dropped focus to the page; put it back.
+    if (hadFocus && button.isConnected && document.activeElement === document.body) button.focus();
+  }
 }
 
 export function go(path) { location.hash = '#' + path; }

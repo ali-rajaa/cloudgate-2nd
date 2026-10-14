@@ -29,24 +29,34 @@ function brand() {
       h('p.auth-brand__headline', 'From surplus to sustenance.'),
       h('ol.auth-brand__steps',
         step('01', 'List.', 'Businesses list good food left at the end of the day.'),
-        step('02', 'Claim.', 'Verified NGOs claim it and pay a fraction of the price.'),
-        step('03', 'Collect.', 'A four-digit code confirms every handover.'))),
+        step('02', 'Claim.', 'Verified NGOs claim it and pay no more than half of retail.'),
+        step('03', 'Collect.', 'A 4-digit pickup code confirms every handover.'))),
     h('p.auth-brand__foot', 'Islamabad. Every account is checked by a person.'));
 }
 
-// The Log in / Create account switch. The thumb slides from the last tab.
-let lastTab = null;
+// The Log in / Create account switch. When you tap a tab, the thumb carries
+// on from wherever it is on screen (even mid-slide) to the new tab.
+let thumbFrom = null;
 function tabs(tab) {
-  const nav = h('nav.auth-switch', { 'aria-label': 'Log in or create an account', dataset: { active: lastTab || tab } },
+  const nav = h('nav.auth-switch', { 'aria-label': 'Log in or create an account', dataset: { active: tab } },
     h('a.auth-switch__option', { href: '#/login', 'aria-current': tab === 'login' ? 'page' : null }, 'Log in'),
     h('a.auth-switch__option', { href: '#/signup', 'aria-current': tab === 'signup' ? 'page' : null }, 'Create account'));
-  if (lastTab && lastTab !== tab) requestAnimationFrame(() => requestAnimationFrame(() => { nav.dataset.active = tab; }));
-  lastTab = tab;
+  nav.addEventListener('click', (e) => {
+    const option = e.target.closest('.auth-switch__option');
+    if (!option) return;
+    // Tapping the tab you're on would reload it and wipe what you typed.
+    if (option.getAttribute('aria-current') === 'page') { e.preventDefault(); return; }
+    thumbFrom = new DOMMatrix(getComputedStyle(nav, '::before').transform).m41;
+  });
+  if (thumbFrom !== null) {
+    nav.style.setProperty('--thumb', thumbFrom + 'px');
+    requestAnimationFrame(() => requestAnimationFrame(() => nav.style.removeProperty('--thumb')));
+  }
+  thumbFrom = null;
   return nav;
 }
 
 function screen({ tab, title, lead, body, foot }) {
-  if (!tab) lastTab = null;
   return h('div.auth',
     brand(),
     h('section.auth-panel',
@@ -57,24 +67,24 @@ function screen({ tab, title, lead, body, foot }) {
         foot ? h('div.auth-foot', foot) : null)));
 }
 
-// A password box with a Show/Hide button inside it, and an optional link
-// on the label row (Forgot password?).
+// A password box with a Show/Hide button inside it. An optional link
+// (Forgot password?) shows on the label row but comes after the box in tab order.
 function passwordField({ label, autocomplete, hint, aside }) {
   const f = field({ name: 'password', label, type: 'password', required: true, autocomplete, hint });
-  const toggle = h('button.auth-reveal', { type: 'button', 'aria-controls': f.input.id }, 'Show');
+  const word = h('span', 'Show');
+  const toggle = h('button.auth-reveal', { type: 'button', 'aria-controls': f.input.id }, word, h('span.visually-hidden', ' password'));
   toggle.addEventListener('click', () => {
     const show = f.input.type === 'password';
     f.input.type = show ? 'text' : 'password';
-    toggle.textContent = show ? 'Hide' : 'Show';
+    word.textContent = show ? 'Hide' : 'Show';
   });
   const box = h('div.auth-reveal-box');
   f.input.replaceWith(box);
   box.append(f.input, toggle);
   if (aside) {
-    const labelEl = f.wrap.querySelector('.field__label');
-    const row = h('div.auth-label-row');
-    labelEl.replaceWith(row);
-    row.append(labelEl, aside);
+    aside.classList.add('auth-aside');
+    f.wrap.classList.add('field--aside');
+    box.after(aside);
   }
   return f;
 }
@@ -91,13 +101,22 @@ function login() {
   const form = h('form.app-form.auth-form', { novalidate: true }, email.wrap, password.wrap, submit);
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    if (!email.value()) return email.error('Enter your email address.');
-    if (!password.value()) return password.error('Enter your password.');
+    let first = null;
+    if (!email.value()) { email.error('Enter your email address.'); first = email.input; }
+    if (!password.value()) { password.error('Enter your password.'); first = first || password.input; }
+    if (first) { first.focus(); return; }
     busy(submit, async () => {
       const { error } = await db.auth.signInWithPassword({ email: email.value(), password: password.value() });
       if (error) {
-        if (/confirm/i.test(error.message)) return password.error('Confirm your email first. We sent you a link when you signed up.');
-        return password.error('That email and password don\'t match an account.');
+        if (/confirm/i.test(error.message)) {
+          // Their address isn't confirmed yet: the next screen can send the link again.
+          sessionStorage.setItem('rr-signup-email', email.value());
+          go('/check-email');
+          return;
+        }
+        password.error('That email and password don\'t match an account.');
+        password.input.focus();
+        return;
       }
       const after = sessionStorage.getItem('rr-after-login');
       sessionStorage.removeItem('rr-after-login');
@@ -123,13 +142,22 @@ function signup({ params }) {
     h('input.auth-type__input', { type: 'radio', name: 'type', value, checked: type === value }),
     h('span.auth-type__title', title),
     h('span.auth-type__text', text));
-  const typeError = h('p.field__error', { hidden: true });
+  const typeError = h('p#type-error.field__error', { hidden: true });
   const types = h('fieldset.auth-type',
     h('legend.field__label', 'Which describes you?'),
     h('div.auth-type__options',
       option('vendor', 'Food business', 'Restaurant, bakery, grocer or cafe'),
       option('ngo', 'NGO or charity', 'Shelter, food bank or community kitchen')),
     typeError);
+  const radios = () => types.querySelectorAll('.auth-type__input');
+  const typeInvalid = (message) => {
+    typeError.textContent = message || '';
+    typeError.hidden = !message;
+    radios().forEach((r) => {
+      if (message) { r.setAttribute('aria-invalid', 'true'); r.setAttribute('aria-describedby', 'type-error'); }
+      else { r.removeAttribute('aria-invalid'); r.removeAttribute('aria-describedby'); }
+    });
+  };
 
   const name = field({ name: 'name', label: 'Your name', required: true, autocomplete: 'name' });
   const phone = field({ name: 'phone', label: 'Mobile number', type: 'tel', required: true, inputmode: 'tel', autocomplete: 'tel-national', placeholder: '0300 1234567' });
@@ -143,7 +171,7 @@ function signup({ params }) {
 
   types.addEventListener('change', (e) => {
     type = e.target.value;
-    typeError.hidden = true;
+    typeInvalid('');
     org.wrap.querySelector('.field__label').firstChild.textContent = orgLabel();
     [agreementLink.href, agreementLink.textContent] = [site(agreement()[0]), agreement()[1]];
     history.replaceState(null, '', '#/signup/' + type);
@@ -155,15 +183,15 @@ function signup({ params }) {
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     let bad = false;
-    if (!type) { typeError.textContent = 'Choose the one that describes you.'; typeError.hidden = false; bad = true; }
+    if (!type) { typeInvalid('Choose the one that describes you.'); bad = true; }
     if (!name.value()) { name.error('Enter your name.'); bad = true; }
     const tel = normalisePhone(phone.value());
-    if (!tel) { phone.error('Enter a Pakistani mobile number, like 0300 1234567.'); bad = true; }
+    if (!tel) { phone.error('Enter a mobile number like 0300 1234567.'); bad = true; }
     if (org.value().length < 2) { org.error('Enter the name people know you by.'); bad = true; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.value())) { email.error('Enter an email address like name@example.com.'); bad = true; }
     if (password.value().length < 8) { password.error('Use at least 8 characters.'); bad = true; }
-    if (!terms.value()) { terms.error('Please agree to continue.'); bad = true; }
-    if (bad) { (type ? form.querySelector('[aria-invalid="true"]') : form.querySelector('.auth-type__input'))?.focus(); return; }
+    if (!terms.value()) { terms.error('Agree to the terms to continue.'); bad = true; }
+    if (bad) { (type ? form.querySelector('[aria-invalid="true"]') : radios()[0])?.focus(); return; }
     busy(submit, async () => {
       localStorage.setItem('rr-pending-org', JSON.stringify({ type, name: org.value(), phone: tel }));
       const { data, error } = await db.auth.signUp({
@@ -171,8 +199,8 @@ function signup({ params }) {
         options: { data: { full_name: name.value(), phone: tel }, emailRedirectTo: redirectBase() + '#/start' },
       });
       if (error) {
-        if (/registered|exists/i.test(error.message)) return email.error('An account with this email already exists. Log in instead.');
-        if (/password/i.test(error.message)) return password.error(friendly(error));
+        if (/registered|exists/i.test(error.message)) { email.error('An account with this email already exists. Log in instead.'); email.input.focus(); return; }
+        if (/password/i.test(error.message)) { password.error(friendly(error)); password.input.focus(); return; }
         throw error;
       }
       if (data.session) { window.dispatchEvent(new Event('rr:state')); go('/start'); }
@@ -190,12 +218,26 @@ function signup({ params }) {
 
 function checkEmail() {
   const email = sessionStorage.getItem('rr-signup-email');
+  let body;
+  if (email) {
+    const again = h('button.btn.btn--secondary.btn--block', { type: 'button' }, 'Send the link again');
+    again.addEventListener('click', () => busy(again, async () => {
+      const { error } = await db.auth.resend({ type: 'signup', email, options: { emailRedirectTo: redirectBase() + '#/start' } });
+      if (error) throw error;
+      toast('Sent again. Check your inbox.');
+    }));
+    body = h('div.auth-stack',
+      h('div.auth-sent', h('span.auth-sent__label', 'Sent to'), h('span.auth-sent__email', email)),
+      notice('info', 'Nothing after a few minutes? Check your spam folder, then send it again.'),
+      again);
+  } else {
+    body = h('div.auth-stack', h('p.auth-lead', 'Nothing in your inbox? Check your spam folder. Still nothing? ',
+      h('a', { href: site('contact/') }, 'Contact us'), '.'));
+  }
   return screen({
     title: 'Check your email',
     lead: 'Open the link we sent to confirm your address and carry on setting up. Use this device if you can.',
-    body: h('div.auth-stack',
-      h('div.auth-sent', h('span.auth-sent__label', 'Sent to'), h('span.auth-sent__email', email || 'your email address')),
-      notice('info', 'Nothing after a few minutes? Check your spam folder, or log in to have it sent again.')),
+    body,
     foot: h('p', link('/login', 'Back to log in')),
   });
 }
@@ -206,10 +248,14 @@ function forgot() {
   const form = h('form.app-form.auth-form', { novalidate: true }, email.wrap, submit);
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    if (!email.value()) return email.error('Enter your email address.');
+    if (!email.value()) { email.error('Enter your email address.'); email.input.focus(); return; }
     busy(submit, async () => {
       await db.auth.resetPasswordForEmail(email.value(), { redirectTo: redirectBase() + '#/reset-password' });
-      form.replaceWith(notice('info', 'If that email has an account, a reset link is on its way. It works once and expires in an hour.'));
+      const done = notice('info', 'If that email has an account, a reset link is on its way. It works once and expires in an hour.');
+      done.setAttribute('role', 'status');
+      done.tabIndex = -1;
+      form.replaceWith(done);
+      done.focus();
     });
   });
   return screen({
@@ -226,7 +272,7 @@ function reset() {
   const form = h('form.app-form.auth-form', { novalidate: true }, password.wrap, submit);
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    if (password.value().length < 8) return password.error('Use at least 8 characters.');
+    if (password.value().length < 8) { password.error('Use at least 8 characters.'); password.input.focus(); return; }
     busy(submit, async () => {
       const { error } = await db.auth.updateUser({ password: password.value() });
       if (error) throw error;

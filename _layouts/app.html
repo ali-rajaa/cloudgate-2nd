@@ -7,6 +7,14 @@
 <link rel="stylesheet" href="{{ '/assets/css/app.css' | relative_url }}">
 </head>
 <body class="app-body">
+<script>
+  // Start in the sign-in layout when that's where this visit lands, so the app header doesn't flash first.
+  (function () {
+    var hash = location.hash, guest = true;
+    try { guest = !Object.keys(localStorage).some(function (k) { return /^sb-.+-auth-token$/.test(k); }); } catch (e) {}
+    if (/^#\/(login|signup|check-email|forgot-password|reset-password)(\/|$|\?)/.test(hash) || (guest && /^(#\/?)?$/.test(hash))) document.body.dataset.layout = 'auth';
+  })();
+</script>
 <a class="skip-link" href="#app-view">Skip to content</a>
 <header class="app-header">
   <div class="app-header__bar">
@@ -17,7 +25,7 @@
     <nav class="app-nav" id="app-nav" aria-label="App"></nav>
   </div>
 </header>
-<main class="app-main" id="app-view" tabindex="-1" aria-live="polite"></main>
+<main class="app-main" id="app-view" tabindex="-1"></main>
 <footer class="app-footer">
   <a href="{{ '/' | relative_url }}">Website</a>
   <a href="{{ '/faq/' | relative_url }}">Help</a>

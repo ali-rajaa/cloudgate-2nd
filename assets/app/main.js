@@ -8,6 +8,11 @@ import * as ngo from './ngo.js';
 import * as admin from './admin.js';
 
 const view = document.getElementById('app-view');
+// The skip link would otherwise change the route to #app-view.
+document.querySelector('.skip-link')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  (view.querySelector('.auth-panel input, .auth-panel button') || view).focus();
+});
 const nav = document.getElementById('app-nav');
 const routes = [];
 
@@ -105,7 +110,9 @@ async function render() {
 
 function show(node) {
   view.replaceChildren(node);
-  view.focus({ preventScroll: true });
+  // Move focus to the new screen's heading so screen readers announce it.
+  const heading = view.querySelector('h1');
+  if (heading) { heading.tabIndex = -1; heading.focus({ preventScroll: true }); } else view.focus({ preventScroll: true });
   window.scrollTo({ top: 0 });
 }
 
@@ -116,6 +123,7 @@ window.addEventListener('rr:state', reload);
 
 async function start() {
   if (!configured) {
+    document.body.dataset.layout = '';
     view.replaceChildren(h('div.app-empty',
       h('p.app-empty__title', 'The platform isn\'t connected yet'),
       h('p', 'Accounts open at launch. Until then, register your interest and we\'ll invite you.'),
@@ -123,6 +131,7 @@ async function start() {
     return;
   }
   if (clientMissing) {
+    document.body.dataset.layout = '';
     show(empty('The app didn\'t load', 'Part of the app was blocked from loading. Turn off any ad or script blocker for this site, then reload.',
       h('button.btn.btn--secondary', { type: 'button', onclick: () => location.reload() }, 'Reload')));
     return;
@@ -137,6 +146,7 @@ async function start() {
     await countUnread().catch(() => {});
     listen();
   } catch (e) {
+    document.body.dataset.layout = '';
     show(empty('We couldn\'t load your account', friendly(e),
       h('button.btn.btn--secondary', { type: 'button', onclick: () => location.reload() }, 'Try again')));
     return;

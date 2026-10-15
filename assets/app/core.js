@@ -37,13 +37,18 @@ export async function loadState() {
   if (state.user) {
     const results = await Promise.all([
       db.from('profiles').select('*').eq('id', state.user.id).maybeSingle(),
-      db.from('memberships').select('role, organisation_id, organisations(*)').eq('user_id', state.user.id).maybeSingle(),
+      // A list, not a single row: an account with more than one (from before
+      // one-per-person was enforced) must still load.
+      db.from('memberships').select('role, organisation_id, created_at, organisations(*)').eq('user_id', state.user.id).order('created_at'),
       db.rpc('is_admin'),
     ]);
     // A failed lookup must not look like "no organisation yet": say so instead.
     const failed = results.find((r) => r.error);
     if (failed) throw new AppError(friendly(failed.error));
-    const [{ data: profile }, { data: membership }, { data: admin }] = results;
+    const [{ data: profile }, { data: memberships }, { data: admin }] = results;
+    // The organisation furthest along wins: approved, then anything past set-up, then the oldest.
+    const rank = (m) => (m.organisations?.status === 'approved' ? 0 : m.organisations?.status === 'onboarding' ? 2 : 1);
+    const membership = (memberships || []).filter((m) => m.organisations).sort((a, b) => rank(a) - rank(b))[0] || null;
     state.profile = profile;
     state.admin = Boolean(admin);
     if (membership) {

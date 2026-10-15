@@ -32,6 +32,7 @@ export const DOCS = {
 };
 const REQUIRED = { vendor: ['registration', 'ntn', 'ifa_licence', 'signatory_cnic', 'bank_letter'], ngo: ['registration', 'authority_letter', 'signatory_cnic'] };
 
+let creating = null;
 async function start() {
   if (state.org) { go('/onboarding'); return h('div'); }
   // Details from sign-up: saved on this device, or with the account (when the
@@ -44,7 +45,12 @@ async function start() {
   const name = field({ name: 'name', label: 'Business or organisation name', required: true, value: pending?.name || '' });
   const submit = h('button.btn.btn--primary', { type: 'submit' }, 'Continue');
   const form = h('form.app-form.card', { novalidate: true }, type.wrap, name.wrap, submit);
-  const create = async () => {
+  const create = () => {
+    // Never twice at once, even if this screen is drawn twice in a row.
+    creating ||= createNow().finally(() => { creating = null; });
+    return creating;
+  };
+  const createNow = async () => {
     const id = await rpc('create_organisation', { p_type: type.value(), p_name: name.value(), p_business_kind: null, p_phone: pending?.phone || state.profile?.phone || null });
     await rpc('accept_policies', { p_org: id, p_policies: ['terms', 'privacy', type.value() === 'vendor' ? 'vendor-agreement' : 'ngo-agreement'], p_version: '0.1' });
     localStorage.removeItem('rr-pending-org');
@@ -60,7 +66,11 @@ async function start() {
   // Details given at sign-up on this device: create the organisation straight away.
   if (pending?.type && pending?.name) {
     try { await create(); return h('div'); }
-    catch (e) { toast(friendly(e), 'error'); }
+    catch (e) {
+      // Already made (another tab, or an earlier visit): load it instead of showing an error.
+      if (/already belongs/i.test(String(e?.message || e))) { window.dispatchEvent(new Event('rr:state')); return h('div'); }
+      toast(friendly(e), 'error');
+    }
   }
   return h('section.app-narrow', pageHead('Set up your account', 'Tell us who you are. You\'ll add details and documents next.'), form);
 }

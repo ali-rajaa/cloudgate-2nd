@@ -499,7 +499,7 @@ async function signedIn(pathAndHash, { viewport = { width: 1280, height: 900 } }
     if (route.request().method() === 'HEAD') return route.fulfill({ status: 200, headers: { 'content-range': '*/0' }, body: '' });
     if (/rpc\/is_admin/.test(url)) return json(route, 200, false);
     if (/\/profiles/.test(url)) return json(route, 200, { id: USER.id, full_name: 'Ali Rajaa', phone: '+923001234567' });
-    if (/\/memberships/.test(url)) return json(route, 200, { role: 'owner', organisation_id: 'o1', organisations: { id: 'o1', type: 'vendor', name: 'Rajaa Bakery', status: 'approved' } });
+    if (/\/memberships/.test(url)) return json(route, 200, [{ role: 'owner', organisation_id: 'o1', created_at: '2026-10-01T00:00:00Z', organisations: { id: 'o1', type: 'vendor', name: 'Rajaa Bakery', status: 'approved' } }]);
     return json(route, 200, []);
   });
   await page.goto(`${base}${BASE_PATH}${pathAndHash}`);
@@ -644,4 +644,31 @@ test('header: signed in on a 320px phone, the account button has a name and its 
   const box = await page.locator('#account-menu').boundingBox();
   assert.ok(box.x >= 0 && box.x + box.width <= 320, `menu spans ${box.x} to ${box.x + box.width}`);
   await close();
+});
+
+test('app: an account with two organisations still loads, using the one furthest along', async () => {
+  const context = await browser.newContext();
+  const key = await storageKey();
+  await context.addInitScript(([k, v]) => { if (!sessionStorage.getItem('seeded')) { sessionStorage.setItem('seeded', '1'); localStorage.setItem(k, v); } },
+    [key, JSON.stringify({ ...SESSION, user: { ...USER, user_metadata: { full_name: 'Ali Rajaa' } } })]);
+  const page = await context.newPage();
+  await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
+  await page.routeWebSocket(/realtime/, () => {});
+  await page.route(/supabase\.co\/auth\/v1\//, (route) => route.fulfill({ status: 204, body: '' }));
+  await page.route(/supabase\.co\/rest\/v1\//, (route) => {
+    const url = route.request().url();
+    if (route.request().method() === 'HEAD') return route.fulfill({ status: 200, headers: { 'content-range': '*/0' }, body: '' });
+    if (/rpc\/is_admin/.test(url)) return json(route, 200, false);
+    if (/\/profiles/.test(url)) return json(route, 200, { id: USER.id, full_name: 'Ali Rajaa' });
+    if (/\/memberships/.test(url)) return json(route, 200, [
+      { role: 'owner', organisation_id: 'o1', created_at: '2026-10-01T00:00:00Z', organisations: { id: 'o1', type: 'vendor', name: 'Started twice', status: 'onboarding' } },
+      { role: 'owner', organisation_id: 'o2', created_at: '2026-10-02T00:00:00Z', organisations: { id: 'o2', type: 'vendor', name: 'Rajaa Bakery', status: 'approved' } },
+    ]);
+    return json(route, 200, []);
+  });
+  await page.goto(`${base}${BASE_PATH}/app/#/`);
+  await page.waitForFunction(() => location.hash === '#/vendor');
+  await page.locator('.app-header .account__button').click();
+  assert.ok(await page.getByText('Rajaa Bakery · Owner').isVisible());
+  await context.close();
 });

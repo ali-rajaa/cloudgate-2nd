@@ -170,7 +170,20 @@ function show(node) {
   window.scrollTo({ top: 0 });
 }
 
-async function reload() {
+// One reload at a time: a second request while one runs waits for it, then
+// runs once more, so the screen can't be built twice at the same moment.
+let started = false; // set once the first account load has finished
+let reloading = null;
+let reloadAgain = false;
+function reload() {
+  if (reloading) { reloadAgain = true; return reloading; }
+  reloading = (async () => {
+    do { reloadAgain = false; await reloadOnce(); } while (reloadAgain);
+  })().finally(() => { reloading = null; });
+  return reloading;
+}
+
+async function reloadOnce() {
   try {
     await loadState();
   } catch (e) {
@@ -213,13 +226,19 @@ async function start() {
   }
   catchLinkError();
   show(spinner());
-  db.auth.onAuthStateChange((event) => {
+  db.auth.onAuthStateChange((event, session) => {
     if (event === 'PASSWORD_RECOVERY') { redirect('/reset-password'); return; }
     if (event === 'SIGNED_IN') sessionStorage.removeItem('rr-signup-email');
-    if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') { realtime?.unsubscribe(); realtime = null; reload(); }
+    if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+      // supabase-js also says SIGNED_IN when it restores a saved session at start-up;
+      // that's the same person we're already loading, so don't load twice.
+      if (event === 'SIGNED_IN' && (!started || session?.user?.id === state.user?.id)) return;
+      realtime?.unsubscribe(); realtime = null; reload();
+    }
   });
   try {
     await withTimeout(loadState(), 15000);
+    started = true;
     await countUnread().catch(() => {});
     listen();
   } catch (e) {

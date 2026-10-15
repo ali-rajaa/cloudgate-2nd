@@ -563,7 +563,7 @@ function linkExpired() {
 // ---------------------------------------------------------------------------
 let leaving = false;
 async function logout() {
-  const waiting = h('div.app-loading', { role: 'status' }, h('span.app-spinner'), h('span.visually-hidden', 'Logging out'));
+  const waiting = h('div.app-loading', { role: 'status' }, h('span.activity.activity--large', { 'aria-hidden': 'true' }), h('span.visually-hidden', 'Logging out'));
   if (leaving) return waiting; // signing out re-renders this route once more
   leaving = true;
   if (state.user) {

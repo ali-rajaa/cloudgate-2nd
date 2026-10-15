@@ -488,7 +488,7 @@ async function claimPage({ params, query }) {
 
   function waitingBox(d) {
     return h('div.ngo-wait', { role: 'status' },
-      h('span.app-spinner'),
+      h('span.activity', { 'aria-hidden': 'true' }),
       h('div', h('p.ngo-wait__title', 'Waiting for the business to confirm'),
         h('p.app-muted', `You told us you paid ${rs(d.price_rs)} with reference ${d.ngo_payment_reference || ''}. Your pickup code appears here as soon as the business confirms the money arrived. You can leave this page.`)));
   }
@@ -519,7 +519,7 @@ async function claimPage({ params, query }) {
   }
 
   function confirmingBox() {
-    return h('div.ngo-wait', { role: 'status' }, h('span.app-spinner'),
+    return h('div.ngo-wait', { role: 'status' }, h('span.activity', { 'aria-hidden': 'true' }),
       h('div', h('p.ngo-wait__title', 'Confirming payment'),
         h('p.app-muted', 'We\'re checking with the payment service. This usually takes under a minute. Your pickup code appears here once it is confirmed.')));
   }

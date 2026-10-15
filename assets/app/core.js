@@ -209,7 +209,7 @@ export function icon(name, size = 20) {
 
 export const badge = (status) => h('span.badge', { class: 'badge--' + statusTone(status) }, statusLabel(status));
 export const empty = (title, text, action) => h('div.app-empty', h('p.app-empty__title', title), text ? h('p', text) : null, action || null);
-export const spinner = () => h('div.app-loading', { role: 'status' }, h('span.app-spinner'), h('span.visually-hidden', 'Loading'));
+export const spinner = () => h('div.app-loading', { role: 'status' }, h('span.activity.activity--large', { 'aria-hidden': 'true' }), h('span.visually-hidden', 'Loading'));
 
 export function pageHead(title, lead, actions) {
   return h('header.app-page-head', h('div', h('h1.app-title', title), lead ? h('p.app-lead', lead) : null), actions ? h('div.app-page-actions', actions) : null);

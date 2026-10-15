@@ -167,6 +167,25 @@ p { margin: 0; }
 .btn--accent { --btn-bg: var(--accent); --btn-fg: var(--on-accent); --btn-border: var(--accent); }
 .btn--sm { min-height: 2.5rem; padding: 0.5rem 1.1rem; font-size: 0.9375rem; }
 .btn--block { display: flex; width: 100%; }
+.btn[aria-busy="true"] { cursor: progress; transform: none; }
+.btn:disabled:not([aria-busy="true"]), .btn[aria-disabled="true"]:not([aria-busy="true"]) { opacity: 0.55; cursor: not-allowed; }
+
+/* ---------- Activity indicator ----------
+   The eight-spoke wheel from iOS. The spokes don't sweep round: the bright one
+   steps to the next spoke eight times a second, so it reads as working without
+   smooth motion. It's a mask, so it takes the colour of the text around it, and
+   it fades in after --activity-delay, so a quick load never flashes it.
+   Used on its own (.activity) and by busy buttons and the Urdu toggle. */
+.activity, .btn[aria-busy="true"]::before, .lang-toggle[aria-busy="true"]::after {
+  content: ""; display: inline-block; flex: none; width: 1.125em; height: 1.125em;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M12 2.75v4.5'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-45 12 12)' stroke-opacity='0.9'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-90 12 12)' stroke-opacity='0.8'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-135 12 12)' stroke-opacity='0.7'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-180 12 12)' stroke-opacity='0.6'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-225 12 12)' stroke-opacity='0.5'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-270 12 12)' stroke-opacity='0.4'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-315 12 12)' stroke-opacity='0.3'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M12 2.75v4.5'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-45 12 12)' stroke-opacity='0.9'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-90 12 12)' stroke-opacity='0.8'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-135 12 12)' stroke-opacity='0.7'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-180 12 12)' stroke-opacity='0.6'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-225 12 12)' stroke-opacity='0.5'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-270 12 12)' stroke-opacity='0.4'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-315 12 12)' stroke-opacity='0.3'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+  animation: activity-step 1s steps(8) infinite, activity-in 200ms ease-out var(--activity-delay, 0ms) both;
+}
+.activity--large { width: 2rem; height: 2rem; color: var(--muted); }
+@keyframes activity-step { to { transform: rotate(360deg); } }
+@keyframes activity-in { from { opacity: 0; } }
 .text-link { display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 650; text-decoration: none; }
 .text-link:hover { text-decoration: underline; }
 .text-link .icon { transition: transform 200ms cubic-bezier(.2, .9, .3, 1); }
@@ -718,12 +737,8 @@ td.num, th.num { text-align: end; font-variant-numeric: tabular-nums; white-spac
 .lang-toggle[lang="ur"] { font-family: var(--font-urdu); font-size: 1.05rem; font-weight: 400; line-height: 1; }
 .lang-toggle[lang="en"] { font-family: var(--font-body); }
 .lang-toggle[aria-busy="true"] { position: relative; color: transparent; pointer-events: none; }
-.lang-toggle[aria-busy="true"]::after {
-  content: ""; position: absolute; inset: 0; margin: auto; width: 1rem; height: 1rem;
-  border: 2px solid var(--ink); border-right-color: transparent; border-radius: 50%;
-  animation: lang-spin 700ms linear infinite;
-}
-@keyframes lang-spin { to { transform: rotate(360deg); } }
+/* The label is hidden (transparent) while Google loads, so the wheel takes the ink colour directly. */
+.lang-toggle[aria-busy="true"]::after { position: absolute; inset: 0; margin: auto; width: 1.125rem; height: 1.125rem; background: var(--ink); }
 /* While Google translates, the page dims; it fades back once the Urdu text is in. */
 main, .site-footer { transition: opacity 260ms ease; }
 html.lang-loading main, html.lang-loading .site-footer { opacity: 0.35; }
@@ -761,6 +776,10 @@ html.lang-ur .phone-field, html.lang-ur .money-field { text-align: left; }
 /* ---------- Accessibility preferences ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+  /* The activity wheel is status, not decoration, and it steps rather than moves, so it keeps going (as on iOS). */
+  .activity, .btn[aria-busy="true"]::before, .lang-toggle[aria-busy="true"]::after {
+    animation: activity-step 1s steps(8) infinite, activity-in 200ms ease-out var(--activity-delay, 0ms) both !important;
+  }
   .btn, .card--link, .text-link .icon, .accordion__chevron, .footer-col__chevron { transition: none !important; }
   .btn:active, .card--link:active { transform: none; }
   .listing-card { transform: none; }

@@ -85,7 +85,7 @@
   display: flex; gap: 1rem; align-items: flex-start; padding: 1.25rem; border-radius: 1.25rem;
   background: var(--info-bg); color: var(--text);
 }
-.ngo-wait .app-spinner { flex-shrink: 0; width: 1.6rem; height: 1.6rem; border-top-color: var(--info); }
+.ngo-wait .activity { width: 1.6rem; height: 1.6rem; margin-top: 0.1rem; color: var(--info); }
 .ngo-wait__title { font-weight: 700; font-size: 1.125rem; margin-bottom: 0.25rem; color: var(--info); }
 
 .ngo-code { padding: 1.75rem 1.25rem; }

@@ -25,7 +25,10 @@
     <nav class="app-nav" id="app-nav" aria-label="App"></nav>
   </div>
 </header>
-<main class="app-main" id="app-view" tabindex="-1"></main>
+<main class="app-main" id="app-view" tabindex="-1">
+  <div class="app-loading app-loading--start" role="status"><span class="activity activity--large" aria-hidden="true"></span><span class="visually-hidden">Loading</span></div>
+  <noscript><div class="app-empty"><p class="app-empty__title">Turn on JavaScript</p><p>The {{ site.title }} app needs JavaScript. Turn it on for this site in your browser's settings, then reload.</p></div></noscript>
+</main>
 <footer class="app-footer">
   <a href="{{ '/' | relative_url }}">Website</a>
   <a href="{{ '/faq/' | relative_url }}">Help</a>

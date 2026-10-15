@@ -25,7 +25,7 @@ This website is a set of plain pages hosted on GitHub Pages. It has no log in, n
 - **No cookies by default.** This website does not set any cookies or save anything in your browser's storage. The one exception is if you choose to read it in Urdu (see section 3).
 - **No analytics or tracking.** We don't use visitor counters, analytics, advertising or social media tracking tools, so we don't know which pages you read.
 - **No cookie banner.** Nothing is set unless you press the Urdu button yourself, so you won't see one.
-- **Forms.** The contact, partner and "register your interest" forms don't set cookies either. When you send one, your email app opens with a pre-filled message to us or, once we connect a form service, your details reach us through that provider. Our [Privacy Policy]({{ '/legal/privacy/' | relative_url }}) explains what happens to them.
+- **Forms.** The contact and partner forms don't set cookies either. When you send one, your email app opens with a pre-filled message to us or, once we connect a form service, your details reach us through that provider. Our [Privacy Policy]({{ '/legal/privacy/' | relative_url }}) explains what happens to them.
 
 Like any web host, GitHub receives your browser's request for each page, including your IP address, so that it can send the page back to you.
 

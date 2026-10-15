@@ -46,14 +46,14 @@ lead: Questions about listing food, joining as an NGO, working with us or writin
 
 <section class="section section--sunk" aria-labelledby="register-links-title">
   <div class="container">
-    {% include section-head.html eyebrow="Want to join?" title="Register your interest instead" id="register-links-title" lead="If you'd like to list food, claim food or partner with us, these forms ask for exactly what we need, so we can reply with next steps." %}
+    {% include section-head.html eyebrow="Want to join?" title="Create an account instead" id="register-links-title" lead="To list or claim food, create an account: it asks for exactly what we need. To partner with us, use the partner form." %}
     <div class="grid grid--3">
-      <a class="card card--link" href="{{ '/for-businesses/#register' | relative_url }}">
+      <a class="card card--link" href="{{ site.app_url }}#/signup/vendor">
         <span class="card__icon">{% include icon.html name="store" size=22 %}</span>
         <h3>I have surplus food</h3>
         <p>For restaurants, bakeries, grocers and cafes in Islamabad. Hotels and caterers will join later.</p>
       </a>
-      <a class="card card--link" href="{{ '/for-ngos/#register' | relative_url }}">
+      <a class="card card--link" href="{{ site.app_url }}#/signup/ngo">
         <span class="card__icon">{% include icon.html name="heart" size=22 %}</span>
         <h3>I feed people</h3>
         <p>For registered NGOs, shelters, community kitchens, food banks and orphanages.</p>

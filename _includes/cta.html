@@ -4,10 +4,10 @@
 <section class="section cta-band">
   <div class="container container--narrow cta-band__inner">
     <h2 class="display display--section">{{ include.title | default: "Good food deserves a second chance." }}</h2>
-    <p class="lead">{{ include.text | default: "Rizq Rasan launches across Islamabad on 22 March 2027. Register your interest and we'll invite you as soon as there's a place." }}</p>
+    <p class="lead">{{ include.text | default: "Create your account now. We check every business and NGO by hand, and listing and claiming start when Rizq Rasan launches across Islamabad on 22 March 2027." }}</p>
     <div class="button-row button-row--center">
-      <a class="btn btn--primary" href="{{ '/for-businesses/#register' | relative_url }}">I have surplus food</a>
-      <a class="btn btn--secondary" href="{{ '/for-ngos/#register' | relative_url }}">I feed people</a>
+      <a class="btn btn--primary" href="{{ site.app_url }}#/signup/vendor">I have surplus food</a>
+      <a class="btn btn--secondary" href="{{ site.app_url }}#/signup/ngo">I feed people</a>
     </div>
   </div>
 </section>

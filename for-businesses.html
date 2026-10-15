@@ -6,8 +6,8 @@ eyebrow: For restaurants, bakeries, grocers and cafes
 heading: Sell your surplus food to NGOs instead of throwing it away
 lead: List your surplus at a recovery price, hand it to a verified NGO with a 4-digit code, and get paid twice a week. Rizq Rasan launches in Islamabad on 22 March 2027.
 actions:
-  - title: Register your interest
-    url: /for-businesses/#register
+  - title: Create your account
+    url: /app/#/signup/vendor
   - title: See how it works
     url: /how-it-works/
 ---
@@ -238,9 +238,10 @@ actions:
 
 <section id="register" class="section section--sunk register" aria-labelledby="register-title">
   <div class="container container--narrow">
-    {% include section-head.html eyebrow="Register your business" title="Register your interest" id="register-title" lead="Accounts open at launch on 22 March 2027, and places in the January pilot are limited. Tell us about your business and we'll be in touch." %}
-    <div class="card">
-      {% include interest-form.html type="business" %}
+    {% include section-head.html eyebrow="Get started" title="Create your account" id="register-title" lead="It takes two minutes. Then you add your documents in the app, and we check every account by hand within 2 working days. Listing and claiming start at launch on 22 March 2027." %}
+    <div class="button-row">
+      <a class="btn btn--primary" href="{{ site.app_url }}#/signup/vendor">Create a business account</a>
+      <a class="btn btn--secondary" href="{{ site.app_url }}#/login">Log in</a>
     </div>
   </div>
 </section>

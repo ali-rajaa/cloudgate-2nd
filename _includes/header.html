@@ -22,9 +22,8 @@
       <button class="lang-toggle notranslate" type="button" translate="no" lang="ur" aria-label="اردو میں پڑھیں، Read in Urdu" aria-pressed="false" data-lang-toggle>اردو</button>
       {%- endif %}
       {%- if site.app_url != "" %}
-      <a class="site-header__login guest-only" href="{{ site.app_url }}">Log in</a>
+      <a class="btn btn--primary btn--sm site-header__login guest-only" href="{{ site.app_url }}#/login">Log in</a>
       {%- endif %}
-      <a class="btn btn--primary btn--sm site-header__join guest-only" href="{{ '/join/' | relative_url }}">Join</a>
       {%- if site.app_url != "" %}
       <div class="account signed-in-only" data-account>
         <button class="account__button" type="button" aria-expanded="false" aria-controls="account-menu" data-account-toggle>
@@ -86,9 +85,9 @@
     </div>
     {%- endif %}
     <div class="menu-sheet__actions guest-only">
-      <a class="btn btn--primary btn--block" href="{{ '/join/' | relative_url }}">Join</a>
+      <a class="btn btn--primary btn--block" href="{{ site.app_url }}#/login">Log in</a>
       {%- if site.app_url != "" %}
-      <a class="menu-sheet__secondary" href="{{ site.app_url }}">Log in</a>
+      <a class="menu-sheet__secondary" href="{{ site.app_url }}#/signup">Create an account</a>
       {%- endif %}
     </div>
     <ul class="menu-sheet__more">

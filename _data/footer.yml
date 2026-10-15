@@ -11,14 +11,14 @@ columns:
   - title: For businesses
     links:
       - { title: Why list with us, url: /for-businesses/ }
-      - { title: Register your business, url: /for-businesses/#register }
+      - { title: Create a business account, url: /app/#/signup/vendor }
       - { title: Vendor Agreement, url: /legal/vendor-agreement/ }
       - { title: Food safety for vendors, url: /food-safety/#vendors }
       - { title: Verification Policy, url: /legal/verification/ }
   - title: For NGOs
     links:
       - { title: Why join, url: /for-ngos/ }
-      - { title: Register your organisation, url: /for-ngos/#register }
+      - { title: Create an NGO account, url: /app/#/signup/ngo }
       - { title: NGO Agreement, url: /legal/ngo-agreement/ }
       - { title: Food safety after pickup, url: /food-safety/#ngos }
       - { title: Reliability and No-show Policy, url: /legal/reliability/ }

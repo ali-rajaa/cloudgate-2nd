@@ -1,11 +1,9 @@
 {%- comment -%}
-  Lead and contact forms. Param: type = business | ngo | partner | contact
+  Contact and partner forms. Param: type = partner | contact
   Posts to site.forms.endpoint when set. Otherwise site.js opens a pre-filled email to site.contact.email.
 {%- endcomment -%}
 {%- assign t = include.type | default: "contact" -%}
 {%- case t -%}
-  {%- when "business" -%}{%- assign subject = "Business interest" -%}{%- assign submit = "Register my business" -%}
-  {%- when "ngo" -%}{%- assign subject = "NGO interest" -%}{%- assign submit = "Register my organisation" -%}
   {%- when "partner" -%}{%- assign subject = "Partnership request" -%}{%- assign submit = "Send partnership request" -%}
   {%- else -%}{%- assign subject = "Website message" -%}{%- assign submit = "Send message" -%}
 {%- endcase -%}
@@ -19,44 +17,7 @@
   </div>
 
   <div class="form__grid">
-  {%- if t == "business" %}
-    <div class="field field--full">
-      <label class="field__label" for="{{ t }}-org">Business name</label>
-      <input class="field__input" id="{{ t }}-org" name="business_name" autocomplete="organization" required>
-    </div>
-    <div class="field">
-      <label class="field__label" for="{{ t }}-kind">Type of business</label>
-      <select class="field__input" id="{{ t }}-kind" name="business_type" required data-error="Choose the type of business">
-        <option value="">Choose one</option>
-        <option>Bakery</option><option>Restaurant</option><option>Grocer or supermarket</option>
-        <option>Cafe</option><option>Caterer</option><option>Hotel</option><option>Other</option>
-      </select>
-    </div>
-    <div class="field">
-      <label class="field__label" for="{{ t }}-when">When do you usually have surplus?</label>
-      <select class="field__input" id="{{ t }}-when" name="surplus_time">
-        <option value="">Choose one</option>
-        <option>Afternoon</option><option>Evening, after 8 pm</option><option>Late night</option><option>It varies</option>
-      </select>
-    </div>
-  {%- elsif t == "ngo" %}
-    <div class="field field--full">
-      <label class="field__label" for="{{ t }}-org">Organisation name</label>
-      <input class="field__input" id="{{ t }}-org" name="organisation_name" autocomplete="organization" required>
-    </div>
-    <div class="field">
-      <label class="field__label" for="{{ t }}-kind">Type of organisation</label>
-      <select class="field__input" id="{{ t }}-kind" name="organisation_type" required data-error="Choose the type of organisation">
-        <option value="">Choose one</option>
-        <option>NGO</option><option>Shelter</option><option>Community kitchen</option>
-        <option>Food bank</option><option>Orphanage</option><option>Other</option>
-      </select>
-    </div>
-    <div class="field">
-      <label class="field__label" for="{{ t }}-people">People you serve each day</label>
-      <input class="field__input" id="{{ t }}-people" name="people_per_day" type="number" inputmode="numeric" min="1">
-    </div>
-  {%- elsif t == "partner" %}
+  {%- if t == "partner" %}
     <div class="field field--full">
       <label class="field__label" for="{{ t }}-org">Organisation</label>
       <input class="field__input" id="{{ t }}-org" name="organisation" autocomplete="organization" required data-error="Enter your organisation's name">
@@ -72,19 +33,13 @@
       <input class="field__input" id="{{ t }}-email" name="email" type="email" autocomplete="email" required>
     </div>
     <div class="field">
-      <label class="field__label" for="{{ t }}-phone">Mobile number{% if t == "contact" or t == "partner" %} <span class="field__optional">(optional)</span>{% endif %}</label>
+      <label class="field__label" for="{{ t }}-phone">Mobile number <span class="field__optional">(optional)</span></label>
       <div class="phone-field">
         <span class="phone-field__prefix" aria-hidden="true">+92</span>
         <input class="field__input phone-field__input" id="{{ t }}-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="300 1234567" aria-describedby="{{ t }}-phone-hint"{% unless t == "contact" or t == "partner" %} required{% endunless %} data-phone>
       </div>
       <p class="field__hint" id="{{ t }}-phone-hint">A Pakistani mobile number, like 0300 1234567</p>
     </div>
-  {%- if t == "business" or t == "ngo" %}
-    <div class="field">
-      <label class="field__label" for="{{ t }}-area">Area of Islamabad</label>
-      <input class="field__input" id="{{ t }}-area" name="area" placeholder="For example F-7 Markaz or G-9/4" autocomplete="address-level3">
-    </div>
-  {%- endif %}
   {%- if t == "contact" %}
     <div class="field">
       <label class="field__label" for="{{ t }}-topic">What is it about?</label>
@@ -96,8 +51,8 @@
     </div>
   {%- endif %}
     <div class="field field--full">
-      <label class="field__label" for="{{ t }}-message">{% if t == "partner" %}How would you like to work with us?{% elsif t == "contact" %}Message{% else %}Anything else we should know? <span class="field__optional">(optional)</span>{% endif %}</label>
-      <textarea class="field__input" id="{{ t }}-message" name="message" rows="4"{% if t == "contact" or t == "partner" %} required{% endif %}></textarea>
+      <label class="field__label" for="{{ t }}-message">{% if t == "partner" %}How would you like to work with us?{% else %}Message{% endif %}</label>
+      <textarea class="field__input" id="{{ t }}-message" name="message" rows="4" required></textarea>
     </div>
     <div class="field field--full field--check">
       <input class="check" id="{{ t }}-consent" name="consent" type="checkbox" value="yes" required>

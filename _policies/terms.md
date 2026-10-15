@@ -30,10 +30,11 @@ In these terms, "we", "us" and "Rizq Rasan" mean {{ site.company.legal_name }}. 
 
 ## 2. This website before launch
 
-Rizq Rasan is not open for business yet. Public launch in Islamabad is planned for 22 March 2027. Until then:
+Accounts are open, but Rizq Rasan is not trading yet: listing and claiming food start at public launch in Islamabad, planned for 22 March 2027. Until then:
 
 - This website explains how the platform will work. Nothing on it is an offer to sell food or a promise that the platform will open on a given date.
-- The "register your interest" forms for businesses and NGOs, the partner form and the contact form only send your details to us. Filling one in does not create an account, does not sign you up to these terms or any agreement, and puts you under no obligation. We use those details as our [Privacy Policy]({{ '/legal/privacy/' | relative_url }}) explains.
+- You can create an account and complete verification. When you create one you accept these terms, your Vendor or NGO Agreement and our Privacy Policy, as the sign-up form asks.
+- The partner form and the contact form only send your details to us. Filling one in does not create an account, does not sign you up to these terms or any agreement, and puts you under no obligation. We use those details as our [Privacy Policy]({{ '/legal/privacy/' | relative_url }}) explains.
 - Organisations invited to the pilot before launch sign separate pilot terms. During the pilot, NGOs pay vendors directly, no commission is charged, and Rizq Rasan is not involved in the payment.
 
 These terms take effect for each organisation when it accepts them while joining the platform.

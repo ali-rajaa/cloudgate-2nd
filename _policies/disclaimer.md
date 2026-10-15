@@ -15,7 +15,7 @@ This disclaimer explains the limits of what Rizq Rasan does, and what you can an
 
 ## 1. This website describes a planned service
 
-Rizq Rasan is not open yet. We plan a pilot with invited partners from January 2027 and a public launch in Islamabad on 22 March 2027.
+Accounts are open, but Rizq Rasan is not trading yet. We plan a pilot with invited partners from January 2027 and a public launch in Islamabad on 22 March 2027.
 
 - This website explains how the platform is planned to work. Rules, fees, timings, food categories, starting areas and dates may change before launch, as we learn from the pilot and from legal, tax and food-safety advice.
 - Our policies set out the rules. The other pages of this website summarise them, and where the two differ, the policy applies.

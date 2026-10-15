@@ -6,8 +6,8 @@ eyebrow: For NGOs, shelters and community kitchens
 heading: Good food near you, at no more than half of retail
 lead: Claim surplus food from verified businesses nearby, pay for it in seconds by Raast, and send your driver with a pickup code. Rizq Rasan launches in Islamabad on 22 March 2027.
 actions:
-  - title: Register your interest
-    url: /for-ngos/#register
+  - title: Create your account
+    url: /app/#/signup/ngo
   - title: See how it works
     url: /how-it-works/
 ---
@@ -296,9 +296,10 @@ actions:
 
 <section id="register" class="section section--sunk register" aria-labelledby="ngo-register-title">
   <div class="container container--narrow">
-    {% include section-head.html eyebrow="Register your organisation" title="Register your interest" id="ngo-register-title" lead="Accounts open at launch on 22 March 2027, and places in the January pilot are limited. Tell us about your organisation and we'll be in touch." %}
-    <div class="card">
-      {% include interest-form.html type="ngo" %}
+    {% include section-head.html eyebrow="Get started" title="Create your account" id="ngo-register-title" lead="It takes two minutes. Then you add your documents in the app, and we check every account by hand within 2 working days. Listing and claiming start at launch on 22 March 2027." %}
+    <div class="button-row">
+      <a class="btn btn--primary" href="{{ site.app_url }}#/signup/ngo">Create a NGO account</a>
+      <a class="btn btn--secondary" href="{{ site.app_url }}#/login">Log in</a>
     </div>
   </div>
 </section>

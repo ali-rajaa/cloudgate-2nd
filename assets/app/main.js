@@ -214,8 +214,8 @@ async function start() {
     document.body.dataset.layout = '';
     view.replaceChildren(h('div.app-empty',
       h('p.app-empty__title', 'The platform isn\'t connected yet'),
-      h('p', 'Accounts open at launch. Until then, register your interest and we\'ll invite you.'),
-      h('p', h('a.btn.btn--primary', { href: '../join/' }, 'Register your interest'))));
+      h('p', 'Sign-in is switched off on this copy of the site. Contact us and we\'ll help you get started.'),
+      h('p', h('a.btn.btn--primary', { href: '../contact/' }, 'Contact us'))));
     return;
   }
   if (clientMissing) {

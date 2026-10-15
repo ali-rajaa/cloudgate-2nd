@@ -13,7 +13,7 @@ summary:
 ---
 This policy explains how Rizq Rasan checks the businesses and organisations that use the platform: who has to be verified, which documents we ask for, the checks we run, how long it takes, and what happens afterwards. It forms part of our [Terms of Service]({{ '/legal/terms/' | relative_url }}).
 
-Accounts open by invitation for the January 2027 pilot and to everyone at launch on 22 March 2027. Registering your interest on this website does not start verification. Please don't attach documents to the forms on this website or email them to us. We will ask for them through your account once it is open.
+Accounts are open now. Create one and upload your documents through it, and verification starts. Listing and claiming food start at launch on 22 March 2027, or earlier for organisations invited to the January 2027 pilot. Please don't attach documents to the forms on this website or email them to us.
 
 ## 1. Why we verify
 

@@ -225,14 +225,10 @@ p { margin: 0; }
 }
 .logo-mark { flex: none; }
 .site-header__actions { display: flex; align-items: center; gap: 0.5rem; }
-.site-header__login {
-  display: inline-flex; align-items: center; min-height: 2.5rem; padding: 0.4rem 0.8rem; border-radius: var(--radius-pill);
-  font-weight: 600; text-decoration: none; white-space: nowrap; transition: background-color 150ms ease;
-}
-.site-header__login:hover { background: rgba(46, 69, 55, 0.08); text-decoration: none; }
+.site-header__login { white-space: nowrap; }
 .menu-button { display: none; }
 @media (max-width: 960px) {
-  .site-nav, .site-header__login { display: none; }
+  .site-nav { display: none; }
   .site-header__actions { margin-inline-start: auto; }
   .menu-button {
     display: inline-grid; place-items: center; width: var(--tap); height: var(--tap);
@@ -241,7 +237,7 @@ p { margin: 0; }
   }
   .menu-button:active { transform: scale(0.92); background: rgba(46, 69, 55, 0.1); }
 }
-@media (max-width: 380px) { .site-header__join { display: none; } }
+
 
 /* ---------- Signed in: the account menu replaces Log in and Join ---------- */
 html.signed-in .guest-only { display: none !important; }
@@ -735,7 +731,6 @@ html.lang-loading main, html.lang-loading .site-footer { opacity: 0.35; }
 html.lang-pending main, html.lang-pending .site-footer { opacity: 0; animation: lang-reveal 1ms 6s forwards; }
 @keyframes lang-reveal { to { opacity: 1; } }
 .brand__name { white-space: nowrap; }
-@media (max-width: 520px) { html.lang-ur .site-header__join { display: none; } }
 .translate-note {
   padding: 0.6rem var(--gutter); background: var(--warning-bg); color: var(--warning);
   font-size: 0.9375rem; line-height: 1.9; text-align: center;

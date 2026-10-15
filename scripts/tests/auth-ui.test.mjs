@@ -506,21 +506,25 @@ async function signedIn(pathAndHash, { viewport = { width: 1280, height: 900 } }
   return { page, errors, close: () => context.close() };
 }
 
-test('website: guests see Log in and Join; nobody sees the account menu', async () => {
+test('website: guests see one Log in button (no Join); nobody sees the account menu', async () => {
   const context = await browser.newContext();
   const page = await context.newPage();
   await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
   await page.goto(`${base}${BASE_PATH}/`);
-  assert.ok(await page.locator('.site-header__login').isVisible());
-  assert.ok(await page.locator('.site-header__join').isVisible());
+  const login = page.locator('.site-header__login');
+  assert.ok(await login.isVisible());
+  assert.match(await login.getAttribute('href'), /\/app\/#\/login$/);
+  assert.equal(await page.getByRole('link', { name: 'Join', exact: true }).count(), 0);
   assert.equal(await page.locator('[data-account]').isVisible(), false);
+  // The home page's buttons go straight to sign-up, as a business or an NGO.
+  assert.match(await page.getByRole('link', { name: 'I have surplus food' }).first().getAttribute('href'), /\/app\/#\/signup\/vendor$/);
+  assert.match(await page.getByRole('link', { name: 'I feed people' }).first().getAttribute('href'), /\/app\/#\/signup\/ngo$/);
   await context.close();
 });
 
 test('website: signed in, the header shows your account instead of Log in and Join', async () => {
   const { page, errors, close } = await signedIn('/');
   assert.equal(await page.locator('.site-header__login').isVisible(), false);
-  assert.equal(await page.locator('.site-header__join').isVisible(), false);
   const button = page.getByRole('button', { name: 'Your account: Ali' });
   assert.equal((await button.locator('.account__avatar').textContent()).trim(), 'AR');
   await button.click();
@@ -556,7 +560,7 @@ test('app: the header has the same account menu, and Log out returns to the webs
   await menu.getByRole('link', { name: 'Log out' }).click();
   await page.waitForFunction((root) => location.pathname === root && document.readyState === 'complete', `${BASE_PATH}/`);
   assert.equal(await page.evaluate(() => Object.keys(localStorage).some((k) => /auth-token/.test(k))), false, 'saved sign-in removed');
-  assert.ok(await page.locator('.site-header__join').isVisible());
+  assert.ok(await page.locator('.site-header__login').isVisible());
   assert.deepEqual(errors, []);
   await close();
 });
@@ -609,19 +613,20 @@ test('header: tucks away when scrolling down, returns on scroll up and when it g
   await page.waitForFunction(() => !document.querySelector('[data-header]').classList.contains('is-tucked'));
   await page.mouse.wheel(0, 600);
   await page.waitForFunction(() => document.querySelector('[data-header]').classList.contains('is-tucked'));
-  await page.locator('.site-header__join').focus();
+  await page.locator('.site-header__login').focus();
   assert.equal(await tucked(), false, 'focus brings it back');
   await close();
 });
 
-test('header: on phones the bar is just logo, Join and menu; the Urdu switch is in the menu', async () => {
+test('header: on phones the bar is just logo, Log in and menu; the Urdu switch is in the menu', async () => {
   const { page, close } = await sitePage('/', { width: 390, height: 800 });
   assert.equal(await page.locator('.site-header .lang-toggle').isVisible(), false);
-  assert.ok(await page.locator('.site-header__join').isVisible());
+  assert.ok(await page.locator('.site-header__login').isVisible());
   await page.locator('[data-menu-open]').click();
   await page.locator('#menu-sheet .lang-toggle').waitFor();
-  // One Join, and no Impact link until its numbers are published.
-  assert.equal(await page.locator('#menu-sheet').getByRole('link', { name: 'Join', exact: true }).count(), 1);
+  // Log in, Create an account, and no Impact link until its numbers are published.
+  assert.equal(await page.locator('#menu-sheet').getByRole('link', { name: 'Log in', exact: true }).count(), 1);
+  assert.match(await page.locator('#menu-sheet').getByRole('link', { name: 'Create an account' }).getAttribute('href'), /#\/signup$/);
   assert.equal(await page.locator('#menu-sheet').getByRole('link', { name: 'Impact' }).count(), 0);
   await close();
 });
@@ -670,5 +675,15 @@ test('app: an account with two organisations still loads, using the one furthest
   await page.waitForFunction(() => location.hash === '#/vendor');
   await page.locator('.app-header .account__button').click();
   assert.ok(await page.getByText('Rajaa Bakery · Owner').isVisible());
+  await context.close();
+});
+
+test('join: the old /join/ address now opens sign-up in the app', async () => {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
+  await page.goto(`${base}${BASE_PATH}/join/`);
+  await page.waitForFunction(() => location.hash === '#/signup');
+  assert.match(page.url(), /\/app\/#\/signup$/);
   await context.close();
 });

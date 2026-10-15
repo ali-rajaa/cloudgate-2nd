@@ -35,7 +35,7 @@ Current status: {{ site.company.status }}.{% if site.company.secp_number == "" %
 
 - **Contracts.** Agreements with vendors, NGOs and partners are signed only by the company, never by a team member personally.
 - **Payments.** We take no payments until the company is incorporated and our payment gateway has approved its account. During the pilot planned for January 2027, NGOs pay vendors directly, we charge no commission, and Rizq Rasan is not involved in the payment.
-- **Launch.** Public launch in Islamabad is planned for 22 March 2027. Until then, this website explains how the platform will work, and our forms only send your details to us.
+- **Launch.** Accounts are open now. Listing and claiming food start at public launch in Islamabad, planned for 22 March 2027.
 
 ## 3. Grievance officer and complaints
 

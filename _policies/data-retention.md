@@ -28,7 +28,7 @@ We never receive or store card numbers, or bank or wallet login details. NGOs pa
 
 | Information | Why we keep it | How long |
 | --- | --- | --- |
-| Messages from the contact, partner and "register your interest" forms | To reply, and to contact you about your request, including joining Rizq Rasan | While we deal with your request. If your organisation applies to join, your messages become part of its application. A fixed period will be set before launch, and you can ask us to delete them at any time |
+| Messages from the contact and partner forms | To reply, and to contact you about your request | While we deal with your request. If your organisation applies to join, your messages become part of its application. A fixed period will be set before launch, and you can ask us to delete them at any time |
 
 This website sets no cookies and keeps no visitor records of its own. See our [Cookie Policy]({{ '/legal/cookies/' | relative_url }}).
 

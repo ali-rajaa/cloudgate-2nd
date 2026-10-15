@@ -33,7 +33,7 @@ company:
   registered_office: ""
   grievance_officer: ""
 
-# Form handler for the contact, partner and "register your interest" forms.
+# Form handler for the contact and partner forms.
 # GitHub Pages cannot receive form posts, so point this at a form service
 # (for example Formspree or Getform). While empty, forms open a pre-filled email instead.
 forms:

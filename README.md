@@ -189,7 +189,7 @@ The look and feel follows Apple's interface guidelines, translated for the web:
 - **Materials.**
   - The header and menu are translucent, with a fade at the scroll edge instead of a hard line.
   - The menu sheet drops from the top, next to the menu button, and leaves the same way.
-- **Typography.** Fraunces for headings, with tracking and line height tuned per size. The system font is used for body text.
+- **Typography.** Fraunces for headings, with tracking and line height tuned per size, and Figtree for text. Both load from Google Fonts; headings balance their lines so no word sits alone.
 - **Accessibility.**
   - It respects reduced motion (movement becomes a fade or an instant change), reduced transparency, higher contrast and forced colours. The site is always light.
   - Tap targets are 48 px and focus states are visible.

@@ -6,7 +6,7 @@ version: "0.1 (draft)"
 effective: from launch (22 March 2027)
 summary:
   - This website sets no cookies and runs no analytics or tracking tools. The only exception is the Urdu translation, and only if you ask for it.
-  - Our pages load a typeface from Google Fonts, so Google receives your IP address.
+  - Our pages load two typefaces from Google Fonts, so Google receives your IP address.
   - The platform at /app/ saves your sign-in in your browser to keep you logged in. This is essential, so it is always on.
   - Analytics cookies will stay off unless you turn them on, and we will never use advertising trackers.
 ---
@@ -34,15 +34,15 @@ Like any web host, GitHub receives your browser's request for each page, includi
 ### Fonts
 
 
-Our headings use a typeface called Fraunces. Your browser downloads it from Google Fonts when you open a page. To send the font, Google's servers receive:
+Our headings use a typeface called Fraunces and our text uses one called Figtree. Your browser downloads them from Google Fonts when you open a page. To send the fonts, Google's servers receive:
 
 - your IP address;
 - the details your browser sends with every request, such as the browser type and language;
-- the address of the page that asked for the font.
+- the address of the page that asked for the fonts.
 
 We don't receive any of this from Google. Google handles what it receives under its own privacy policy.
 
-If you would rather your browser didn't contact Google, you can block fonts.googleapis.com and fonts.gstatic.com in your browser settings or with a content blocker. Every page still works, and the headings appear in a font already on your device.
+If you would rather your browser didn't contact Google, you can block fonts.googleapis.com and fonts.gstatic.com in your browser settings or with a content blocker. Every page still works, and the text appears in fonts already on your device.
 
 ### Urdu translation
 

@@ -7,8 +7,7 @@
 /* ---------- Header and navigation ---------- */
 .app-header {
   position: sticky; top: 0; z-index: 40;
-  background: var(--header-bg, rgba(247, 244, 236, 0.85));
-  -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%);
+  background: var(--header-bg, var(--paper));
   border-bottom: 1px solid var(--divider);
 }
 .app-header__bar { display: flex; align-items: center; gap: 1rem; max-width: 72rem; margin: 0 auto; padding: 0.5rem var(--gutter); min-height: 3.5rem; }
@@ -88,8 +87,7 @@ h1[tabindex="-1"]:focus { outline: none; }
   .auth-brand::before {
     content: ""; position: absolute; z-index: 0; pointer-events: none;
     width: 52rem; height: 52rem; inset-inline-end: -24rem; bottom: -22rem;
-    background: radial-gradient(closest-side at 38% 38%, rgba(196, 71, 27, 0.11), transparent),
-                radial-gradient(closest-side at 62% 62%, rgba(46, 69, 55, 0.15), transparent);
+    border-radius: 50%; background: var(--surface-sunk); border: 1px solid var(--divider);
   }
   .auth-brand > * { position: relative; z-index: 1; }
   .auth-brand__logo { align-self: flex-start; }
@@ -339,7 +337,7 @@ h1[tabindex="-1"]:focus { outline: none; }
 a.app-card { transition: transform 160ms ease, box-shadow 160ms ease; }
 a.app-card:hover { box-shadow: var(--shadow-md); }
 a.app-card:active { transform: scale(0.985); }
-.app-card__photo { aspect-ratio: 16 / 9; background: linear-gradient(135deg, #8a5a2b, #5e3b1d); object-fit: cover; width: 100%; }
+.app-card__photo { aspect-ratio: 16 / 9; background: #6F4A26; object-fit: cover; width: 100%; }
 .app-card__body { padding: 1rem 1.1rem 1.15rem; display: grid; gap: 0.35rem; flex: 1; }
 .app-card__title { font-family: var(--font-display); font-weight: 600; font-size: 1.2rem; line-height: 1.25; color: var(--text); }
 .app-card__meta { display: flex; flex-wrap: wrap; gap: 0.25rem 0.9rem; color: var(--muted); font-size: 0.875rem; }

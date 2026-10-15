@@ -39,7 +39,7 @@
 .ngo-gallery img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; background: var(--surface-sunk); }
 .ngo-gallery--multi { grid-auto-flow: column; grid-auto-columns: 88%; overflow-x: auto; scroll-snap-type: x mandatory; border-radius: 0; }
 .ngo-gallery--multi img { scroll-snap-align: start; border-radius: 1.25rem; }
-.ngo-gallery.ngo-nophoto { aspect-ratio: 16 / 7; background: linear-gradient(135deg, #8a5a2b, #5e3b1d); }
+.ngo-gallery.ngo-nophoto { aspect-ratio: 16 / 7; background: #6F4A26; }
 .ngo-listing__head { display: grid; gap: 0.5rem; margin-bottom: 1rem; }
 .ngo-when-box {
   display: flex; gap: 0.75rem; align-items: flex-start; margin: 1rem 0; padding: 1rem 1.15rem;

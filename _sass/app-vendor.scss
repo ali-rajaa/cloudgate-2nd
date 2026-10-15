@@ -59,7 +59,7 @@ a.vd-item__title:hover { color: var(--ink); text-decoration: underline; }
   margin: 0.25rem calc(-1 * clamp(1.25rem, 3vw, 1.75rem)) calc(-1 * clamp(1.25rem, 3vw, 1.75rem));
   padding: 0.9rem clamp(1.25rem, 3vw, 1.75rem) max(0.9rem, env(safe-area-inset-bottom));
   border-top: 1px solid var(--divider); border-radius: 0 0 var(--radius-card) var(--radius-card);
-  background: var(--sheet-bg); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+  background: var(--sheet-bg); box-shadow: 0 -1px 0 var(--divider);
 }
 .vd-stepbar .btn { flex: 1; min-height: 3rem; }
 .vd-stepbar .btn[hidden] { display: none; }

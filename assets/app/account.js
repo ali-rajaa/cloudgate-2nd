@@ -1,5 +1,6 @@
 // My account, notifications and problem reports (shared by both sides).
 import { db, state, h, field, busy, toast, rpc, select, pageHead, empty, dateTime, normalisePhone, phoneDisplay, notice, badge, signOut } from './core.js';
+import { passwordStrength, personalWords } from './validate.js';
 
 export function routes(register) {
   register('/account', { title: 'My account', render: account });
@@ -24,13 +25,16 @@ async function account({ app }) {
     });
   });
 
-  const pw = field({ name: 'pw', label: 'New password', type: 'password', autocomplete: 'new-password', hint: 'At least 8 characters.' });
+  const pw = field({ name: 'pw', label: 'New password', type: 'password', autocomplete: 'new-password', hint: 'At least 8 characters. Longer is stronger: a few unrelated words work well.' });
   const pwBtn = h('button.btn.btn--secondary', { type: 'submit' }, 'Change password');
   const pwForm = h('form.app-form.card', { novalidate: true }, pw.wrap, pwBtn);
   pwForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    if (pw.value().length < 8) return pw.error('Use at least 8 characters.');
-    busy(pwBtn, async () => { const { error } = await db.auth.updateUser({ password: pw.value() }); if (error) throw error; pw.input.value = ''; toast('Password changed.'); });
+    // The same rules as sign up, and never trimmed.
+    const value = pw.input.value;
+    const problem = passwordStrength(value, personalWords({ email: state.user.email, name: state.profile?.full_name || '', org: state.org?.name || '' })).problem;
+    if (problem) { pw.error(problem); pw.input.focus(); return; }
+    busy(pwBtn, async () => { const { error } = await db.auth.updateUser({ password: value }); if (error) throw error; pw.input.value = ''; toast('Password changed.'); });
   });
 
   const out = h('button.btn.btn--secondary', { type: 'button', onclick: () => busy(out, () => signOut()) }, 'Log out');

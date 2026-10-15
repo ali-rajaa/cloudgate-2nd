@@ -1,5 +1,5 @@
 // Rizq Rasan app: routing, the app header and start-up.
-import { db, config, configured, clientMissing, state, loadState, h, icon, spinner, empty, toast, friendly, go, link } from './core.js';
+import { db, config, configured, clientMissing, state, loadState, h, icon, spinner, empty, toast, friendly, go, redirect, link } from './core.js';
 import * as auth from './auth.js';
 import * as onboarding from './onboarding.js';
 import * as account from './account.js';
@@ -126,18 +126,25 @@ let renderToken = 0;
 async function render() {
   const token = ++renderToken;
   const [path, qs] = (location.hash.slice(1) || '/').split('?');
-  if (path === '/' || path === '') { go(homeFor()); return; }
+  if (path === '/' || path === '') { redirect(homeFor()); return; }
   const match = routes.map((r) => ({ r, m: r.re.exec(path) })).find((x) => x.m);
   renderNav(path);
   if (!match) { document.body.dataset.layout = ''; show(empty('Page not found', 'This page doesn\'t exist in the app.', link(homeFor(), 'Go to your home page'))); return; }
   const { r, m } = match;
 
   // Access rules for screens (the database enforces the real rules).
-  if (!r.public && !state.user) { sessionStorage.setItem('rr-after-login', path); go('/login'); return; }
-  if (r.guestOnly && state.user) { go(homeFor()); return; }
+  // Redirects replace the history entry, so Back never lands on a screen that only forwards you on.
+  if (!r.public && !state.user) { sessionStorage.setItem('rr-after-login', path); redirect('/login'); return; }
+  if (r.guestOnly && state.user) {
+    // Just logged in: go where they were heading, or to their home screen.
+    const next = sessionStorage.getItem('rr-after-login');
+    sessionStorage.removeItem('rr-after-login');
+    redirect(next && next !== '/login' ? next : homeFor());
+    return;
+  }
   if (r.roles) {
     const allowed = r.roles.some((role) => (role === 'admin' && state.admin) || (role === state.role && state.org?.status === 'approved'));
-    if (!allowed) { go(homeFor()); return; }
+    if (!allowed) { redirect(homeFor()); return; }
   }
 
   document.title = `${r.title || 'Rizq Rasan'} · Rizq Rasan`;
@@ -162,7 +169,28 @@ function show(node) {
   window.scrollTo({ top: 0 });
 }
 
-async function reload() { await loadState(); await countUnread(); listen(); await render(); }
+async function reload() {
+  try {
+    await loadState();
+  } catch (e) {
+    document.body.dataset.layout = '';
+    show(empty('We couldn\'t load your account', friendly(e), h('button.btn.btn--secondary', { type: 'button', onclick: reload }, 'Try again')));
+    return;
+  }
+  await countUnread().catch(() => {});
+  listen();
+  await render();
+}
+
+// An email link that has expired or was already used comes back with an error
+// in the address instead of a session. Send it to a screen that explains.
+function catchLinkError() {
+  const found = /[?#&]error_code=([^&#]*)/.exec(location.href) || /[?#&]error=([^&#]*)/.exec(location.href);
+  if (!found) return;
+  const description = /error_description=([^&#]*)/.exec(location.href)?.[1];
+  sessionStorage.setItem('rr-link-error', description ? decodeURIComponent(description.replace(/\+/g, ' ')) : found[1]);
+  history.replaceState(null, '', location.pathname + '#/link-expired');
+}
 
 // Screens call this after changing who is signed in or the organisation's status.
 window.addEventListener('rr:state', reload);
@@ -182,9 +210,11 @@ async function start() {
       h('button.btn.btn--secondary', { type: 'button', onclick: () => location.reload() }, 'Reload')));
     return;
   }
+  catchLinkError();
   show(spinner());
   db.auth.onAuthStateChange((event) => {
-    if (event === 'PASSWORD_RECOVERY') { go('/reset-password'); return; }
+    if (event === 'PASSWORD_RECOVERY') { redirect('/reset-password'); return; }
+    if (event === 'SIGNED_IN') sessionStorage.removeItem('rr-signup-email');
     if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') { realtime?.unsubscribe(); realtime = null; reload(); }
   });
   try {

@@ -43,6 +43,8 @@ test('password: common, repeated and personal passwords are refused', () => {
   const avoid = personalWords({ email: 'ayesha.k@edhi.org', name: 'Ayesha Khan', org: 'Edhi Foundation' });
   assert.equal(passwordStrength('ayesha2024!', avoid).ok, false);
   assert.equal(passwordStrength('MyFoundation#9', avoid).ok, false);
+  // Your own words are fine inside a password that's strong without them.
+  assert.equal(passwordStrength('edhi bread for every street 9', avoid).ok, true);
   // Short words (under 4 letters) are not held against you.
   assert.equal(passwordStrength('ali-bread-77', personalWords({ name: 'Ali' })).ok, true);
 });
@@ -79,10 +81,12 @@ test('server errors become plain messages, routed to the right place', () => {
   assert.equal(authError({ message: 'Email not confirmed', status: 400 }).field, 'confirm');
   assert.equal(authError({ message: 'User already registered', status: 422 }).field, 'email');
   assert.equal(authError({ message: 'Password should be at least 6 characters.', status: 422 }).field, 'password');
-  assert.match(authError({ message: 'Email rate limit exceeded', status: 429 }).message, /Too many attempts/);
-  assert.match(authError({ message: 'For security purposes, you can only request this after 60 seconds.', status: 429 }).message, /Too many attempts/);
+  assert.match(authError({ message: 'Email rate limit exceeded', status: 429 }).message, /can't send more emails right now/);
+  assert.equal(authError({ message: 'For security purposes, you can only request this after 47 seconds.', status: 429 }).message, 'You can ask again in 47 seconds.');
+  assert.match(authError({ message: 'Request rate limit reached', status: 429 }).message, /Too many attempts/);
   assert.match(authError(new TypeError('Failed to fetch')).message, /couldn't reach the server/);
-  assert.match(authError(new Error('took too long')).message, /couldn't reach the server/);
+  assert.match(authError(new Error('took too long')).message, /taking too long.*may still have gone through/);
+  assert.equal(authError({ message: 'Email address "x@y" is invalid', code: 'email_address_invalid', status: 400 }).field, 'email');
   assert.equal(authError({ message: 'Auth session missing!', status: 400 }).field, 'expired');
   assert.equal(authError({ message: 'Token has expired or is invalid', status: 403 }).field, 'expired');
   assert.match(authError({ message: 'upstream error', status: 502 }).message, /on our side/);

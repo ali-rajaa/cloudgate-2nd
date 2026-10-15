@@ -12,7 +12,7 @@
   (function () {
     var hash = location.hash, guest = true;
     try { guest = !Object.keys(localStorage).some(function (k) { return /^sb-.+-auth-token$/.test(k); }); } catch (e) {}
-    if (/^#\/(login|signup|check-email|forgot-password|reset-password|logout)(\/|$|\?)/.test(hash) || (guest && /^(#\/?)?$/.test(hash))) document.body.dataset.layout = 'auth';
+    if (/^#\/(login|signup|check-email|forgot-password|reset-password|logout|link-expired)(\/|$|\?)/.test(hash) || (guest && /^(#\/?)?$/.test(hash))) document.body.dataset.layout = 'auth';
   })();
 </script>
 <a class="skip-link" href="#app-view">Skip to content</a>

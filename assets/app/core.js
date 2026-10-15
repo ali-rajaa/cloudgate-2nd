@@ -35,11 +35,15 @@ export async function loadState() {
   state.profile = state.org = state.role = state.membershipRole = null;
   state.admin = false;
   if (state.user) {
-    const [{ data: profile }, { data: membership }, { data: admin }] = await Promise.all([
+    const results = await Promise.all([
       db.from('profiles').select('*').eq('id', state.user.id).maybeSingle(),
       db.from('memberships').select('role, organisation_id, organisations(*)').eq('user_id', state.user.id).maybeSingle(),
       db.rpc('is_admin'),
     ]);
+    // A failed lookup must not look like "no organisation yet": say so instead.
+    const failed = results.find((r) => r.error);
+    if (failed) throw new AppError(friendly(failed.error));
+    const [{ data: profile }, { data: membership }, { data: admin }] = results;
     state.profile = profile;
     state.admin = Boolean(admin);
     if (membership) {
@@ -225,11 +229,12 @@ export function tabs(items, active, onChange) {
 // ---------------------------------------------------------------------------
 // Toasts and dialogs
 // ---------------------------------------------------------------------------
+// The toast area exists from the start, so screen readers announce the first toast too.
+const toastHost = h('div.app-toasts', { 'aria-live': 'polite' });
+document.body.append(toastHost);
 export function toast(text, kind = 'ok') {
-  let host = document.querySelector('.app-toasts');
-  if (!host) { host = h('div.app-toasts', { 'aria-live': 'polite' }); document.body.append(host); }
   const t = h('div.app-toast', { class: 'app-toast--' + kind, role: kind === 'error' ? 'alert' : 'status' }, text);
-  host.append(t);
+  toastHost.append(t);
   requestAnimationFrame(() => t.classList.add('is-in'));
   setTimeout(() => { t.classList.remove('is-in'); setTimeout(() => t.remove(), 300); }, kind === 'error' ? 6000 : 3500);
 }
@@ -316,6 +321,8 @@ export async function busy(button, fn, { working } = {}) {
 }
 
 export function go(path) { location.hash = '#' + path; }
+// Like go(), but replaces the current history entry, so Back doesn't return to a screen that only forwards you on.
+export function redirect(path) { location.replace('#' + path); }
 export const link = (path, ...children) => h('a', { href: '#' + path }, ...children);
 
 // Upload a file into a bucket under the organisation's folder. Images are

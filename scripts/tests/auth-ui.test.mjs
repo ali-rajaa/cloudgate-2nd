@@ -194,18 +194,21 @@ test('log in: too many attempts gets a plain message', async () => {
   await close();
 });
 
-test('log in: an unconfirmed address goes to Check your email, which can send the link again once a minute', async () => {
+test('log in: an unconfirmed address is asked to confirm first, and can send a new link once a minute', async () => {
   const { page, calls, close } = await open('/login', { auth: { token: (route) => json(route, 400, { code: 'email_not_confirmed', message: 'Email not confirmed' }) } });
   await page.getByLabel('Email').fill('new@edhi.org');
   await page.getByLabel('Password').fill('whatever-1');
   await page.getByRole('button', { name: 'Log in' }).click();
-  await page.getByRole('heading', { name: 'Check your email' }).waitFor();
+  await page.getByRole('heading', { name: 'Confirm your email first' }).waitFor();
   assert.ok(await page.getByText('new@edhi.org').isVisible());
-  const again = page.getByRole('button', { name: 'Send the link again' });
-  await again.click();
-  await page.getByText('Sent. Check your inbox.').waitFor();
-  assert.match(await page.locator('.auth-stack .btn').textContent(), /Send again in \d+s/);
-  assert.ok(await page.locator('.auth-stack .btn').isDisabled());
+  await page.getByRole('button', { name: 'Send a new link' }).click();
+  await page.getByText('Sent to new@edhi.org. Check your inbox.').waitFor();
+  assert.equal(await page.evaluate(() => document.activeElement.className), 'auth-status', 'focus stays with the result');
+  const button = page.locator('.auth-stack .btn');
+  assert.match(await button.textContent(), /Send again in \d+ seconds/);
+  assert.equal(await button.getAttribute('aria-disabled'), 'true');
+  await button.click({ force: true });
+  assert.equal(calls.filter((c) => c.name === 'resend').length, 1, 'no second email during the wait');
   const resend = calls.find((c) => c.name === 'resend');
   assert.deepEqual([resend.body.type, resend.body.email], ['signup', 'new@edhi.org']);
   await close();
@@ -219,6 +222,9 @@ test('log in: success opens the account and brings the app header back', async (
   await page.waitForFunction(() => !location.hash.startsWith('#/login'));
   await page.waitForFunction(() => document.body.dataset.layout !== 'auth');
   assert.ok(await page.locator('.app-header').isVisible());
+  // The log in screen was replaced in history, so Back doesn't bounce you through it.
+  await page.goBack().catch(() => {});
+  assert.equal(await page.evaluate(() => location.hash.startsWith('#/login')), false);
   await close();
 });
 
@@ -327,10 +333,12 @@ test('sign up: sends clean details and opens Check your email', async () => {
   await fillSignup(page, { email: '  Ayesha@Edhi.org ', phone: '+92 300 123 4567', password: ' spaces kept 4 sure ', confirm: ' spaces kept 4 sure ' });
   await page.getByRole('button', { name: 'Create account' }).click();
   await page.getByRole('heading', { name: 'Check your email' }).waitFor();
+  // Supabase only allows one email a minute, so the resend button starts out waiting.
+  assert.equal(await page.getByRole('button', { name: /Send again in \d+ seconds/ }).getAttribute('aria-disabled'), 'true');
   const sent = calls.find((c) => c.name.startsWith('signup')).body;
   assert.equal(sent.email, 'Ayesha@Edhi.org');
   assert.equal(sent.password, ' spaces kept 4 sure ', 'passwords are never trimmed');
-  assert.deepEqual(sent.data, { full_name: 'Ayesha Khan', phone: '+923001234567' });
+  assert.deepEqual(sent.data, { full_name: 'Ayesha Khan', phone: '+923001234567', org_type: 'ngo', org_name: 'Edhi Kitchen' }, 'the organisation travels with the account');
   const pending = await page.evaluate(() => JSON.parse(localStorage.getItem('rr-pending-org')));
   assert.deepEqual(pending, { type: 'ngo', name: 'Edhi Kitchen', phone: '+923001234567' });
   assert.deepEqual(errors, []);
@@ -341,8 +349,31 @@ test('sign up: an existing address is flagged on the email field', async () => {
   const { page, close } = await open('/signup/vendor', { auth: { signup: (route) => json(route, 422, { code: 'user_already_exists', message: 'User already registered' }) } });
   await fillSignup(page);
   await page.getByRole('button', { name: 'Create account' }).click();
-  await page.getByText('An account with this email already exists. Log in instead.').waitFor();
+  await page.getByText('An account with this email already exists.').waitFor();
   assert.equal(await focused(page), 'email');
+  const error = page.locator('input[name=email]').locator('xpath=..').locator('.field__error');
+  assert.equal(await error.getByRole('link', { name: 'Log in' }).getAttribute('href'), '#/login');
+  assert.equal(await error.getByRole('link', { name: 'reset your password' }).getAttribute('href'), '#/forgot-password');
+  await close();
+});
+
+test('sign up: an address that already has an account is caught even when Supabase hides it', async () => {
+  // With email confirmation on, Supabase answers with a stand-in user (no identities) and sends nothing.
+  const { page, close } = await open('/signup/ngo', { auth: { signup: (route, body) => json(route, 200, { ...USER, email: body.email, identities: [] }) } });
+  await fillSignup(page);
+  await page.getByRole('button', { name: 'Create account' }).click();
+  await page.getByText('An account with this email already exists.').waitFor();
+  assert.notEqual(await page.evaluate(() => location.hash), '#/check-email');
+  await close();
+});
+
+test('sign up: a server error shows next to the button, on screen, even on a phone', async () => {
+  const { page, close } = await open('/signup/vendor', { viewport: { width: 390, height: 844 }, auth: { signup: (route) => json(route, 500, { message: 'upstream error' }) } });
+  await fillSignup(page);
+  await page.getByRole('button', { name: 'Create account' }).click();
+  const alert = page.getByRole('alert').filter({ hasText: 'on our side' });
+  await alert.waitFor();
+  await page.waitForFunction(() => { const r = document.querySelector('.auth-alert').getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight; });
   await close();
 });
 
@@ -365,21 +396,27 @@ test('forgot password: checks the address, then gives the same answer whether or
   assert.equal(await errorText(page, 'Email'), 'Enter your email address.');
   await page.getByLabel('Email').fill('someone@edhi.org');
   await page.getByRole('button', { name: 'Send reset link' }).click();
-  const done = page.getByRole('status').filter({ hasText: 'If that email has an account' });
+  const done = page.getByRole('status').filter({ hasText: 'If someone@edhi.org has an account' });
   await done.waitFor();
+  assert.ok(await page.getByRole('heading', { name: 'Check your email' }).isVisible());
   assert.ok(await done.evaluate((el) => el === document.activeElement), 'focus moves to the confirmation');
   assert.equal(calls.find((c) => c.name === 'recover').body.email, 'someone@edhi.org');
   await close();
 });
 
-test('reset password: an expired link explains what to do next', async () => {
-  const { page, close } = await open('/reset-password', { auth: { user: (route) => json(route, 401, { message: 'Auth session missing!' }) } });
-  await page.getByLabel('New password', { exact: true }).fill('Bread & lentils 4 all');
-  await page.getByLabel('Confirm new password').fill('Bread & lentils 4 all');
-  await page.getByRole('button', { name: 'Save new password' }).click();
-  const alert = page.getByRole('alert').filter({ hasText: 'expired or was already used' });
-  await alert.waitFor();
-  assert.equal(await alert.getByRole('link', { name: 'Ask for a new one' }).getAttribute('href'), '#/forgot-password');
+test('reset password: an expired link says so straight away, before any typing', async () => {
+  const { page, close } = await open('/reset-password');
+  assert.ok(await page.getByRole('heading', { name: 'This link has expired' }).isVisible());
+  assert.equal(await page.getByLabel('New password', { exact: true }).count(), 0);
+  assert.equal(await page.getByRole('link', { name: 'Ask for a new password reset link' }).getAttribute('href'), '#/forgot-password');
+  await close();
+});
+
+test('email links: an expired or used link opens the expired-link screen, not Page not found', async () => {
+  const { page, errors, close } = await open('error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid+or+has+expired');
+  assert.ok(await page.getByRole('heading', { name: 'This link has expired' }).isVisible());
+  assert.equal(await page.evaluate(() => location.hash), '#/link-expired');
+  assert.deepEqual(errors, []);
   await close();
 });
 
@@ -398,14 +435,29 @@ test('layout: no sideways scrolling from 320px phones to wide screens, and the a
   }
 });
 
-test('details: Caps Lock warning shows while it is on and hides when you leave the box', async () => {
-  const { page, close } = await open('/login');
+test('details: Caps Lock warning follows Caps Lock, and a click on Log in still lands while it shows', async () => {
+  const { page, calls, close } = await open('/login', { viewport: { width: 390, height: 844 } });
+  await page.getByLabel('Email').fill('ali@gmail.com');
   const password = page.getByLabel('Password');
-  await password.focus();
-  await password.evaluate((el) => el.dispatchEvent(new KeyboardEvent('keydown', { key: 'A', modifierCapsLock: true, bubbles: true })));
-  assert.ok(await page.getByText('Caps Lock is on.').isVisible());
+  await password.fill('SECRET-PASS');
+  await password.evaluate((el) => el.dispatchEvent(new KeyboardEvent('keyup', { key: 'A', modifierCapsLock: true, bubbles: true })));
+  assert.ok(await page.locator('.auth-caps').isVisible());
+  // Clicking low on the button: if the note vanished on blur, the button would move and the click be lost.
+  const b = await page.locator('button.auth-submit').boundingBox();
+  await page.mouse.click(b.x + b.width / 2, b.y + b.height * 0.85);
+  await page.getByRole('alert').filter({ hasText: 'don\'t match' }).waitFor();
+  assert.equal(calls.filter((c) => c.name.startsWith('token')).length, 1);
   await password.evaluate((el) => el.dispatchEvent(new KeyboardEvent('keyup', { key: 'a', modifierCapsLock: false, bubbles: true })));
-  assert.equal(await page.getByText('Caps Lock is on.').isVisible(), false);
+  assert.equal(await page.locator('.auth-caps').isVisible(), false);
+  await close();
+});
+
+test('details: very long text never makes the form wider than a 320px phone', async () => {
+  const { page, close } = await open('/signup/vendor', { viewport: { width: 320, height: 700 } });
+  await page.getByLabel('Email').fill('averyveryveryveryveryveryveryverylongaddressthatkeepsgoing@gmial.com');
+  await page.getByLabel('Your name').focus();
+  await page.locator('.auth-suggest__use').waitFor();
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth), 0);
   await close();
 });
 
@@ -532,13 +584,16 @@ test('header: four short links, and the highlight rests on the current page then
   const pill = page.locator('[data-nav-indicator]');
   const pricing = page.locator('.site-nav__link', { hasText: 'Pricing' });
   assert.deepEqual(await box(pill), await box(pricing));
-  const ngos = page.locator('.site-nav__link', { hasText: 'NGOs' });
-  await ngos.hover();
-  await page.waitForTimeout(700);
-  assert.deepEqual(await box(pill), await box(ngos));
+  // Wait for the spring to settle rather than for a fixed time.
+  const settlesOn = (text) => page.waitForFunction((t) => {
+    const p = document.querySelector('[data-nav-indicator]').getBoundingClientRect();
+    const l = [...document.querySelectorAll('.site-nav__link')].find((a) => a.textContent.trim() === t).getBoundingClientRect();
+    return Math.abs(p.left - l.left) < 1 && Math.abs(p.width - l.width) < 1;
+  }, text, { timeout: 3000 });
+  await page.locator('.site-nav__link', { hasText: 'NGOs' }).hover();
+  await settlesOn('NGOs');
   await page.mouse.move(640, 500);
-  await page.waitForTimeout(700);
-  assert.deepEqual(await box(pill), await box(pricing), 'back on the current page');
+  await settlesOn('Pricing');
   assert.deepEqual(errors, []);
   await close();
 });

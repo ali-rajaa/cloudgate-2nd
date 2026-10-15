@@ -3,16 +3,19 @@
 //
 // How the forms behave:
 // - A field is checked when you leave it, and again as you type once it has
-//   shown a problem: errors appear late and clear early.
+//   shown a problem: errors appear late and clear early. Anything that would
+//   move the page when you leave a field waits until a press has finished, so
+//   a click on the button below always lands.
 // - Submitting checks everything and moves focus to the first problem.
 // - While a request runs, the button shows a spinner and ignores more presses.
 //   After 6 seconds a note says the connection seems slow; after 30 seconds
-//   we stop waiting and say so.
-// - Problems from the server (wrong password, too many attempts, no
-//   connection) show in one alert above the form, or under the field they
-//   belong to.
+//   we stop waiting and say so. Values are read once, when you press.
+// - Problems from the server show under the field they belong to, or in one
+//   alert next to the button (scrolled into view if needed).
+// - Logging in leaves the button busy until main.js has loaded the account
+//   and opened the right screen.
 // The checks themselves live in validate.js, which has its own unit tests.
-import { db, config, state, h, field, busy, go, link, notice, icon, loadState } from './core.js';
+import { db, config, state, h, field, busy, go, link, notice, icon, toast } from './core.js';
 import { emailProblem, suggestEmail, passwordStrength, personalWords, matchProblem, normalisePhone, phoneProblem, authError } from './validate.js';
 
 export function routes(register) {
@@ -23,6 +26,7 @@ export function routes(register) {
   register('/check-email', { ...auth, title: 'Check your email', render: checkEmail });
   register('/forgot-password', { ...auth, title: 'Reset your password', render: forgot });
   register('/reset-password', { ...auth, title: 'Choose a new password', render: reset });
+  register('/link-expired', { ...auth, title: 'Link expired', render: linkExpired });
   register('/logout', { ...auth, title: 'Log out', render: logout });
 }
 
@@ -30,6 +34,7 @@ const redirectBase = () => location.href.split('#')[0];
 const site = (path = '') => (config.siteUrl || '/') + path;
 const SLOW_AFTER = 6000;
 const GIVE_UP_AFTER = 30000;
+const RESEND_WAIT = 60;
 
 // ---------------------------------------------------------------------------
 // The two halves of the screen
@@ -43,7 +48,7 @@ function brand() {
     h('div.auth-brand__body',
       h('p.auth-brand__urdu', { lang: 'ur', dir: 'rtl', translate: 'no' }, 'رزق رسان'),
       h('p.auth-brand__headline', 'From surplus to sustenance.'),
-      h('p.auth-brand__lead', 'Restaurants, bakeries and grocers list good food left at the end of the day. Verified NGOs claim it, and it gets eaten instead of thrown away.'),
+      h('p.auth-brand__lead', 'Good food from Islamabad\'s restaurants, bakeries and grocers reaches people who need it, instead of the bin.'),
       h('ol.auth-brand__steps',
         step('01', 'List.', 'Businesses list good food left at the end of the day.'),
         step('02', 'Claim.', 'Verified NGOs claim it and pay no more than half of retail.'),
@@ -88,14 +93,51 @@ function screen({ tab, badge, title, lead, body, foot }) {
 // Form parts
 // ---------------------------------------------------------------------------
 
+// Leaving a field can show an error or a suggestion, which moves the button
+// below. If that happens between press and release, the click is lost. So
+// when a press is under way, wait until it has finished (and its click has
+// landed) before doing that work.
+let pressing = false;
+addEventListener('pointerdown', () => { pressing = true; }, true);
+addEventListener('pointerup', () => { pressing = false; }, true);
+addEventListener('pointercancel', () => { pressing = false; }, true);
+function afterPress(fn) {
+  if (!pressing) { fn(); return; }
+  const run = () => {
+    removeEventListener('pointerup', run, true);
+    removeEventListener('pointercancel', run, true);
+    setTimeout(fn, 0);
+  };
+  addEventListener('pointerup', run, true);
+  addEventListener('pointercancel', run, true);
+}
+
 // Checks a field when you leave it (if you typed something), and on every
 // change once it has shown a problem. f.validate() checks it now, as on submit.
+// f.serverError() shows a problem the server found; it stays until the value changes.
 function check(f, problemOf, { onBlur, blur = true } = {}) {
   let shown = false;
-  const validate = () => { const m = problemOf(f.value()); f.error(m); shown = Boolean(m); return m; };
-  if (blur) f.input.addEventListener('blur', () => { if (f.value() !== '' || shown) validate(); onBlur?.(); });
+  let server = null;
+  const errorEl = f.wrap.querySelector('.field__error');
+  const validate = () => {
+    const value = f.value();
+    const fromServer = server && server.value === value ? server : null;
+    const m = problemOf(value) || fromServer?.message || '';
+    f.error(m);
+    if (m && fromServer && m === fromServer.message && fromServer.extra) errorEl.append(...fromServer.extra());
+    shown = Boolean(m);
+    return m;
+  };
+  if (blur) {
+    f.input.addEventListener('blur', () => afterPress(() => {
+      if (!f.input.isConnected) return;
+      if (f.value() !== '' || shown) validate();
+      onBlur?.();
+    }));
+  }
   f.input.addEventListener(f.input.type === 'checkbox' ? 'change' : 'input', () => { if (shown) validate(); });
   f.validate = validate;
+  f.serverError = (message, extra) => { server = { value: f.value(), message, extra }; validate(); };
   return f;
 }
 
@@ -111,16 +153,26 @@ function emailField({ autocomplete }) {
   const f = field({ name: 'email', label: 'Email', type: 'email', required: true, autocomplete, placeholder: 'name@example.com' });
   f.input.setAttribute('autocapitalize', 'none');
   f.input.setAttribute('spellcheck', 'false');
+  // The address you typed on one screen is there on the next (log in, sign up, reset).
+  f.input.value = sessionStorage.getItem('rr-email') || '';
+  f.input.addEventListener('change', () => sessionStorage.setItem('rr-email', f.value()));
   // "Did you mean name@gmail.com?" for slips in well-known addresses.
-  const tip = h('p.auth-suggest', { 'aria-live': 'polite' });
+  const tip = h('p.auth-suggest', { id: f.input.id + '-tip', 'aria-live': 'polite' });
   f.wrap.append(tip);
   const suggest = () => {
     tip.replaceChildren();
     const better = !emailProblem(f.value()) && suggestEmail(f.value());
     if (!better) return;
     const use = h('button.auth-suggest__use', { type: 'button' }, better);
-    use.addEventListener('click', () => { f.input.value = better; tip.replaceChildren(); f.validate(); f.input.focus(); });
+    use.addEventListener('click', () => {
+      f.input.value = better;
+      sessionStorage.setItem('rr-email', better);
+      tip.replaceChildren();
+      f.validate();
+      f.input.focus();
+    });
     tip.append('Did you mean ', use, '?');
+    f.input.setAttribute('aria-describedby', tip.id);
   };
   f.input.addEventListener('input', () => tip.replaceChildren());
   return check(f, emailProblem, { onBlur: suggest });
@@ -139,7 +191,8 @@ function passwordField({ name = 'password', label, autocomplete, hint, aside, re
   if (reveal) {
     const inputs = [f.input];
     const word = h('span', 'Show');
-    const toggle = h('button.auth-reveal', { type: 'button', 'aria-controls': f.input.id }, word, h('span.visually-hidden', ' password'));
+    const what = h('span.visually-hidden', ' password');
+    const toggle = h('button.auth-reveal', { type: 'button', 'aria-controls': f.input.id }, word, what);
     toggle.addEventListener('click', () => {
       const show = f.input.type === 'password';
       inputs.forEach((i) => { i.type = show ? 'text' : 'password'; });
@@ -150,6 +203,7 @@ function passwordField({ name = 'password', label, autocomplete, hint, aside, re
       inputs.push(other.input);
       other.input.type = f.input.type;
       toggle.setAttribute('aria-controls', inputs.map((i) => i.id).join(' '));
+      what.textContent = ' passwords';
     };
   } else {
     box.classList.add('auth-reveal-box--plain');
@@ -162,19 +216,26 @@ function passwordField({ name = 'password', label, autocomplete, hint, aside, re
   return f;
 }
 
+// Shown while you type with Caps Lock on, and announced once. It stays put
+// when you leave the box: hiding it then would move the button you're clicking.
 function capsWarning(f) {
-  const note = h('p.auth-caps', { hidden: true }, icon('alert', 16), h('span', 'Caps Lock is on.'));
-  f.wrap.append(note);
-  const update = (e) => { if (e.getModifierState) note.hidden = !e.getModifierState('CapsLock'); };
+  const note = h('p.auth-caps', { hidden: true, 'aria-hidden': 'true' }, icon('alert', 16), h('span', 'Caps Lock is on.'));
+  const spoken = h('span.visually-hidden', { role: 'status' });
+  f.wrap.append(note, spoken);
+  const set = (on) => {
+    if (note.hidden === !on) return;
+    note.hidden = !on;
+    spoken.textContent = on ? 'Caps Lock is on.' : '';
+  };
+  const update = (e) => { if (e.getModifierState) set(e.getModifierState('CapsLock')); };
   f.input.addEventListener('keydown', update);
   f.input.addEventListener('keyup', update);
-  f.input.addEventListener('blur', () => { note.hidden = true; });
 }
 
 // Four bars and a word under a new password. Screen readers hear the word
-// once typing pauses, not on every key.
+// once typing pauses, and only when it changes.
 function strengthMeter(f, avoid) {
-  const text = h('span.auth-meter__text');
+  const text = h('span.auth-meter__text', { 'aria-hidden': 'true' });
   const spoken = h('span.visually-hidden', { 'aria-live': 'polite' });
   const meter = h('div.auth-meter', { dataset: { score: '' } },
     h('span.auth-meter__bars', { 'aria-hidden': 'true' }, h('span'), h('span'), h('span'), h('span')), text, spoken);
@@ -185,20 +246,27 @@ function strengthMeter(f, avoid) {
     const r = passwordStrength(value, avoid());
     meter.dataset.score = value ? String(r.score) : '';
     text.textContent = value ? r.label : '';
+    const next = value ? `Password strength: ${r.label}` : '';
     clearTimeout(timer);
-    timer = setTimeout(() => { spoken.textContent = value ? `Password strength: ${r.label}` : ''; }, 900);
+    timer = setTimeout(() => { if (spoken.textContent !== next) spoken.textContent = next; }, 900);
   };
   f.input.addEventListener('input', update);
   return update;
 }
 
-// The alert above a form and the status line under its button.
+// The alert for problems that aren't about one field, and the status line
+// under the button.
 function formParts() {
-  const alertEl = h('div.auth-alert', { role: 'alert', hidden: true });
+  const alertEl = h('div#auth-alert.auth-alert', { role: 'alert', hidden: true });
   const status = h('p.auth-status', { role: 'status' });
   return {
     alertEl, status,
-    alert(...message) { alertEl.replaceChildren(icon('alert', 18), h('p', ...message)); alertEl.hidden = false; },
+    alert(...message) {
+      alertEl.replaceChildren(icon('alert', 18), h('p', ...message));
+      alertEl.hidden = false;
+      const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      alertEl.scrollIntoView({ block: 'nearest', behavior: still ? 'auto' : 'smooth' });
+    },
     clear() { alertEl.hidden = true; alertEl.replaceChildren(); },
   };
 }
@@ -209,12 +277,14 @@ async function send(button, parts, working, request) {
   parts.clear();
   if (navigator.onLine === false) { parts.alert('You\'re offline. Connect to the internet and try again.'); return null; }
   const result = await busy(button, async () => {
+    // Say it's working straight away, for people who pressed Enter and can't see the button.
+    parts.status.replaceChildren(h('span.visually-hidden', working));
     const slow = setTimeout(() => { parts.status.textContent = 'Still working. Your connection seems slow.'; }, SLOW_AFTER);
     let giveUp;
     try {
       return await Promise.race([request(), new Promise((_, reject) => { giveUp = setTimeout(() => reject(new Error('took too long')), GIVE_UP_AFTER); })]);
     } catch (e) {
-      parts.alert(authError(e).message);
+      if (button.isConnected) parts.alert(authError(e).message);
       return null;
     } finally {
       clearTimeout(slow);
@@ -226,6 +296,7 @@ async function send(button, parts, working, request) {
 }
 
 const submitButton = (text) => h('button.btn.btn--primary.btn--block.auth-submit', { type: 'submit' }, text);
+const waitForNextScreen = () => new Promise((resolve) => addEventListener('hashchange', resolve, { once: true }));
 
 // ---------------------------------------------------------------------------
 // Log in
@@ -241,28 +312,31 @@ function login() {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!validateAll([email, password])) return;
-    const res = await send(submit, parts, 'Logging in…', () => db.auth.signInWithPassword({ email: email.value(), password: password.value() }));
-    if (!res) return;
-    if (res.error) {
-      const problem = authError(res.error);
-      if (problem.field === 'confirm') {
-        // Not confirmed yet: the next screen can send the link again.
-        sessionStorage.setItem('rr-signup-email', email.value());
-        go('/check-email');
-        return;
+    const address = email.value();
+    const res = await send(submit, parts, 'Logging in…', async () => {
+      const reply = await db.auth.signInWithPassword({ email: address, password: password.value() });
+      if (!reply.error) {
+        // main.js now loads the account and opens the right screen; stay busy until it has.
+        parts.status.textContent = 'Logged in. Opening your account.';
+        await waitForNextScreen();
       }
-      if (/match an account/.test(problem.message)) {
-        parts.alert('That email and password don\'t match an account. Check them and try again, or ', link('/forgot-password', 'reset your password'), '.');
-      } else parts.alert(problem.message);
-      password.input.focus();
-      password.input.select();
+      return reply;
+    });
+    if (!res?.error || !form.isConnected) return;
+    const problem = authError(res.error);
+    if (problem.field === 'confirm') {
+      // Not confirmed yet: the next screen sends a new link.
+      sessionStorage.setItem('rr-signup-email', address);
+      sessionStorage.setItem('rr-check-from', 'login');
+      go('/check-email');
       return;
     }
-    const after = sessionStorage.getItem('rr-after-login');
-    sessionStorage.removeItem('rr-after-login');
-    parts.status.textContent = 'Logged in. Opening your account.';
-    await loadState();
-    go(after && after !== '/login' ? after : '/');
+    if (/match an account/.test(problem.message)) {
+      parts.alert('That email and password don\'t match an account. Check them and try again, or ', link('/forgot-password', 'reset your password'), '.');
+    } else parts.alert(problem.message);
+    password.input.setAttribute('aria-describedby', 'auth-alert');
+    password.input.focus();
+    password.input.select();
   });
 
   return screen({
@@ -354,28 +428,46 @@ function signup({ params }) {
 
   const submit = submitButton('Create account');
   const trust = h('p.auth-trust', icon('lock', 16), h('span', 'We never sell your data, and your password is stored only in scrambled form.'));
+  // The alert sits right above the button: on this long form, one at the top would be off screen.
   const form = h('form.app-form.auth-form', { novalidate: true },
-    parts.alertEl, types, h('div.auth-row', name.wrap, phone.wrap), org.wrap, email.wrap, password.wrap, confirm.wrap, terms.wrap, submit, parts.status, trust);
+    types, h('div.auth-row', name.wrap, phone.wrap), org.wrap, email.wrap, password.wrap, confirm.wrap, terms.wrap, parts.alertEl, submit, parts.status, trust);
+  const accountExists = () => email.serverError('An account with this email already exists.',
+    () => [' ', link('/login', 'Log in'), ' or ', link('/forgot-password', 'reset your password'), '.']);
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!validateAll([typeField, name, phone, org, email, password, confirm, terms])) return;
-    const tel = normalisePhone(phone.value());
-    localStorage.setItem('rr-pending-org', JSON.stringify({ type, name: org.value(), phone: tel }));
+    const details = { type, name: name.value(), org: org.value(), email: email.value(), phone: normalisePhone(phone.value()) };
+    localStorage.setItem('rr-pending-org', JSON.stringify({ type: details.type, name: details.org, phone: details.phone }));
     const res = await send(submit, parts, 'Creating your account…', () => db.auth.signUp({
-      email: email.value(), password: password.value(),
-      options: { data: { full_name: name.value(), phone: tel }, emailRedirectTo: redirectBase() + '#/start' },
+      email: details.email, password: password.value(),
+      options: {
+        // The organisation goes with the account too, so setup works on any device.
+        data: { full_name: details.name, phone: details.phone, org_type: details.type, org_name: details.org },
+        emailRedirectTo: redirectBase() + '#/start',
+      },
     }));
-    if (!res) return;
+    if (!res || !form.isConnected) return;
     if (res.error) {
       const problem = authError(res.error);
-      if (problem.field === 'email') { email.error(problem.message); email.input.focus(); return; }
-      if (problem.field === 'password') { password.error(problem.message); password.input.focus(); return; }
+      if (problem.field === 'email' && /already exists/.test(problem.message)) { accountExists(); email.input.focus(); return; }
+      if (problem.field === 'email') { email.serverError(problem.message); email.input.focus(); return; }
+      if (problem.field === 'password') { password.serverError(problem.message); password.input.focus(); return; }
       parts.alert(problem.message);
       return;
     }
-    if (res.data?.session) { window.dispatchEvent(new Event('rr:state')); go('/start'); }
-    else { sessionStorage.setItem('rr-signup-email', email.value()); go('/check-email'); }
+    // With email confirmation on, Supabase answers a sign-up for an address that
+    // already has an account with a stand-in user (no identities) and sends nothing.
+    if (!res.data?.session && Array.isArray(res.data?.user?.identities) && res.data.user.identities.length === 0) {
+      accountExists();
+      email.input.focus();
+      return;
+    }
+    if (res.data?.session) { window.dispatchEvent(new Event('rr:state')); go('/start'); return; }
+    sessionStorage.setItem('rr-signup-email', details.email);
+    sessionStorage.removeItem('rr-check-from');
+    sessionStorage.setItem('rr-resend-after', String(Date.now() + RESEND_WAIT * 1000));
+    go('/check-email');
   });
 
   return screen({
@@ -387,48 +479,81 @@ function signup({ params }) {
 }
 
 // ---------------------------------------------------------------------------
-// Check your email (after signing up, or logging in before confirming)
+// Check your email: after signing up, or after trying to log in before
+// confirming (then a new link is needed, as old ones expire after an hour).
 // ---------------------------------------------------------------------------
 function checkEmail() {
-  const email = sessionStorage.getItem('rr-signup-email');
-  let body;
-  if (email) {
-    const parts = formParts();
-    const again = h('button.btn.btn--secondary.btn--block', { type: 'button' }, 'Send the link again');
-    // After sending, wait a minute before allowing another, so the email
-    // service doesn't block the address for sending too often.
-    const coolDown = (seconds) => {
-      again.disabled = true;
-      const tick = () => {
-        if (!again.isConnected) return;
-        if (seconds <= 0) { again.disabled = false; again.textContent = 'Send the link again'; return; }
-        again.textContent = `Send again in ${seconds--}s`;
-        setTimeout(tick, 1000);
-      };
-      tick();
+  const stored = sessionStorage.getItem('rr-signup-email');
+  const fromLogin = sessionStorage.getItem('rr-check-from') === 'login';
+  const parts = formParts();
+  const sendWord = fromLogin ? 'Send a new link' : 'Send the link again';
+  const again = h('button.btn.btn--secondary.btn--block', { type: 'button' }, sendWord);
+  // The email service only allows one email a minute per address. The button
+  // waits that minute (even if you leave and come back) and stays focusable.
+  const coolDown = () => {
+    // The first tick runs before the screen is on the page; later ones stop once it's gone.
+    const tick = (first) => {
+      if (!first && !again.isConnected) return;
+      const left = Math.ceil((Number(sessionStorage.getItem('rr-resend-after')) - Date.now()) / 1000);
+      if (left <= 0) { again.removeAttribute('aria-disabled'); again.textContent = sendWord; return; }
+      again.setAttribute('aria-disabled', 'true');
+      again.textContent = `Send again in ${left} seconds`;
+      setTimeout(tick, 1000);
     };
-    again.addEventListener('click', async () => {
-      const res = await send(again, parts, 'Sending…', () => db.auth.resend({ type: 'signup', email, options: { emailRedirectTo: redirectBase() + '#/start' } }));
-      if (!res) return;
-      if (res.error) { parts.alert(authError(res.error).message); return; }
-      parts.status.textContent = 'Sent. Check your inbox.';
-      coolDown(60);
-    });
+    tick(true);
+  };
+  const sendTo = async (address) => {
+    if (again.getAttribute('aria-disabled') === 'true') return;
+    const res = await send(again, parts, 'Sending…', () => db.auth.resend({ type: 'signup', email: address, options: { emailRedirectTo: redirectBase() + '#/start' } }));
+    if (!res || !again.isConnected) return;
+    if (res.error) { parts.alert(authError(res.error).message); return; }
+    sessionStorage.setItem('rr-signup-email', address);
+    sessionStorage.setItem('rr-resend-after', String(Date.now() + RESEND_WAIT * 1000));
+    parts.status.textContent = `Sent to ${address}. Check your inbox.`;
+    parts.status.tabIndex = -1;
+    parts.status.focus();
+    coolDown();
+  };
+
+  let body;
+  if (stored) {
+    again.addEventListener('click', () => sendTo(stored));
     body = h('div.auth-stack',
-      parts.alertEl,
-      h('div.auth-sent', h('span.auth-sent__label', 'Sent to'), h('span.auth-sent__email', email)),
-      notice('info', 'Nothing after a few minutes? Check your spam folder, then send it again.'),
-      again, parts.status);
+      h('div.auth-sent', h('span.auth-sent__label', fromLogin ? 'Account email' : 'Sent to'), h('span.auth-sent__email', stored)),
+      fromLogin ? null : notice('info', 'Nothing after a few minutes? Check your spam folder, then send it again.'),
+      parts.alertEl, again, parts.status);
+    coolDown();
   } else {
-    body = h('div.auth-stack', h('p.auth-lead', 'Nothing in your inbox? Check your spam folder. Still nothing? ',
-      h('a', { href: site('contact/') }, 'Contact us'), '.'));
+    // Opened directly: ask which address to send the link to.
+    const email = emailField({ autocomplete: 'email' });
+    again.textContent = 'Send the link';
+    again.addEventListener('click', () => { if (validateAll([email])) sendTo(email.value()); });
+    body = h('div.auth-stack', email.wrap, parts.alertEl, again, parts.status);
   }
   return screen({
     badge: 'mail',
-    title: 'Check your email',
-    lead: 'Open the link we sent to confirm your address and carry on setting up. Use this device if you can.',
+    title: fromLogin ? 'Confirm your email first' : 'Check your email',
+    lead: fromLogin
+      ? 'Your email address isn\'t confirmed yet. Links expire after an hour, so send yourself a new one.'
+      : 'Open the link we sent to confirm your address and carry on setting up. Use this device if you can.',
     body,
-    foot: h('p', link('/login', 'Back to log in')),
+    foot: h('p', 'Wrong address? ', link('/signup', 'Sign up again'), ' · ', link('/login', 'Back to log in')),
+  });
+}
+
+// ---------------------------------------------------------------------------
+// An email link that has expired or was already used (main.js sends it here)
+// ---------------------------------------------------------------------------
+function linkExpired() {
+  sessionStorage.removeItem('rr-link-error');
+  return screen({
+    badge: 'clock',
+    title: 'This link has expired',
+    lead: 'Email links work once and expire after an hour. Ask for a new one, or log in if you\'ve already confirmed your address.',
+    body: h('div.auth-stack',
+      h('a.btn.btn--primary.btn--block', { href: '#/login' }, 'Log in'),
+      h('a.btn.btn--secondary.btn--block', { href: '#/forgot-password' }, 'Ask for a new password reset link')),
+    foot: h('p', 'Still stuck? ', h('a', { href: site('contact/') }, 'Contact us')),
   });
 }
 
@@ -460,15 +585,26 @@ function forgot() {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!validateAll([email])) return;
-    const res = await send(submit, parts, 'Sending…', () => db.auth.resetPasswordForEmail(email.value(), { redirectTo: redirectBase() + '#/reset-password' }));
-    if (!res) return;
+    const address = email.value();
+    const res = await send(submit, parts, 'Sending…', () => db.auth.resetPasswordForEmail(address, { redirectTo: redirectBase() + '#/reset-password' }));
+    if (!res || !form.isConnected) return;
     if (res.error) { parts.alert(authError(res.error).message); return; }
     // The same answer whether or not the address has an account, so this
     // screen can't be used to find out who has signed up.
-    const done = notice('info', 'If that email has an account, a reset link is on its way. It works once and expires in an hour.');
+    const panel = form.closest('.auth-panel__inner');
+    panel.querySelector('.auth-title').textContent = 'Check your email';
+    panel.querySelector('.auth-lead').textContent = 'Nothing after a few minutes? Check your spam folder.';
+    const done = notice('info', `If ${address} has an account, a reset link is on its way. It works once and expires in an hour.`);
     done.setAttribute('role', 'status');
     done.tabIndex = -1;
-    form.replaceWith(done);
+    const other = h('button.btn.btn--secondary.btn--block', { type: 'button' }, 'Use a different email');
+    const result = h('div.auth-stack', done, other);
+    other.addEventListener('click', () => {
+      result.replaceWith(form);
+      panel.querySelector('.auth-title').textContent = 'Reset your password';
+      email.input.focus();
+    });
+    form.replaceWith(result);
     done.focus();
   });
   return screen({
@@ -480,6 +616,8 @@ function forgot() {
 }
 
 function reset() {
+  // The reset link signs you in for this one job. Without that, it has expired.
+  if (!state.session) return linkExpired();
   const parts = formParts();
   const accountEmail = state.user?.email || '';
   // Lets password managers save the new password against the right account.
@@ -498,15 +636,15 @@ function reset() {
     e.preventDefault();
     if (!validateAll([password, confirm])) return;
     const res = await send(submit, parts, 'Saving…', () => db.auth.updateUser({ password: password.value() }));
-    if (!res) return;
+    if (!res || !form.isConnected) return;
     if (res.error) {
       const problem = authError(res.error);
       if (problem.field === 'expired') { parts.alert('This reset link has expired or was already used. ', link('/forgot-password', 'Ask for a new one'), '.'); return; }
-      if (problem.field === 'password') { password.error(problem.message); password.input.focus(); return; }
+      if (problem.field === 'password') { password.serverError(problem.message); password.input.focus(); return; }
       parts.alert(problem.message);
       return;
     }
-    parts.status.textContent = 'Password changed.';
+    toast('Password changed.');
     go('/');
   });
   return screen({ title: 'Choose a new password', lead: 'You\'ll stay logged in on this device.', body: form });

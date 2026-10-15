@@ -68,8 +68,10 @@ export function passwordStrength(value, avoid = []) {
   }
   const lower = p.toLowerCase();
   const personal = avoid.map((w) => String(w ?? '').toLowerCase().trim()).filter((w) => w.length >= 4);
-  if (COMMON.has(lower) || /^(.)\1+$/.test(p) || personal.some((w) => lower.includes(w))) {
-    return { score: 1, label: 'Too easy to guess', ok: false, problem: 'That password is too easy to guess. Avoid common passwords and your own name or email.' };
+  // Your own words may appear, but what's left once they're taken out must still be a password.
+  const rest = personal.reduce((s, w) => s.split(w).join(''), lower).replace(/[^a-z0-9]/g, '');
+  if (COMMON.has(lower) || /^(.)\1+$/.test(p) || (personal.some((w) => lower.includes(w)) && rest.length < MIN_PASSWORD)) {
+    return { score: 1, label: 'Too easy to guess', ok: false, problem: 'That password is too easy to guess. Avoid common passwords, and don\'t build it from your name, email or organisation name.' };
   }
   let points = 1;
   if (p.length >= 12) points++;
@@ -120,14 +122,26 @@ export function authError(error) {
     return { field: 'form', message: 'That email and password don\'t match an account. Check them and try again, or reset your password.' };
   }
   if (/email not confirmed|not confirmed/i.test(msg)) return { field: 'confirm', message: 'Confirm your email address first.' };
+  if (/email_address_invalid|email address .*invalid|unable to validate email/i.test(msg)) {
+    return { field: 'email', message: 'Enter an email address like name@example.com.' };
+  }
   if (/already registered|already exists|user_already_exists/i.test(msg)) {
     return { field: 'email', message: 'An account with this email already exists. Log in instead.' };
   }
   if (/password/i.test(msg) && /(weak|short|least|pwned|leaked|characters)/i.test(msg)) {
     return { field: 'password', message: 'Choose a stronger password: longer, and not one used on other sites.' };
   }
-  if (status === 429 || /rate limit|too many/i.test(msg)) return { field: 'form', message: 'Too many attempts. Wait a minute, then try again.' };
-  if (/failed to fetch|networkerror|network request failed|load failed|took too long|offline/i.test(msg)) {
+  if (status === 429 || /rate limit|too many|security purposes/i.test(msg)) {
+    // Supabase uses the same code for "ask again in N seconds" and the hourly email cap.
+    const wait = /after (\d+) seconds?/i.exec(msg)?.[1];
+    if (wait) return { field: 'form', message: `You can ask again in ${wait} seconds.` };
+    if (/email rate limit/i.test(msg)) return { field: 'form', message: 'We can\'t send more emails right now. Try again in an hour, or contact us.' };
+    return { field: 'form', message: 'Too many attempts. Wait a minute, then try again.' };
+  }
+  if (/took too long/i.test(msg)) {
+    return { field: 'form', message: 'This is taking too long, so we stopped waiting. It may still have gone through: check your email, then try again.' };
+  }
+  if (/failed to fetch|networkerror|network request failed|load failed|offline/i.test(msg)) {
     return { field: 'form', message: 'We couldn\'t reach the server. Check your connection and try again.' };
   }
   if (status >= 500) return { field: 'form', message: 'Something went wrong on our side. Please try again in a moment.' };

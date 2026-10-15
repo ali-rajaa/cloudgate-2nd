@@ -34,7 +34,11 @@ const REQUIRED = { vendor: ['registration', 'ntn', 'ifa_licence', 'signatory_cni
 
 async function start() {
   if (state.org) { go('/onboarding'); return h('div'); }
-  const pending = JSON.parse(localStorage.getItem('rr-pending-org') || 'null');
+  // Details from sign-up: saved on this device, or with the account (when the
+  // email link is opened on another device).
+  const meta = state.user?.user_metadata || {};
+  const pending = JSON.parse(localStorage.getItem('rr-pending-org') || 'null')
+    || (meta.org_type && meta.org_name ? { type: meta.org_type, name: meta.org_name, phone: meta.phone } : null);
   const type = field({ name: 'type', label: 'Account type', type: 'select', required: true, value: pending?.type,
     options: [{ value: 'vendor', label: 'Food business with surplus food' }, { value: 'ngo', label: 'NGO, shelter or kitchen that feeds people' }] });
   const name = field({ name: 'name', label: 'Business or organisation name', required: true, value: pending?.name || '' });

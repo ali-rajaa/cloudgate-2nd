@@ -63,7 +63,7 @@
   content: ""; width: 1em; height: 1em; flex: none; border-radius: 50%;
   border: 2px solid currentColor; border-inline-end-color: transparent; animation: app-spin 0.7s linear infinite;
 }
-.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn:disabled, .btn[aria-disabled="true"]:not([aria-busy="true"]) { opacity: 0.55; cursor: not-allowed; }
 .field--check label { font-size: 0.9375rem; }
 
 /* ---------- Sign-in screens: brand panel + form ---------- */
@@ -136,7 +136,9 @@ h1[tabindex="-1"]:focus { outline: none; }
   .auth-brand__steps { margin-top: 1.25rem; }
   .auth-brand__step { padding-block: 0.65rem; }
 }
-.auth-panel__inner { width: 100%; max-width: 25.5rem; display: grid; gap: 1.75rem; }
+.auth-panel__inner { width: 100%; max-width: 25.5rem; display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.75rem; }
+.auth-form { grid-template-columns: minmax(0, 1fr); }
+.auth-alert p, .auth-suggest, .auth-sent__email, .auth-status { overflow-wrap: anywhere; }
 .auth-panel__inner > :not(.auth-switch) { animation: auth-in 420ms cubic-bezier(.2, .9, .3, 1) both; }
 @keyframes auth-in { from { opacity: 0; transform: translateY(8px); } }
 
@@ -255,11 +257,12 @@ h1[tabindex="-1"]:focus { outline: none; }
 .auth-alert p { color: var(--text); }
 .auth-alert a { color: var(--text); font-weight: 650; }
 .auth-status { min-height: 1.35em; margin-top: -0.35rem; font-size: 0.875rem; color: var(--muted); text-align: center; }
-.auth-status:empty { min-height: 0; margin-top: -1.15rem; }
+/* Empty, or holding only words for screen readers: out of the layout, still announced. */
+.auth-status:empty, .auth-status:has(> .visually-hidden:only-child) { position: absolute; min-height: 0; margin: 0; }
 
 /* Did you mean ...? */
 .auth-suggest { font-size: 0.875rem; color: var(--muted); }
-.auth-suggest:empty { display: none; }
+.auth-suggest:empty { position: absolute; }
 .auth-suggest__use {
   padding: 0; border: 0; background: none; font: inherit; font-weight: 650; color: var(--ink);
   text-decoration: underline; text-underline-offset: 0.18em; cursor: pointer;
@@ -281,7 +284,7 @@ h1[tabindex="-1"]:focus { outline: none; }
 .auth-meter[data-score="4"] .auth-meter__bars span { background: var(--success); }
 
 .auth-persona { margin-top: 0.7rem; font-size: 0.875rem; line-height: 1.5; color: var(--muted); }
-.auth-persona:empty { display: none; }
+.auth-persona:empty { margin: 0; }
 .auth-trust { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.8125rem; line-height: 1.5; color: var(--muted); }
 .auth-trust .icon { margin-top: 0.15rem; color: var(--ink); }
 .auth-reveal-box--plain .field__input { padding-inline-end: 1rem; }

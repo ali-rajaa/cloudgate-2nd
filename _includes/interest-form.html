@@ -26,7 +26,7 @@
     </div>
     <div class="field">
       <label class="field__label" for="{{ t }}-kind">Type of business</label>
-      <select class="field__input" id="{{ t }}-kind" name="business_type" required>
+      <select class="field__input" id="{{ t }}-kind" name="business_type" required data-error="Choose the type of business">
         <option value="">Choose one</option>
         <option>Bakery</option><option>Restaurant</option><option>Grocer or supermarket</option>
         <option>Cafe</option><option>Caterer</option><option>Hotel</option><option>Other</option>
@@ -46,7 +46,7 @@
     </div>
     <div class="field">
       <label class="field__label" for="{{ t }}-kind">Type of organisation</label>
-      <select class="field__input" id="{{ t }}-kind" name="organisation_type" required>
+      <select class="field__input" id="{{ t }}-kind" name="organisation_type" required data-error="Choose the type of organisation">
         <option value="">Choose one</option>
         <option>NGO</option><option>Shelter</option><option>Community kitchen</option>
         <option>Food bank</option><option>Orphanage</option><option>Other</option>
@@ -59,7 +59,7 @@
   {%- elsif t == "partner" %}
     <div class="field field--full">
       <label class="field__label" for="{{ t }}-org">Organisation</label>
-      <input class="field__input" id="{{ t }}-org" name="organisation" autocomplete="organization" required>
+      <input class="field__input" id="{{ t }}-org" name="organisation" autocomplete="organization" required data-error="Enter your organisation's name">
     </div>
   {%- endif %}
 
@@ -88,7 +88,7 @@
   {%- if t == "contact" %}
     <div class="field">
       <label class="field__label" for="{{ t }}-topic">What is it about?</label>
-      <select class="field__input" id="{{ t }}-topic" name="topic" required>
+      <select class="field__input" id="{{ t }}-topic" name="topic" required data-error="Choose what your message is about">
         <option value="">Choose one</option>
         <option>I run a food business</option><option>I'm with an NGO</option><option>Partnership</option>
         <option>Press</option><option>Complaint</option><option>Something else</option>

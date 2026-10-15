@@ -29,7 +29,7 @@
       <div class="account signed-in-only" data-account>
         <button class="account__button" type="button" aria-expanded="false" aria-controls="account-menu" data-account-toggle>
           <span class="account__avatar" aria-hidden="true" data-account-initials></span>
-          <span class="account__label"><span class="visually-hidden">Your account: </span><span data-account-first>Account</span></span>
+          <span class="visually-hidden">Your account: </span><span class="account__label"><span data-account-first>Account</span></span>
           {% include icon.html name="chevron-down" size=16 %}
         </button>
         <div class="account__menu" id="account-menu" data-account-menu hidden>
@@ -86,8 +86,7 @@
     </div>
     {%- endif %}
     <div class="menu-sheet__actions guest-only">
-      <a class="btn btn--primary btn--block" href="{{ '/for-businesses/#register' | relative_url }}">I have surplus food</a>
-      <a class="btn btn--secondary btn--block" href="{{ '/for-ngos/#register' | relative_url }}">I feed people</a>
+      <a class="btn btn--primary btn--block" href="{{ '/join/' | relative_url }}">Join</a>
       {%- if site.app_url != "" %}
       <a class="menu-sheet__secondary" href="{{ site.app_url }}">Log in</a>
       {%- endif %}
@@ -96,7 +95,9 @@
       {%- if site.translate_toggle %}
       <li class="menu-sheet__lang"><button class="lang-toggle notranslate" type="button" translate="no" lang="ur" aria-label="اردو میں پڑھیں، Read in Urdu" aria-pressed="false" data-lang-toggle>اردو</button></li>
       {%- endif %}
+      {%- if site.impact.published %}
       <li><a href="{{ '/impact/' | relative_url }}">Impact</a></li>
+      {%- endif %}
       <li><a href="{{ '/about/' | relative_url }}">About us</a></li>
       <li><a href="{{ '/faq/' | relative_url }}">FAQ</a></li>
       <li><a href="{{ '/contact/' | relative_url }}">Contact</a></li>

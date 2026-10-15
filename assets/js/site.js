@@ -202,7 +202,8 @@
       var y = Math.max(0, window.scrollY);
       var delta = y - lastY;
       header.classList.toggle('is-scrolled', y > 4);
-      var busy = header.contains(document.activeElement) || header.querySelector('[aria-expanded="true"]') || root.classList.contains('has-sheet');
+      // Keyboard focus keeps it out; focus left behind by a tap or click doesn't.
+      var busy = header.querySelector(':focus-visible') || header.querySelector('[aria-expanded="true"]') || root.classList.contains('has-sheet');
       if (busy || y < header.offsetHeight * 2) setTucked(false);
       else if (delta > 6) setTucked(true);
       else if (delta < -6) setTucked(false);
@@ -212,7 +213,7 @@
     window.addEventListener('scroll', function () {
       if (!ticking) { ticking = true; requestAnimationFrame(updateHeader); }
     }, { passive: true });
-    header.addEventListener('focusin', function () { setTucked(false); });
+    header.addEventListener('focusin', function (e) { if (e.target.matches(':focus-visible')) setTucked(false); });
     updateHeader();
   }
 
@@ -226,11 +227,13 @@
     if (!pill) return;
     var links = list.querySelectorAll('.site-nav__link');
     var current = list.querySelector('.site-nav__link[aria-current="page"]');
+    var target = current;
     var x = new Spring({ response: 0.32, onUpdate: function () { draw(); } });
     var w = new Spring({ response: 0.32, onUpdate: function () { draw(); } });
     var shown = false;
     function draw() { pill.style.transform = 'translateX(' + x.value.toFixed(2) + 'px)'; pill.style.width = w.value.toFixed(2) + 'px'; }
     function moveTo(link, instant) {
+      target = link;
       if (!link) { pill.style.opacity = '0'; shown = false; return; }
       var box = link.getBoundingClientRect();
       var left = box.left - list.getBoundingClientRect().left;
@@ -249,9 +252,14 @@
     list.addEventListener('pointerleave', function () { moveTo(current); });
     list.addEventListener('focusout', function (e) { if (!list.contains(e.relatedTarget)) moveTo(current); });
     // Fonts arriving or a resize move the links: snap the highlight to its link.
-    var resnap = function () { moveTo(current, true); };
+    var resnap = function () { moveTo(target, true); };
     window.addEventListener('resize', resnap);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(resnap);
+    // Links change size when the page is translated: keep the highlight on its link.
+    if ('ResizeObserver' in window) {
+      var watcher = new ResizeObserver(resnap);
+      Array.prototype.forEach.call(links, function (l) { watcher.observe(l); });
+    }
   });
 
   /* ---------------------------------------------------------------------------
@@ -312,6 +320,7 @@
       isOpen = true;
       var wasHidden = sheet.hidden;
       sheet.hidden = false;
+      sheet.style.pointerEvents = '';
       measure();
       if (wasHidden) spring.set(-height);
       openButton.setAttribute('aria-expanded', 'true');
@@ -324,6 +333,8 @@
     function close(velocity, flicked) {
       if (!isOpen) return;
       isOpen = false;
+      // Taps during the close go to the page (and the menu button) beneath, not to links you didn't pick.
+      sheet.style.pointerEvents = 'none';
       openButton.setAttribute('aria-expanded', 'false');
       root.classList.remove('has-sheet');
       setBackgroundInert(false);
@@ -517,7 +528,8 @@
     tabs.forEach(function (t, i) {
       t.addEventListener('click', function () { select(i, false); });
       t.addEventListener('keydown', function (e) {
-        var keys = { ArrowRight: current + 1, ArrowLeft: current - 1, Home: 0, End: tabs.length - 1 };
+        var step = getComputedStyle(box).direction === 'rtl' ? -1 : 1;
+        var keys = { ArrowRight: current + step, ArrowLeft: current - step, Home: 0, End: tabs.length - 1 };
         if (!(e.key in keys)) return;
         e.preventDefault();
         select(keys[e.key], true);
@@ -605,6 +617,8 @@
     }
     if (!value) {
       if (!field.required) return '';
+      // A field can say exactly what to ask for, where the label wouldn't read well.
+      if (field.getAttribute('data-error')) return field.getAttribute('data-error');
       if (field.tagName === 'SELECT') return 'Choose ' + name.charAt(0).toLowerCase() + name.slice(1);
       if (field.type === 'email') return 'Enter your email address';
       if (field.hasAttribute('data-phone')) return 'Enter your mobile number';
@@ -702,6 +716,15 @@
       finish('Your email is ready to send',
         'We opened your email app with your details filled in. Press send there and we will reply within one working day. ' +
         'If nothing opened, email us at <a href="mailto:' + to + '">' + to + '</a>.');
+      // If no email app opened, what they typed is still here to copy.
+      var copy = document.createElement('details');
+      copy.className = 'form__copy';
+      copy.innerHTML = '<summary>See the details you entered</summary><pre></pre>';
+      copy.querySelector('pre').textContent = body;
+      var text = done.querySelector('[data-form-done-text]');
+      var old = done.querySelector('.form__copy');
+      if (old) old.remove();
+      text.parentNode.insertBefore(copy, text.nextSibling);
     }
 
     form.addEventListener('submit', function (e) {
@@ -828,7 +851,7 @@
     }
     function setCookie(value) {
       var expire = value ? '' : '; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-      cookieDomains().forEach(function (d) {
+      (value ? [''] : cookieDomains()).forEach(function (d) {
         document.cookie = 'googtrans=' + value + '; path=/' + (d ? '; domain=' + d : '') + expire + '; SameSite=Lax';
       });
     }
@@ -884,6 +907,7 @@
       root.classList.add('lang-ur');
       root.classList.remove('lang-pending', 'lang-loading');
       setButtons('ur');
+      setCookie('/en/ur');
       showNote('یہ صفحہ خودکار طور پر اردو میں ترجمہ کیا گیا ہے۔ سرکاری متن انگریزی میں ہے۔' +
         '<button type="button" lang="en" dir="ltr" data-lang-english>English</button>', 'info');
       window.dispatchEvent(new Event('resize'));
@@ -893,6 +917,7 @@
     function urduFailed() {
       if (finished) return;
       finished = true;
+      started = false; // a tap on اردو tries again for real
       clearTimeout(timer);
       setCookie('');
       root.classList.remove('lang-pending', 'lang-loading', 'lang-ur');
@@ -950,10 +975,13 @@
       root.classList.add('lang-loading');
       loadUrduFont();
       timer = setTimeout(urduFailed, TIMEOUT);
-      var holder = document.createElement('div');
-      holder.id = 'google_translate_element';
-      holder.hidden = true;
-      document.body.appendChild(holder);
+      var holder = document.getElementById('google_translate_element');
+      if (!holder) {
+        holder = document.createElement('div');
+        holder.id = 'google_translate_element';
+        holder.hidden = true;
+        document.body.appendChild(holder);
+      }
       window.rizqTranslateInit = function () {
         try {
           new window.google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'ur', autoDisplay: false }, 'google_translate_element');
@@ -964,7 +992,6 @@
     }
 
     function toUrdu() {
-      setCookie('/en/ur');
       startTranslation();
     }
 

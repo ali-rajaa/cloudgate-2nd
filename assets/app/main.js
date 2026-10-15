@@ -76,7 +76,8 @@ function accountMenu() {
     h('a.account__out', { href: '#/logout' }, 'Log out'));
   const button = h('button.account__button', { type: 'button', 'aria-expanded': 'false', 'aria-controls': 'app-account-menu' },
     h('span.account__avatar', { 'aria-hidden': 'true' }, initials),
-    h('span.account__label', h('span.visually-hidden', 'Your account: '), words[0]),
+    h('span.visually-hidden', 'Your account: '),
+    h('span.account__label', words[0]),
     icon('chevron-down', 16));
   const wrap = h('div.account', button, menu);
   const outside = (e) => { if (!wrap.contains(e.target)) close(false); };

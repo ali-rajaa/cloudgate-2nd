@@ -1,7 +1,7 @@
 ---
 title: Cookie Policy
 order: 12
-description: This website sets no cookies unless you choose to read it in Urdu. From launch the platform will use essential cookies, analytics only if you agree, and never advertising trackers.
+description: This website sets no cookies unless you read it in Urdu. From launch the platform uses essential cookies, and analytics only if you agree.
 version: "0.1 (draft)"
 effective: from launch (22 March 2027)
 summary:

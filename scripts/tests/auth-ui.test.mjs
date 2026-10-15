@@ -620,6 +620,28 @@ test('header: on phones the bar is just logo, Join and menu; the Urdu switch is 
   assert.ok(await page.locator('.site-header__join').isVisible());
   await page.locator('[data-menu-open]').click();
   await page.locator('#menu-sheet .lang-toggle').waitFor();
-  assert.ok(await page.locator('#menu-sheet').getByRole('link', { name: 'Impact' }).isVisible());
+  // One Join, and no Impact link until its numbers are published.
+  assert.equal(await page.locator('#menu-sheet').getByRole('link', { name: 'Join', exact: true }).count(), 1);
+  assert.equal(await page.locator('#menu-sheet').getByRole('link', { name: 'Impact' }).count(), 0);
+  await close();
+});
+
+test('header: still tucks away after you tap one of its buttons', async () => {
+  const { page, close } = await sitePage('/for-ngos/', { width: 390, height: 800 });
+  await page.locator('[data-menu-open]').click();
+  await page.locator('#menu-sheet .menu-sheet__scrim').click({ position: { x: 20, y: 780 } });
+  await page.waitForFunction(() => document.querySelector('#menu-sheet').hidden || !document.documentElement.classList.contains('has-sheet'));
+  await page.mouse.move(200, 600);
+  await page.mouse.wheel(0, 1600);
+  await page.waitForFunction(() => document.querySelector('[data-header]').classList.contains('is-tucked'));
+  await close();
+});
+
+test('header: signed in on a 320px phone, the account button has a name and its menu stays on screen', async () => {
+  const { page, close } = await signedIn('/', { viewport: { width: 320, height: 640 } });
+  const button = page.getByRole('button', { name: /Your account/ });
+  await button.click();
+  const box = await page.locator('#account-menu').boundingBox();
+  assert.ok(box.x >= 0 && box.x + box.width <= 320, `menu spans ${box.x} to ${box.x + box.width}`);
   await close();
 });

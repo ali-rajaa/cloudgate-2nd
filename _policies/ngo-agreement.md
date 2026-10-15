@@ -1,7 +1,7 @@
 ---
 title: NGO Agreement
 order: 4
-description: The agreement every NGO accepts before it claims food on Rizq Rasan, covering no resale, paying at claim, inspection at pickup, handling, collectors and no-shows.
+description: "The agreement every NGO accepts before claiming food on Rizq Rasan: no resale, paying at claim, inspection at pickup, collectors and no-shows."
 version: "0.1 (draft)"
 effective: from launch (22 March 2027)
 summary:

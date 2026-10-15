@@ -1,25 +1,25 @@
 ---
 title: Security and Responsible Disclosure
 order: 14
-description: How Rizq Rasan protects this website and the planned platform, and how to report a security flaw to us safely and in good faith.
+description: How Rizq Rasan protects this website and the platform, and how to report a security flaw to us safely and in good faith.
 version: "0.1 (draft)"
 effective: from launch (22 March 2027)
 summary:
-  - This website has no log in, no payments and no cookies, so it holds very little to protect.
-  - From launch, the platform will enforce access rules inside the database, require an authenticator app for our admins and log every document view.
+  - The public pages of this website hold no data about you. Accounts are on the platform at /app/.
+  - The platform already enforces access rules inside the database. From launch, it will also require an authenticator app for our admins and log every document view.
   - Found a flaw? Email us with "Security" in the subject line, and we aim to acknowledge it within 1 working day.
   - If you research in good faith and follow this policy, we will not take legal action against you.
   - If a breach affects your data, we will tell you within 72 hours of confirming it.
 ---
-This policy explains how we protect Rizq Rasan and the information organisations trust us with, and how to tell us about a security weakness. It covers this website today and the platform that verified businesses and NGOs will use from launch.
+This policy explains how we protect Rizq Rasan and the information organisations trust us with, and how to tell us about a security weakness. It covers this website and the platform at /app/, where accounts are open now.
 
 ## 1. This website today
 
-This website is a set of plain pages hosted on GitHub Pages. It has no log in, no accounts, no payments and no database of visitors, and it sets no cookies. The forms send your details to us by email or, once we connect a form service, through that provider. Nothing you type into them is stored on this website.
+The public pages of this website are plain pages hosted on GitHub Pages. They have no payments and no database of visitors, and set no cookies. Accounts and logging in are on the platform at /app/ (section 2). The forms send your details to us by email or, once we connect a form service, through that provider. Nothing you type into them is stored on this website.
 
 ## 2. How the platform will protect your data
 
-The platform is being built so that a mistake on one screen cannot expose another organisation's data or move money. These protections are planned for launch.
+The platform is being built so that a mistake on one screen cannot expose another organisation's data or move money. Accounts are open now, and the access rules and private document storage below already apply. The rest will be in place by launch.
 
 ### Access to data
 
@@ -89,7 +89,7 @@ If you look for and report a flaw in good faith and follow this policy, we will 
 
 Good faith means that you:
 
-- test only this website or, from launch, accounts that you own or that we have given you for testing;
+- test only this website, or accounts that you own or that we have given you for testing;
 - don't access, change, delete or keep other people's data beyond the minimum needed to show the flaw, and stop and tell us at once if you reach personal data;
 - don't disrupt the service, or interfere with real listings, orders, payments, payouts or pickups;
 - don't ask for money or anything else in return for the details;

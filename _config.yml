@@ -42,7 +42,7 @@ forms:
 # The platform (NGO and business accounts) at /app/. Fill these in from your
 # Supabase project (Settings > API): the project URL and the anon public key.
 # Both are safe to publish; access is controlled by the database's rules.
-# While they are empty, /app/ explains that accounts open at launch.
+# While they are empty, /app/ says sign-in is switched off on this copy of the site.
 platform:
   supabase_url: "https://ldzxxujxlzjuptzuxdcc.supabase.co"
   supabase_anon_key: "sb_publishable_oAL_pvsTv0oG1P89CsorOw_yHgEORpv"

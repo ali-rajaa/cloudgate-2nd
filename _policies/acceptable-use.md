@@ -17,7 +17,7 @@ This policy sets out what nobody may do on Rizq Rasan. It adds detail to section
 
 This policy applies to every organisation that uses Rizq Rasan and to everyone who acts for it: vendor owners and counter staff, NGO owners, the people allowed to pay for an NGO, and the collectors who carry its collector pass. Each organisation is responsible for what its people do on the platform and at pickups.
 
-Parts of it also apply to this website before launch. Don't send false details through our forms, send forms automatically, or try to break into or overload the site.
+Before launch, it already applies to creating an account and getting verified, and to this website: don't send false details through our forms, send forms automatically, or try to break into or overload the site.
 
 ## 2. Be who you say you are
 

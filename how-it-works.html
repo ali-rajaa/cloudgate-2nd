@@ -100,7 +100,7 @@ lead: A business lists good food it couldn't sell. A verified NGO claims it, pay
         </table>
       </div>
       <p>The countdown turns amber at 5 minutes and red at 2 minutes. Screen readers announce it at 10, 5, 2 and 1 minutes left, never every second.</p>
-      <div class="grid grid--4">
+      <div class="grid grid--2">
         <div class="card">
           <span class="card__icon">{% include icon.html name="clock" size=22 %}</span>
           <h3>At least 10 minutes to pay</h3>
@@ -110,16 +110,6 @@ lead: A business lists good food it couldn't sell. A verified NGO claims it, pay
           <span class="card__icon">{% include icon.html name="receipt" size=22 %}</span>
           <h3>Checkout needs 5 minutes</h3>
           <p>PayFast's payment page can only be opened with 5 or more minutes left, and it closes at the deadline.</p>
-        </div>
-        <div class="card">
-          <span class="card__icon">{% include icon.html name="shield" size=22 %}</span>
-          <h3>Still processing</h3>
-          <p>If the bank or wallet is still confirming when time runs out, the food stays held for up to 15 more minutes.</p>
-        </div>
-        <div class="card">
-          <span class="card__icon">{% include icon.html name="x" size=22 %}</span>
-          <h3>Missed the deadline</h3>
-          <p>The claim expires and the food goes back to other organisations. It isn't a strike, but 3 expired claims in 7 days pause claiming for 24 hours.</p>
         </div>
       </div>
       <div class="notice notice--info" role="note">
@@ -132,7 +122,7 @@ lead: A business lists good food it couldn't sell. A verified NGO claims it, pay
 
 <section class="section section--sunk" aria-labelledby="codes-title">
   <div class="container">
-    {% include section-head.html eyebrow="Pickup codes" title="Pickup codes" id="codes-title" lead="Food is handed over only when the vendor types in the code the NGO received after paying. That one step closes the order." %}
+    {% include section-head.html title="Pickup codes" id="codes-title" lead="Food is handed over only when the vendor types in the code the NGO received after paying. That one step closes the order." %}
     <div class="split">
       <ul class="check-list">
         <li>The code appears for the NGO as soon as its payment is confirmed, with the vendor's address, a map link and phone number. It stays readable on the phone if the signal is weak.</li>
@@ -176,7 +166,7 @@ lead: A business lists good food it couldn't sell. A verified NGO claims it, pay
 
 <section class="section section--sunk" aria-labelledby="problems-title">
   <div class="container">
-    {% include section-head.html eyebrow="When something goes wrong" title="When something goes wrong" id="problems-title" lead="Most orders go smoothly. When one doesn't, this is what happens, who gets their money back, and how fast we act." %}
+    {% include section-head.html title="When something goes wrong" id="problems-title" lead="If an order goes wrong, this is what happens, who gets their money back, and how fast we act." %}
     <div class="stack">
       <div class="table-wrap">
         <table>

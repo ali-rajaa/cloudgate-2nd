@@ -11,14 +11,14 @@ summary:
   - You can ask us to delete your data at any time, and we reply within 30 days.
   - What the law makes us keep is locked away from everyday use instead of being deleted.
 ---
-This policy sets out how long Rizq Rasan keeps the information it holds, and what happens when you ask us to delete it. It covers this website today and the platform that verified businesses and NGOs will use from launch. Read it with our [Privacy Policy]({{ '/legal/privacy/' | relative_url }}), which explains what we collect and why.
+This policy sets out how long Rizq Rasan keeps the information it holds, and what happens when you ask us to delete it. It covers this website and the platform, where accounts are open now and listing and claiming food start at launch. Read it with our [Privacy Policy]({{ '/legal/privacy/' | relative_url }}), which explains what we collect and why.
 
 ## 1. Our approach
 
 - **Only as long as needed.** We keep each kind of information only for as long as we need it for the reason we collected it, or for as long as the law requires.
 - **Tax law sets the longest period.** Section 174 of the Income Tax Ordinance 2001 requires business records to be kept for 6 years after the end of the tax year they relate to, and longer while tax proceedings are pending.
 - **We follow the draft data law.** As of October 2026, Pakistan has no data protection law in force, and the Personal Data Protection Bill (May 2023 draft) has not passed Parliament. We follow the draft's standard anyway, so nothing needs to change when a law is passed.
-- **Some periods are still to be set.** Where the table below says "set before launch", that period will be decided after legal review and published here before the platform opens.
+- **Some periods are still to be set.** Where the table below says "set before launch", that period will be decided after legal review and published here before launch.
 
 We never receive or store card numbers, or bank or wallet login details. NGOs pay on our payment gateway's own page or in their bank's app.
 
@@ -32,7 +32,7 @@ We never receive or store card numbers, or bank or wallet login details. NGOs pa
 
 This website sets no cookies and keeps no visitor records of its own. See our [Cookie Policy]({{ '/legal/cookies/' | relative_url }}).
 
-### The platform, from launch
+### The platform
 
 | Information | Why we keep it | How long |
 | --- | --- | --- |
@@ -65,7 +65,7 @@ Records of what people did for an organisation, such as claims they placed or ha
 
 ## 4. Asking us to delete your data
 
-Email {{ site.contact.email }} with "Privacy request" in the subject line, from the address on your account if you have one, and tell us what you would like deleted. Requests about an organisation's data must come from its owner or a signatory. From launch, you can also delete your personal account in your account settings. You can ask before launch too, for anything you sent through this website's forms.
+Email {{ site.contact.email }} with "Privacy request" in the subject line, from the address on your account if you have one, and tell us what you would like deleted. Requests about an organisation's data must come from its owner or a signatory. You can ask at any time, including about anything you sent through this website's forms. From launch, you will also be able to delete your personal account in My account.
 
 - **We check it's you.** We may ask you to confirm who you are before we act, so nobody else can delete your information.
 - **We reply within 30 days.** We tell you what we deleted, what we kept, and why.
@@ -89,4 +89,4 @@ If you are unhappy with how we handled your request, you can complain under our 
 
 ## 6. Changes to this policy
 
-Every period marked "set before launch" will be decided and published here before the platform opens. When we change this policy, we show the new version number and effective date at the top. We tell account holders about material changes by email at least 14 days before they take effect, as our [Terms of Service]({{ '/legal/terms/' | relative_url }}) explain.
+Every period marked "set before launch" will be decided and published here before launch. When we change this policy, we show the new version number and effective date at the top. We tell account holders about material changes by email at least 14 days before they take effect, as our [Terms of Service]({{ '/legal/terms/' | relative_url }}) explain.

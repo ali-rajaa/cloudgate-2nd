@@ -17,7 +17,7 @@ This agreement is between {{ site.company.legal_name }} ("Rizq Rasan", "we", "us
 
 - **The parties.** The agreement is made with your organisation, not with the person who accepts it. Our details are on the [Legal Information]({{ '/legal/company/' | relative_url }}) page.
 - **Who accepts it.** A person aged 18 or over who is allowed to act for your organisation, shown by an authority letter and your list of office bearers, accepts this agreement during onboarding. By accepting, they confirm they have that authority.
-- **Accepting online.** Under the Electronic Transactions Ordinance 2002, accepting online has the same effect as signing on paper. We record the version, language, time and IP address of your acceptance.
+- **Accepting online.** Under the Electronic Transactions Ordinance 2002, accepting online has the same effect as signing on paper. We record the version and time of your acceptance, and from launch also the language and your IP address.
 - **When it starts.** This agreement takes effect when we approve your organisation.
 - **Who you buy from.** When you pay for a claim, you buy the food from the vendor. Rizq Rasan is not the seller. We collect the payment as the vendor's agent, so paying us counts as paying the vendor.
 - **The pilot.** Organisations invited before launch sign separate pilot terms, which apply until this agreement takes effect for them. During the pilot, NGOs pay vendors directly and Rizq Rasan is not involved in the payment.

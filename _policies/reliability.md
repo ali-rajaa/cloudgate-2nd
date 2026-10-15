@@ -129,7 +129,7 @@ You can appeal:
 - **a strike, within 24 hours** of being told about it, including a no-show;
 - **a suspension, within 7 days** of being told about it.
 
-To appeal, use the link in the email about the strike or suspension, the Help and disputes screen in your account once accounts open, or write to {{ site.contact.email }}. Give the order reference, say what happened, and add anything that helps, such as photos, messages or a payment reference.
+To appeal, use the link in the email about the strike or suspension, the Help and disputes screen in your account, or write to {{ site.contact.email }}. Give the order reference, say what happened, and add anything that helps, such as photos, messages or a payment reference.
 
 A member of our team reviews every appeal and sends you the decision and the reason in writing.
 

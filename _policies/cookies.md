@@ -1,16 +1,16 @@
 ---
 title: Cookie Policy
 order: 12
-description: This website sets no cookies unless you read it in Urdu. From launch the platform uses essential cookies, and analytics only if you agree.
+description: This website sets no cookies unless you read it in Urdu. The platform at /app/ saves your sign-in in your browser, and will use analytics only if you agree.
 version: "0.1 (draft)"
 effective: from launch (22 March 2027)
 summary:
   - This website sets no cookies and runs no analytics or tracking tools. The only exception is the Urdu translation, and only if you ask for it.
   - Our pages load a typeface from Google Fonts, so Google receives your IP address.
-  - From launch, the platform will use essential cookies to keep you signed in and to protect your account.
+  - The platform at /app/ saves your sign-in in your browser to keep you logged in. This is essential, so it is always on.
   - Analytics cookies will stay off unless you turn them on, and we will never use advertising trackers.
 ---
-This policy explains how Rizq Rasan uses cookies and similar technologies: on this website today, and on the platform that verified businesses and NGOs will use from launch. Read it with our [Privacy Policy]({{ '/legal/privacy/' | relative_url }}), which explains what personal information we hold and why.
+This policy explains how Rizq Rasan uses cookies and similar technologies: on this website today, and on the platform at /app/, where businesses and NGOs create accounts now and list and claim food from launch. Read it with our [Privacy Policy]({{ '/legal/privacy/' | relative_url }}), which explains what personal information we hold and why.
 
 ## 1. What cookies are
 
@@ -20,9 +20,9 @@ Cookies set by the site you are visiting are first-party cookies. Cookies set by
 
 ## 2. This website today
 
-This website is a set of plain pages hosted on GitHub Pages. It has no log in, no accounts and no payments.
+The public pages of this website are plain pages hosted on GitHub Pages. Accounts and logging in are on the platform at /app/ (section 4).
 
-- **No cookies by default.** This website does not set any cookies or save anything in your browser's storage. The one exception is if you choose to read it in Urdu (see section 3).
+- **No cookies by default.** The public pages set no cookies and save nothing in your browser's storage. They only check whether the platform has saved a sign-in on this device, so the header can show your account menu instead of Log in. The one exception is if you choose to read it in Urdu (see section 3).
 - **No analytics or tracking.** We don't use visitor counters, analytics, advertising or social media tracking tools, so we don't know which pages you read.
 - **No cookie banner.** Nothing is set unless you press the Urdu button yourself, so you won't see one.
 - **Forms.** The contact and partner forms don't set cookies either. When you send one, your email app opens with a pre-filled message to us or, once we connect a form service, your details reach us through that provider. Our [Privacy Policy]({{ '/legal/privacy/' | relative_url }}) explains what happens to them.
@@ -53,9 +53,9 @@ The "اردو" button at the top of each page translates the page into Urdu usin
 
 The translation is automatic and may contain mistakes. The English text is always the official version. Google handles what it receives under its own privacy policy.
 
-## 4. The platform from launch
+## 4. The platform
 
-From launch, verified businesses and NGOs will sign in to Rizq Rasan to list, claim, pay for and collect food. The platform will need a few cookies to do that, and we will keep to three rules:
+Businesses and NGOs log in to the platform at /app/ to set up their account and get verified, and from launch to list, claim, pay for and collect food. The platform needs a few cookies to do that, and we keep to three rules:
 
 - **Only essential cookies by default.** These keep you signed in and protect your account. The platform cannot work without them, so they are always on.
 - **Analytics only if you agree.** Analytics cookies stay off until you turn them on.
@@ -65,18 +65,25 @@ These are the cookie categories we plan to use:
 
 | Category | What it is for | Set by | Your choice |
 | --- | --- | --- | --- |
-| Essential | Keeping you signed in as you move between screens, until you sign out | Rizq Rasan | Always on |
+| Essential | Keeping you logged in as you move between screens, until you log out | Rizq Rasan | Always on |
 | Essential | Protecting sign-in and forms from bots and forged requests, including a bot check on sign-up, sign-in and password reset | Rizq Rasan, with the bot check provided by Cloudflare Turnstile | Always on |
 | Essential | Remembering your answer about analytics cookies, so we don't ask on every visit | Rizq Rasan | Always on |
 | Essential | Keeping your latest order and its pickup code readable on your phone when the signal drops | Rizq Rasan, in your device's storage | Always on |
 | Analytics | Showing us how screens are used, such as where people leave a step unfinished, so we can fix problems. Anything you type into a form is masked before it is sent | PostHog, our planned analytics provider | Off unless you turn it on |
 | Advertising | Not used | Nobody | Never |
 
-Before the platform opens, we will add the name of each cookie and how long it lasts to this page.
+The platform stores these in your browser today:
+
+| Name | Where | What it is for | How long |
+| --- | --- | --- | --- |
+| `sb-…-auth-token` | Local storage | Keeps you logged in | Until you log out |
+| `sb-…-auth-token-code-verifier` | Local storage | Checks the link in a sign-up or password reset email | Until the link is used |
+| `rr-pending-org` | Local storage | Holds the account type, organisation name and mobile number you entered at sign-up | Until your account is set up |
+| `rr-email`, `rr-after-login` and other `rr-` items | Session storage | Remembers your email, where you were going and your filters between screens | Until you close the tab |
 
 ### Choosing on the platform
 
-The first time you open the platform, a banner will ask whether you accept analytics cookies. Saying no will be as easy as saying yes, and only essential cookies are used until you choose. A "Cookie settings" link in the platform's footer will reopen the banner, so you can change your mind at any time. If you turn analytics off, we stop collecting analytics from your browser from that moment.
+If we add analytics, a banner will ask whether you accept analytics cookies. Saying no will be as easy as saying yes, and only essential cookies are used until you choose. A "Cookie settings" link in the platform's footer will reopen the banner, so you can change your mind at any time. If you turn analytics off, we stop collecting analytics from your browser from that moment.
 
 ### Other services you will meet
 
@@ -88,7 +95,7 @@ The first time you open the platform, a banner will ask whether you accept analy
 
 - **In your browser.** Most browsers let you see the cookies a site has set, delete them, and block them for one site or for all sites. Look under privacy or site data in your browser's settings. A private or incognito window deletes its cookies when you close it.
 - **On this website,** blocking cookies changes nothing, because we don't set any.
-- **On the platform,** you can use the "Cookie settings" link to turn analytics on or off. If you block essential cookies, you won't be able to stay signed in and some screens won't work.
+- **On the platform,** once analytics are added, a "Cookie settings" link will let you turn them on or off. If you block site data, you won't be able to stay logged in and some screens won't work.
 - **Google Fonts** can be blocked as described in section 3.
 - **Google Translate** only loads if you press the Urdu button. Press "English" to switch back and delete its cookie.
 

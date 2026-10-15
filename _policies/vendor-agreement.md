@@ -17,7 +17,7 @@ This agreement is between {{ site.company.legal_name }} ("Rizq Rasan", "we", "us
 
 - **The parties.** The agreement is made with your business, not with the person who accepts it. Our details are on the [Legal Information]({{ '/legal/company/' | relative_url }}) page.
 - **Who accepts it.** A person aged 18 or over who is allowed to act for your business, shown by a board resolution or authority letter. By accepting, they confirm that authority.
-- **Accepting online.** Under the Electronic Transactions Ordinance 2002, accepting online has the same effect as signing on paper. We record the version, language, time and IP address of your acceptance.
+- **Accepting online.** Under the Electronic Transactions Ordinance 2002, accepting online has the same effect as signing on paper. We record the version and time of your acceptance, and from launch also the language and your IP address.
 - **When it starts.** When we approve your business. You can prepare drafts before then, but not publish them.
 - **The pilot.** Partners invited before launch sign separate pilot terms, which apply until this agreement takes effect for them. During the pilot, NGOs pay vendors directly, no commission is charged and Rizq Rasan is not involved in the payment.
 

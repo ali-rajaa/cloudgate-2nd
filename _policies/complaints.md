@@ -5,13 +5,13 @@ description: How to complain to Rizq Rasan or report a problem with an order, ho
 version: "0.1 (draft)"
 effective: from launch (22 March 2027)
 summary:
-  - Complain by email or through our contact form. Once accounts open, you can also report a problem from your account.
+  - Complain by email or through our contact form. From launch, you can also report a problem with an order from your account.
   - We acknowledge complaints within 1 working day and aim to resolve them within 5 working days.
   - Order disputes are acknowledged within 4 working hours and decided within 48 hours, or within 24 hours for food safety.
   - We decide on the evidence from both sides and send our decision, with reasons, to both.
   - If you are not satisfied, our grievance officer reviews it. Mediation and the courts at Islamabad come after that.
 ---
-This policy explains how to complain to Rizq Rasan, how to report a problem with an order, how quickly we respond, how we decide and what you can do if you disagree. It applies to vendors, NGOs and anyone else who deals with us. You can use it today, for example about this website or about how we handled details you sent us through a form.
+This policy explains how to complain to Rizq Rasan, how to report a problem with an order, how quickly we respond, how we decide and what you can do if you disagree. It applies to vendors, NGOs and anyone else who deals with us. You can use it today, for example about this website, your account or verification, or how we handled details you sent us.
 
 ## 1. What this policy covers
 
@@ -29,7 +29,7 @@ Complaining is free. You can reach us:
 - **Through our [contact page]({{ '/contact/' | relative_url }}),** choosing "Complaint" as the topic.{% if site.contact.whatsapp != "" %}
 - **On WhatsApp** at {{ site.contact.whatsapp }}.{% endif %}{% if site.company.registered_office != "" %}
 - **By post** to the Grievance Officer, {{ site.company.legal_name }}, {{ site.company.registered_office }}.{% endif %}
-- **In your account,** once accounts open. The Help and disputes screen lets you open a ticket or a dispute, add photos, see our replies and appeal a decision.
+- **In your account,** from launch. The Help and disputes screen will let you open a ticket or a dispute, add photos, see our replies and appeal a decision.
 
 For a problem with an order, report it from the order itself, or from the collector pass at pickup (section 6). That is the fastest route, because it links your report to the order's records.
 

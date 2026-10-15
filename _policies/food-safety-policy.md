@@ -144,7 +144,7 @@ An NGO that cooks or reheats food may need its own Islamabad Food Authority lice
 
 - **NGOs** report a problem on the order within 24 hours of pickup, with what went wrong, up to 3 photos, the quantity received and the time. Food-safety cases go to the top of our queue, and if someone may be ill, the form shows an emergency number. Collectors can also report from the collector pass.
 - **Vendors** must tell us within 24 hours about any food incident or any action by the Islamabad Food Authority.
-- **Anyone** can email us at {{ site.contact.email }}{% if site.contact.whatsapp != "" %} or message us on WhatsApp at {{ site.contact.whatsapp }}{% endif %}, including before the platform opens.
+- **Anyone** can email us at {{ site.contact.email }}{% if site.contact.whatsapp != "" %} or message us on WhatsApp at {{ site.contact.whatsapp }}{% endif %}, including before launch.
 
 We expect most pickups between 8 pm and midnight, so one member of our team will be on call every evening to handle food-safety cases.
 

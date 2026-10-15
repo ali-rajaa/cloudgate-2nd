@@ -10,7 +10,7 @@ summary:
   - Rizq Rasan keeps 5% of the listing price, services tax included. Vendors receive 95%, less any tax withheld by law, in payouts every Monday and Thursday.
   - Every refund case is set out below. Whoever causes a refund bears the gateway's fee, and an NGO that doesn't turn up gets no refund.
 ---
-This policy explains how money will move on Rizq Rasan once the platform opens: how NGOs pay, what we keep, when vendors are paid, and what happens to the money when an order goes wrong. It forms part of our [Terms of Service]({{ '/legal/terms/' | relative_url }}) and applies alongside the [Vendor Agreement]({{ '/legal/vendor-agreement/' | relative_url }}) and the [NGO Agreement]({{ '/legal/ngo-agreement/' | relative_url }}). During the pilot, payments work differently, as section 12 explains.
+This policy explains how money will move on Rizq Rasan from launch: how NGOs pay, what we keep, when vendors are paid, and what happens to the money when an order goes wrong. It forms part of our [Terms of Service]({{ '/legal/terms/' | relative_url }}) and applies alongside the [Vendor Agreement]({{ '/legal/vendor-agreement/' | relative_url }}) and the [NGO Agreement]({{ '/legal/ngo-agreement/' | relative_url }}). During the pilot, payments work differently, as section 12 explains.
 
 ## 1. Our role in payments
 

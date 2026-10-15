@@ -6,12 +6,12 @@ version: "0.1 (draft)"
 effective: from launch (22 March 2027)
 summary:
   - This website sets no cookies and runs no analytics, unless you choose the automatic Urdu translation. Its forms only send your details to us so we can reply.
-  - From launch, we collect what we need to verify organisations, run orders and pay vendors. We never see card, bank or wallet login details.
+  - We collect what we need to verify organisations, run orders and pay vendors. We never see card, bank or wallet login details.
   - Other users see only what a pickup needs. CNICs, documents and bank details are seen only by our team, and vendors never see an NGO's address.
   - Platform data is stored outside Pakistan. Verification and payment records are kept for the life of the account plus 6 years.
   - You can ask to see, correct or delete your data, and we will tell you within 72 hours of confirming a breach that affects you.
 ---
-This policy explains how Rizq Rasan handles personal data: what we collect, why, who sees it, where it is kept, for how long, and what you can ask us to do. Section 2 covers this website and applies now. The rest covers the platform that opens to verified businesses and organisations at launch on 22 March 2027. If your organisation joins the pilot before launch, the platform sections apply to you from the day you join. Please read this policy with our [Terms of Service]({{ '/legal/terms/' | relative_url }}) and [Cookie Policy]({{ '/legal/cookies/' | relative_url }}).
+This policy explains how Rizq Rasan handles personal data: what we collect, why, who sees it, where it is kept, for how long, and what you can ask us to do. Section 2 covers this website's public pages. The rest covers the platform at /app/ and applies to you from the day you create an account. Listing and claiming food start at launch on 22 March 2027. Please read this policy with our [Terms of Service]({{ '/legal/terms/' | relative_url }}) and [Cookie Policy]({{ '/legal/cookies/' | relative_url }}).
 
 ## 1. Who we are
 
@@ -23,41 +23,39 @@ This policy explains how Rizq Rasan handles personal data: what we collect, why,
 | SECP registration number | {{ site.company.secp_number | default: "Given here once the company is incorporated" }} |
 | Registered office | {{ site.company.registered_office | default: "Given here once the company is incorporated" }} |
 | Privacy contact | {{ site.contact.email }} |
-| Grievance officer | {{ site.company.grievance_officer | default: "Named here once the company is incorporated" }} |
+| Grievance officer | {{ site.company.grievance_officer | default: "Named here before launch" }} |
 
 "Personal data" means information about an identifiable person, such as a name, phone number, CNIC number or IP address. The platform mostly holds data about organisations, but this policy also covers the people who act for them: owners, staff, signatories, collectors and payers.
 
 ## 2. This website today
 
-This website is a set of information pages. It has no accounts and nothing to sign in to.
+The public pages of this website are information pages. Accounts and logging in are on the platform at /app/, which the rest of this policy covers.
 
-- **No cookies and no tracking.** It sets no cookies and uses no analytics, advertising or tracking tools. Our [Cookie Policy]({{ '/legal/cookies/' | relative_url }}) explains what will change on the platform.
+- **No cookies and no tracking.** It sets no cookies and uses no analytics, advertising or tracking tools. Our [Cookie Policy]({{ '/legal/cookies/' | relative_url }}) explains what the platform saves in your browser to keep you logged in.
 - **Fonts.** Headings use a font loaded from Google Fonts. To send it, Google receives your IP address and basic details about your browser.
 - **Urdu translation.** If you press the "اردو" button, Google Translate translates the page. Google receives your IP address, browser details and the page text, and sets a `googtrans` cookie to remember your choice until you switch back to English. Nothing loads unless you press the button. The translation is automatic, and the English text is the official version.
 - **Hosting.** GitHub hosts this website. Like any web host, it receives your IP address when your browser asks for a page. We do not receive those records.
 
 ### The forms
 
-The register-your-interest forms for businesses and NGOs, the partner form and the contact form ask for:
+The partner form and the contact form ask for:
 
 | Form | What it asks for |
 | --- | --- |
-| Business | Business name and type, your name, email and mobile number, and if you choose, when you usually have surplus, your area of Islamabad and a message |
-| NGO | Organisation name and type, your name, email and mobile number, and if you choose, how many people you serve each day, your area of Islamabad and a message |
 | Partner | Organisation, your name and email, how you would like to work with us, and if you choose, your mobile number |
 | Contact | Your name and email, the topic and your message, and if you choose, your mobile number |
 
 {% if site.forms.endpoint != "" %}When you send a form, your details go through our form service provider, which passes them on to us.{% else %}When you send a form, your own email app opens with a message to us that already holds your details. Nothing reaches us until you send that email, and it travels through your email provider and ours.{% endif %} If you email us directly, we receive your email address and what you write.
 
-We use these details only to reply to you, to keep a list of organisations that want to join, to invite some to the pilot, and to plan where in Islamabad to start. Ticking the box on a form means you agree to us contacting you about your request. Sending a form does not create an account. We don't sell these details, and we won't send you marketing unless you ask for it.
+We use these details only to reply to you and deal with your request, such as a partnership or a place in the pilot. Ticking the box on a form means you agree to us contacting you about your request. Sending a form does not create an account. We don't sell these details, and we won't send you marketing unless you ask for it.
 
-## 3. What the platform will collect
+## 3. What the platform collects
 
-From launch, we will collect the following. We ask only for what we need to verify organisations, run orders, move money and keep food safe.
+We collect account, organisation, verification and signatory details from the day you create an account, and the rest once listing and claiming start. We ask only for what we need to verify organisations, run orders, move money and keep food safe.
 
 | Type | What it includes |
 | --- | --- |
-| Account | Name, email, mobile number, password (stored only in scrambled form), language, role and last sign-in. If you sign in with Google, Google shares your name and email with us |
+| Account | Name, email, mobile number, password (stored only in scrambled form), language, role and last sign-in. If we add sign-in with Google and you use it, Google will share your name and email with us |
 | Organisation | Legal and trading name, type, registration route and number, NTN and Active Taxpayer List status, contact person, opening hours and usual surplus times. For NGOs, also the number of people served each day and the trust tier |
 | Verification documents | Registration documents, NTN, licences, authority letter or board resolution, bank certificate, address proof and any halal certificate, with expiry dates and the result of our checks. Our [Verification Policy]({{ '/legal/verification/' | relative_url }}) lists them |
 | Signatories | The name and CNIC number of each person who signs for an organisation, a copy of their CNIC, and the result of our sanctions screening |
@@ -65,9 +63,9 @@ From launch, we will collect the following. We ask only for what we need to veri
 | Listings and photos | Food details, quantity, price, times, allergens and halal status, and 1 to 3 photos per listing |
 | Orders | Who claimed, the collector, the payment deadline, the pickup code (stored encrypted), the quantity handed over, confirmations, reliability events and strikes |
 | Collectors and payers | Each collector's name and mobile number, and the name, contact details and payment method of the up to 3 people allowed to pay for an NGO |
-| Payments and payouts | PayFast references, amount, method, status and refunds. For vendors, the payout bank account (IBAN, stored encrypted) and account title, commission, tax withheld and payout statements |
+| Payments and payouts | PayFast references, amount, method, status and refunds. For vendors, the payout bank account (IBAN) and account title, commission, tax withheld and payout statements |
 | Messages and reports | Problem reports, disputes, appeals and help requests, with the text and photos you add |
-| Policy acceptances | Which version of each policy a person accepted, in which language, when, and from which IP address |
+| Policy acceptances | Which version of each policy a person accepted and when. From launch, also in which language and from which IP address |
 | Device and log data | IP address, browser and device type, sign-in events, error reports, a record of each message we send and whether it arrived, and an audit log of changes. Product analytics only if you agree |
 
 **What we never collect.** You pay on PayFast's own page or in your bank's app, so we never receive card numbers, bank or wallet logins, PINs or one-time codes. We do not collect personal details of the people an NGO serves. Food photos are shrunk on your phone before upload, which also removes location data from them. Your phone's live location is used for the search and is not stored.
@@ -177,10 +175,10 @@ The full schedule, and how to ask for deletion, are in our [Data Retention]({{ '
 
 ## 8. How we protect it
 
-- Every connection is encrypted. Documents, CNIC numbers and bank account numbers are encrypted when stored, and CNICs and bank numbers are shown masked.
-- Documents sit in private storage and open only through 5-minute links, and every view is logged.
+- Every connection is encrypted. From launch, documents, CNIC numbers and bank account numbers will also be encrypted when stored, and CNICs and bank numbers will be shown masked.
+- Documents sit in private storage and open only through 5-minute links. From launch, every view will be logged.
 - Access rules inside the database cover every table, so one organisation cannot see another's data even if a screen has a fault.
-- Admins sign in with an authenticator app. Payout batches and refunds above Rs 10,000 need a second admin, and an audit log that nobody can edit or delete records every admin action and money movement.
+- From launch, admins will sign in with an authenticator app. Payout batches and refunds above Rs 10,000 need a second admin, and an audit log that nobody can edit or delete records every admin action and money movement.
 - We keep daily backups and a nightly encrypted copy elsewhere, test restoring them every quarter, and never copy real data into test systems.
 
 Food photos are stored so they load quickly, which means anyone with a photo's exact link could open it. That is one more reason photos must show only food. No system is perfectly secure. Our [Security and Responsible Disclosure]({{ '/legal/security/' | relative_url }}) policy explains how to report a weakness.
@@ -200,7 +198,7 @@ You can ask us to:
 - **stop a use based on legitimate interest**, including any marketing, unless we need it to keep the platform safe or to meet the law, in which case we explain why;
 - **hear a complaint** through our grievance officer (section 13).
 
-To use a right, email {{ site.contact.email }} with "Privacy request" in the subject line, from the address on your account if you have one. From launch, you can also correct your details and delete your personal account in your account settings. We may ask you to confirm who you are first. We reply within 30 days, and if we can't do all you asked, we explain why. Requests about an organisation's data must come from its owner or a signatory.
+To use a right, email {{ site.contact.email }} with "Privacy request" in the subject line, from the address on your account if you have one. You can also correct your name and mobile number in My account. From launch, you will also be able to delete your personal account there. We may ask you to confirm who you are first. We reply within 30 days, and if we can't do all you asked, we explain why. Requests about an organisation's data must come from its owner or a signatory.
 
 ## 11. Children
 
@@ -212,6 +210,6 @@ We will email account holders about material changes at least 14 days before the
 
 ## 13. Contact and grievance officer
 
-{% if site.company.grievance_officer != "" %}Our grievance officer is {{ site.company.grievance_officer }}, who handles privacy requests and complaints.{% else %}We will name our grievance officer here once the company is incorporated. Until then, our founders handle privacy requests and complaints.{% endif %} Email {{ site.contact.email }}. We reply {{ site.contact.reply_time }}, {{ site.contact.hours }}.{% if site.contact.whatsapp != "" %} You can also message us on WhatsApp at {{ site.contact.whatsapp }}.{% endif %} You can also write to us through our [contact page]({{ '/contact/' | relative_url }}).
+{% if site.company.grievance_officer != "" %}Our grievance officer is {{ site.company.grievance_officer }}, who handles privacy requests and complaints.{% else %}We will name our grievance officer here before launch. Until then, our founders handle privacy requests and complaints.{% endif %} Email {{ site.contact.email }}. We reply {{ site.contact.reply_time }}, {{ site.contact.hours }}.{% if site.contact.whatsapp != "" %} You can also message us on WhatsApp at {{ site.contact.whatsapp }}.{% endif %} You can also write to us through our [contact page]({{ '/contact/' | relative_url }}).
 
 Complaints are acknowledged within 1 working day and resolved within 5 working days, as our [Complaints and Disputes]({{ '/legal/complaints/' | relative_url }}) policy explains. Requests to use your rights are answered within 30 days. If the Personal Data Protection Bill becomes law and creates a regulator, you will also be able to complain to it, and we will add its details here.

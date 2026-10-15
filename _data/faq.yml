@@ -44,7 +44,7 @@
       a: >-
         A small recovery price covers the vendor's packing and handover time, which keeps them
         listing food instead of throwing it away. Prices are capped at half of retail value, so you
-        always save at least 50%.
+        always save at least 50%. Rizq Rasan's 5% comes out of that price, not on top.
     - q: How much can we claim?
       a: >-
         New organisations start with up to 2 claims a day. After the first month or 10 completed
@@ -115,5 +115,5 @@
         exactly what, and only that part needs redoing.
     - q: Who can see our documents?
       a: >-
-        Only Rizq Rasan's verification team. Documents are stored privately, every view is logged,
+        Only Rizq Rasan's verification team. Documents are stored privately, every view will be logged from launch,
         and they are never shown to other users.

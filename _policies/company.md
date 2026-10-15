@@ -67,5 +67,5 @@ All our policies are listed on the [policies page]({{ '/legal/' | relative_url }
 
 - Every policy stays a draft until a Pakistani lawyer has reviewed it before launch.
 - The English text is binding. Any Urdu summary is there to help you understand it.
-- From launch, we keep every version of every policy, and record which version each person accepted, in which language, when, and from which IP address.
+- We keep every version of every policy, and record which version each person accepted and when. From launch, we will also record the language and the IP address.
 - We email organisations about material changes at least 14 days before they take effect.

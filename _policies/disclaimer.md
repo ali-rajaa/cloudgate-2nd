@@ -11,7 +11,7 @@ summary:
   - Impact numbers are estimates, worked out from the weight of food collected using published factors.
   - We don't control the other websites we link to, and a link is not an endorsement.
 ---
-This disclaimer explains the limits of what Rizq Rasan does, and what you can and can't rely on in the information on this website and, from launch, on the platform. Read it with sections 14 and 15 of our [Terms of Service]({{ '/legal/terms/' | relative_url }}).
+This disclaimer explains the limits of what Rizq Rasan does, and what you can and can't rely on in the information on this website and on the platform. Read it with sections 14 and 15 of our [Terms of Service]({{ '/legal/terms/' | relative_url }}).
 
 ## 1. This website describes a planned service
 

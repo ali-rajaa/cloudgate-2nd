@@ -11,7 +11,7 @@ summary:
   - Food safety sits with the vendor until handover and with the NGO after it. Our liability is limited, subject to legal review.
   - Pakistani law applies, mediation is offered first, and the courts at Islamabad decide disputes.
 ---
-These terms set out the rules for using Rizq Rasan: this website now, and the platform that will open to verified businesses and organisations from launch. Please read them with the policies they link to. Vendors also agree to the [Vendor Agreement]({{ '/legal/vendor-agreement/' | relative_url }}), and NGOs to the [NGO Agreement]({{ '/legal/ngo-agreement/' | relative_url }}). If an agreement and these terms disagree on a point, the agreement wins for that point.
+These terms set out the rules for using Rizq Rasan: this website, and the platform, where accounts are open now and listing and claiming food start at launch. Please read them with the policies they link to. Vendors also agree to the [Vendor Agreement]({{ '/legal/vendor-agreement/' | relative_url }}), and NGOs to the [NGO Agreement]({{ '/legal/ngo-agreement/' | relative_url }}). If an agreement and these terms disagree on a point, the agreement wins for that point.
 
 ## 1. Who we are
 
@@ -28,7 +28,7 @@ These terms set out the rules for using Rizq Rasan: this website now, and the pl
 
 In these terms, "we", "us" and "Rizq Rasan" mean {{ site.company.legal_name }}. "You" means the organisation using Rizq Rasan and the people who act for it. A "vendor" is a food business that lists food. An "NGO" is a non-profit organisation that claims food for the people it serves. Our full company details are on the [Legal Information]({{ '/legal/company/' | relative_url }}) page.
 
-## 2. This website before launch
+## 2. Before launch
 
 Accounts are open, but Rizq Rasan is not trading yet: listing and claiming food start at public launch in Islamabad, planned for 22 March 2027. Until then:
 
@@ -66,7 +66,7 @@ We can refuse an application, and we explain why when we do.
 - **Verification.** We aim to decide on a complete application within 2 working days. If something is missing, only that part needs redoing. We re-check every organisation every 12 months and when a document expires.
 - **Roles.** A vendor owner can invite counter staff with a pickup-only role. An NGO can name 1 to 5 collectors, who get a collector pass instead of a login, and up to 3 people allowed to pay for it.
 - **Keep it accurate and secure.** Keep your details, documents and payout or payment details up to date. Keep your login details private, and tell us at once if you think someone else has used them. You are responsible for what is done through your organisation's accounts and collector passes.
-- **Acceptance records.** When you accept a policy, we record which version you accepted, in which language, the time and your IP address. Under the Electronic Transactions Ordinance 2002, accepting online has the same effect as signing on paper.
+- **Acceptance records.** When you accept a policy, we record which version you accepted and the time. From launch, we will also record the language and your IP address. Under the Electronic Transactions Ordinance 2002, accepting online has the same effect as signing on paper.
 
 ## 6. Listings and prices
 

@@ -147,7 +147,7 @@ Later, Rizq Rasan may offer pay-later invoices to Tier A NGOs with a strong reli
 
 ## 10. Who can see your documents
 
-- **Only our verification team.** Your documents are stored privately and never shown to other vendors, NGOs or the public. Our team opens them only through links that expire after 5 minutes, and every view is logged.
+- **Only our verification team.** Your documents are stored privately and never shown to other vendors, NGOs or the public. Our team opens them only through links that expire after 5 minutes. From launch, every view will be logged.
 - **CNICs are protected.** CNIC numbers are encrypted and shown masked, for example 61101-XXXXXXX-1.
 - **What you see.** After you upload a document, your account shows its review status, and you can replace it.
 - **What other organisations see.** Other organisations see that you are verified, and your reliability badge. They never see your documents. An NGO's address is never shown to vendors.

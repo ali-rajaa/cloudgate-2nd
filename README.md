@@ -4,12 +4,12 @@ Rizq Rasan (رزق رسان) connects Islamabad's food businesses that have good
 
 This repository holds two things:
 
-- **The public website** (Jekyll, deployed to GitHub Pages): marketing pages, 16 policies, and "register your interest" forms.
-- **The platform** at `/app/`: accounts for businesses, NGOs and admins, listing and claiming food, payments, pickups and payouts. The screens are static files on the same site; the data, rules and timers live in [Supabase](https://supabase.com) (`supabase/`). Until a Supabase project is connected, `/app/` says accounts open at launch.
+- **The public website** (Jekyll, deployed to GitHub Pages): marketing pages, 16 policies, and the contact and partner forms.
+- **The platform** at `/app/`: accounts for businesses, NGOs and admins, listing and claiming food, payments, pickups and payouts. The screens are static files on the same site; the data, rules and timers live in [Supabase](https://supabase.com) (`supabase/`). Until a Supabase project is connected, `/app/` says sign-in is switched off on this copy of the site.
 
 ## What's in it
 
-- **13 main pages.** The marketing pages are Home, How it works, For businesses, For NGOs, Pricing, Impact, The problem, About, Food safety, Partners, FAQ and Contact. There is also Join, which picks the right sign-up form.
+- **12 main pages.** The marketing pages are Home, How it works, For businesses, For NGOs, Pricing, Impact, The problem, About, Food safety, Partners, FAQ and Contact. `/join/` only redirects to sign-up in the app.
 - **Policies.** There is a hub at `/legal/` and 16 policy pages in `_policies/`, including Terms, Privacy, the Vendor and NGO agreements, Payments and refunds, and Food safety. All of them are marked as drafts until a Pakistani lawyer has reviewed them.
 - **Error and SEO files.** There is a 404 page, plus `sitemap.xml` and `robots.txt`.
 
@@ -67,8 +67,14 @@ Everything below lives in `_config.yml` unless noted. The site already hides or 
   - figures marked `home: true` are shown on Home.
 - [ ] **Policies** (`_policies/`):
   - have a Pakistani lawyer review every policy;
+  - confirm the effective dates now that accounts are open (people accept the Terms, Privacy Policy and their agreement at sign-up);
   - then update `version` and `effective` in each file's front matter;
   - the draft notice comes from `_layouts/policy.html`, so remove it there.
+- [ ] **Security and records promised for launch** (the policies say "from launch" until these exist):
+  - require an authenticator app (TOTP, `aal2`) for admins;
+  - log every view of a verification document;
+  - encrypt stored documents, CNIC numbers and IBANs, and mask them in the admin screens;
+  - record the language and IP address with each policy acceptance (`policy_acceptances`, `accept_policies`).
 - [ ] **Partners**: replace the placeholder slots on Home and `/partners/` with partners who have agreed in writing.
 - [ ] **Photos**: the example listing uses a drawn placeholder. Swap in real Islamabad photos when you have them.
 - [ ] **Name check**: check the "Rizq Rasan" name with a lawyer before printing anything.

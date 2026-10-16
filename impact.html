@@ -28,45 +28,47 @@ lead: Every completed pickup will add to four public totals. This page explains 
 {%- endif %}
 
 <section class="section" aria-labelledby="method-title">
-  <div class="container">
+  <div class="container offset">
     {% include section-head.html eyebrow="Method" title="How each number is worked out" id="method-title" lead="Every number starts from the weight of food collected, and the others are worked out from it with published factors. Totals come straight from completed orders, so nobody types them in by hand." %}
-    <div class="grid grid--2">
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="leaf" size=22 %}</span>
-        <h3>Kilograms of food rescued</h3>
-        <p>Every listing carries the vendor's estimate of its weight, with a helper that suggests a figure: 40 naan is about 6 kg. A weight more than 3 times the helper's estimate sends the listing to our team for review.</p>
-        <p>A listing counts only once its pickup code has been entered at handover and the order is completed. Food that expires, is cancelled or isn't collected adds nothing.</p>
+    <div>
+      <ul class="ledger">
+        <li>
+          {% include icon.html name="leaf" size=20 %}
+          <h3>Kilograms of food rescued</h3>
+          <p>Every listing carries the vendor's estimate of its weight, with a helper that suggests a figure: 40 naan is about 6 kg. A weight more than 3 times the helper's estimate sends the listing to our team for review.</p>
+          <p>A listing counts only once its pickup code has been entered at handover and the order is completed. Food that expires, is cancelled or isn't collected adds nothing.</p>
+        </li>
+        <li>
+          {% include icon.html name="heart" size=20 %}
+          <h3>Meal equivalents</h3>
+          <p>One meal for every 420 g of food. This follows <a href="https://wrap.ngo/system/files/2020-09/WRAP-Expressing%20redistributed%20food%20surplus%20as%20meal%20equivalents%20%28WRAP%20guidance%29.pdf" rel="noopener">WRAP's meal-equivalent guidance</a>, the most cautious published factor.</p>
+          <p>Where a vendor lists portions, we count the portions, but never more than the weight divided by 0.42 kg, so small portions can't inflate the count. A meal equivalent measures an amount of food. It isn't a claim about a balanced meal.</p>
+        </li>
+        <li>
+          {% include icon.html name="globe" size=20 %}
+          <h3>CO2e avoided</h3>
+          <p>2.5 kg of CO2e for every kg of food. It comes from <a href="https://fao.org/4/i3347e/i3347e.pdf" rel="noopener">FAO's Food Wastage Footprint</a>, which puts the footprint of 1.3 billion tonnes of wasted food at 3.3 billion tonnes of CO2e.</p>
+          <p>It's an average across all kinds of food, so treat it as an estimate rather than a measurement. CO2e means greenhouse gas counted as the amount of carbon dioxide with the same warming effect.</p>
+        </li>
+        <li>
+          {% include icon.html name="receipt" size=20 %}
+          <h3>Rupees saved by NGOs</h3>
+          <p>The food's retail value minus the price the NGO paid. Vendors state the retail value on every listing, and the price can be at most half of it, so an NGO always saves at least half of what the food would cost in the shop.</p>
+        </li>
+        <li>
+          {% include icon.html name="users" size=20 %}
+          <h3>Active partners</h3>
+          <p>The verified vendors and NGOs taking part through completed orders. We'll state the exact period it covers alongside the first published totals.</p>
+        </li>
+        <li>
+          {% include icon.html name="shield" size=20 %}
+          <h3>Who publishes them</h3>
+          <p>The public numbers change only when someone on our team checks and publishes them, once a week. Weight is always shown next to meals, so you can see what each figure rests on.</p>
+        </li>
+      </ul>
+      <div class="section-link">
+        <div class="notice notice--warning" role="note">{% include icon.html name="alert" size=20 %}<p>These are estimates. Weights are entered by vendors, and the meal and carbon factors are published averages, not measurements of each pickup. Read our <a href="{{ '/legal/disclaimer/' | relative_url }}">disclaimer</a> for what the numbers can and can't tell you.</p></div>
       </div>
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="heart" size=22 %}</span>
-        <h3>Meal equivalents</h3>
-        <p>One meal for every 420 g of food. This follows <a href="https://wrap.ngo/system/files/2020-09/WRAP-Expressing%20redistributed%20food%20surplus%20as%20meal%20equivalents%20%28WRAP%20guidance%29.pdf" rel="noopener">WRAP's meal-equivalent guidance</a>, the most cautious published factor.</p>
-        <p>Where a vendor lists portions, we count the portions, but never more than the weight divided by 0.42 kg, so small portions can't inflate the count. A meal equivalent measures an amount of food. It isn't a claim about a balanced meal.</p>
-      </div>
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="globe" size=22 %}</span>
-        <h3>CO2e avoided</h3>
-        <p>2.5 kg of CO2e for every kg of food. It comes from <a href="https://fao.org/4/i3347e/i3347e.pdf" rel="noopener">FAO's Food Wastage Footprint</a>, which puts the footprint of 1.3 billion tonnes of wasted food at 3.3 billion tonnes of CO2e.</p>
-        <p>It's an average across all kinds of food, so treat it as an estimate rather than a measurement. CO2e means greenhouse gas counted as the amount of carbon dioxide with the same warming effect.</p>
-      </div>
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="receipt" size=22 %}</span>
-        <h3>Rupees saved by NGOs</h3>
-        <p>The food's retail value minus the price the NGO paid. Vendors state the retail value on every listing, and the price can be at most half of it, so an NGO always saves at least half of what the food would cost in the shop.</p>
-      </div>
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="users" size=22 %}</span>
-        <h3>Active partners</h3>
-        <p>The verified vendors and NGOs taking part through completed orders. We'll state the exact period it covers alongside the first published totals.</p>
-      </div>
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="shield" size=22 %}</span>
-        <h3>Who publishes them</h3>
-        <p>The public numbers change only when someone on our team checks and publishes them, once a week. Weight is always shown next to meals, so you can see what each figure rests on.</p>
-      </div>
-    </div>
-    <div class="section-link">
-      <div class="notice notice--warning" role="note">{% include icon.html name="alert" size=20 %}<p>These are estimates. Weights are entered by vendors, and the meal and carbon factors are published averages, not measurements of each pickup. Read our <a href="{{ '/legal/disclaimer/' | relative_url }}">disclaimer</a> for what the numbers can and can't tell you.</p></div>
     </div>
   </div>
 </section>
@@ -81,21 +83,18 @@ lead: Every completed pickup will add to four public totals. This page explains 
 <section class="section" aria-labelledby="reports-title">
   <div class="container">
     {% include section-head.html eyebrow="Reports" title="What you'll be able to see" id="reports-title" %}
-    <div class="grid grid--3">
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="store" size=22 %}</span>
-        <h3>Vendors</h3>
+    <div class="bento">
+      <div class="tile tile--lead">
+        <div class="tile__head">{% include icon.html name="doc" size=22 %}<h3>Everyone, later</h3></div>
+        <p>A monthly chart will appear on this page with the first published totals. A yearly report you can download comes in Phase 2, after launch.</p>
+      </div>
+      <div class="tile">
+        <div class="tile__head">{% include icon.html name="store" size=20 %}<h3>Vendors</h3></div>
         <p>Each vendor will see its own kilograms, meals and CO2e, with a monthly impact certificate it can share.</p>
       </div>
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="users" size=22 %}</span>
-        <h3>NGOs</h3>
+      <div class="tile">
+        <div class="tile__head">{% include icon.html name="users" size=20 %}<h3>NGOs</h3></div>
         <p>Each NGO will see the kilograms and meals it received and the money it saved, with a summary ready for its donors.</p>
-      </div>
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="doc" size=22 %}</span>
-        <h3>Everyone, later</h3>
-        <p>A monthly chart will appear on this page with the first published totals. A yearly report you can download comes in Phase 2, after launch.</p>
       </div>
     </div>
   </div>

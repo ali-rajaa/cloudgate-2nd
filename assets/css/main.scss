@@ -145,7 +145,7 @@ li { text-wrap: pretty; }
 .grid--2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); }
 .grid--3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }
 .grid--4 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); }
-.split { display: grid; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+.split { display: grid; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
 @media (min-width: 900px) { .split { grid-template-columns: 1.05fr 1fr; } .split--reverse > :first-child { order: 2; } }
 .stack > * + * { margin-top: 1rem; }
 .button-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
@@ -386,7 +386,7 @@ html.has-sheet { overflow: hidden; }
   .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 0.9rem; }
   .bento > .tile--lead, .bento > :nth-child(even):last-child { grid-column: 1 / -1; }
 }
-@media (min-width: 960px) {
+@media (min-width: 1100px) {
   .bento { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1.1rem 1.35rem; }
   .bento > * { grid-column: span 2; }
   .bento > :nth-child(even):last-child { grid-column: span 2; }
@@ -408,6 +408,7 @@ html.has-sheet { overflow: hidden; }
 .tile ul { margin: 0.35rem 0 0; padding-inline-start: 1.2rem; color: var(--muted); }
 .tile li + li { margin-top: 0.3rem; }
 .tile .text-link { margin-top: auto; padding-top: 0.6rem; }
+.tile .check-list { padding-inline-start: 0; }
 /* The lead tile: solid ink, the point set in the display face, pushed to the foot of the tile. */
 .tile--lead {
   justify-content: flex-end; gap: 0.75rem;
@@ -441,10 +442,11 @@ html.has-sheet { overflow: hidden; }
 .ledger > * > :not(.icon) { grid-column: 2; }
 .ledger h3 { font-size: 1.0625rem; line-height: 1.35; letter-spacing: -0.01em; }
 .ledger p { color: var(--muted); }
-.ledger ul { margin: 0.3rem 0 0; padding-inline-start: 1.2rem; color: var(--muted); }
+.ledger ul { margin: 0.3rem 0 0; padding-inline-start: 1.2rem; color: var(--muted); list-style: disc; }
 
 /* ---------- Offset: the heading holds a narrow column, the content takes the rest ---------- */
 .offset { display: grid; gap: 1.75rem; }
+.offset > .section-head { margin-bottom: 0; }
 @media (min-width: 960px) {
   .offset { grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); column-gap: clamp(3rem, 7vw, 6rem); align-items: start; }
   .offset > .section-head { position: sticky; top: calc(var(--header-h) + 2rem); margin-bottom: 0; }
@@ -658,6 +660,7 @@ thead th { font-size: 0.8125rem; letter-spacing: 0.04em; text-transform: upperca
 tbody tr + tr td, tbody tr + tr th { border-top: 1px solid var(--divider); }
 tbody th { font-weight: 650; }
 td.num, th.num { text-align: end; font-variant-numeric: tabular-nums; white-space: nowrap; }
+@media (max-width: 600px) { th.num { white-space: normal; } }
 
 /* ---------- Prose (policies, long text) ---------- */
 .prose { font-size: 1.0625rem; line-height: 1.7; }

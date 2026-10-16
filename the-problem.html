@@ -14,24 +14,26 @@ lead: Good food is wasted in Pakistan while many families go without. These are 
 </section>
 
 <section class="section" aria-labelledby="paradox-title">
-  <div class="container">
+  <div class="container offset">
     {% include section-head.html eyebrow="The paradox" title="Surplus and need in Islamabad" id="paradox-title" %}
-    <div class="grid grid--2">
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="store" size=22 %}</span>
-        <h3>At closing time</h3>
-        <p>Picture a tandoor in G-9 with 40 naan left at 10 pm, or a bakery in F-7 Markaz with trays of bread and mithai that won't sell tomorrow. The food is good, but the day is over.</p>
-        <p>Some of it goes to staff or is sold off cheaply. What's left can end up in the bin, because there's no quick, trusted way to get it to someone who needs it before its time runs out.</p>
+    <div>
+      <ul class="ledger">
+        <li>
+          {% include icon.html name="store" size=20 %}
+          <h3>At closing time</h3>
+          <p>Picture a tandoor in G-9 with 40 naan left at 10 pm, or a bakery in F-7 Markaz with trays of bread and mithai that won't sell tomorrow. The food is good, but the day is over.</p>
+          <p>Some of it goes to staff or is sold off cheaply. What's left can end up in the bin, because there's no quick, trusted way to get it to someone who needs it before its time runs out.</p>
+        </li>
+        <li>
+          {% include icon.html name="users" size=20 %}
+          <h3>Across the city</h3>
+          <p>NGOs, community kitchens, shelters and iftar dastarkhwans feed people every day. Good food at half of retail or less would stretch what they can do.</p>
+          <p>But surplus appears late and lasts only hours, and there's no easy way to find it, check that it's safe, or be sure it will still be there when they arrive.</p>
+        </li>
+      </ul>
+      <div class="section-link stack">
+        <p>The gap isn't the food. It's time, trust and coordination. And there's no Good Samaritan law in Pakistan to protect a business that hands food on, so whoever passes it on carries the risk.</p>
       </div>
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="users" size=22 %}</span>
-        <h3>Across the city</h3>
-        <p>NGOs, community kitchens, shelters and iftar dastarkhwans feed people every day. Good food at half of retail or less would stretch what they can do.</p>
-        <p>But surplus appears late and lasts only hours, and there's no easy way to find it, check that it's safe, or be sure it will still be there when they arrive.</p>
-      </div>
-    </div>
-    <div class="section-link stack">
-      <p>The gap isn't the food. It's time, trust and coordination. And there's no Good Samaritan law in Pakistan to protect a business that hands food on, so whoever passes it on carries the risk.</p>
     </div>
   </div>
 </section>
@@ -69,7 +71,7 @@ lead: Good food is wasted in Pakistan while many families go without. These are 
 
 <section class="section section--tight" aria-labelledby="checking-title">
   <div class="container container--narrow">
-    <h2 id="checking-title" class="display display--section">How we check these figures</h2>
+    {% include section-head.html title="How we check these figures" id="checking-title" %}
     <div class="stack">
       <p>Each figure on this page is footnoted with its source and year. We recheck every one on its source page before launch, and update them when newer figures come out.</p>
       <p>Where sources disagree, we leave the figure out. That's why you won't find a food-waste-per-person figure here: published estimates for Pakistan differ too widely. If you spot a figure that's out of date, <a href="{{ '/contact/' | relative_url }}">tell us</a> and we'll check it.</p>

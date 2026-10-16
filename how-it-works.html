@@ -62,7 +62,7 @@ lead: A business lists good food it couldn't sell. A verified NGO claims it, pay
 </section>
 
 <section class="section" aria-labelledby="deadline-title">
-  <div class="container">
+  <div class="container offset">
     {% include section-head.html eyebrow="The payment deadline" title="Pay within 30 minutes, or by 15 minutes before pickup ends" id="deadline-title" lead="Claiming holds the food. The NGO then has until the payment deadline to pay: 30 minutes after claiming, or 15 minutes before the pickup window ends, whichever comes first. A countdown shows the time left." %}
     <div class="stack">
       <p>For the example listing, with pickup from 10:00 to 10:45 pm, the deadline works out like this.</p>
@@ -100,18 +100,16 @@ lead: A business lists good food it couldn't sell. A verified NGO claims it, pay
         </table>
       </div>
       <p>The countdown turns amber at 5 minutes and red at 2 minutes. Screen readers announce it at 10, 5, 2 and 1 minutes left, never every second.</p>
-      <div class="grid grid--2">
-        <div class="card">
-          <span class="card__icon">{% include icon.html name="clock" size=22 %}</span>
+      <ul class="ledger section-link">
+        <li>{% include icon.html name="clock" size=20 %}
           <h3>At least 10 minutes to pay</h3>
           <p>If less than 10 minutes would be left, the Claim button is disabled and the listing leaves the list.</p>
-        </div>
-        <div class="card">
-          <span class="card__icon">{% include icon.html name="receipt" size=22 %}</span>
+        </li>
+        <li>{% include icon.html name="receipt" size=20 %}
           <h3>Checkout needs 5 minutes</h3>
           <p>PayFast's payment page can only be opened with 5 or more minutes left, and it closes at the deadline.</p>
-        </div>
-      </div>
+        </li>
+      </ul>
       <div class="notice notice--info" role="note">
         {% include icon.html name="alert" size=20 %}
         <p><strong>During the January 2027 pilot,</strong> NGOs will pay the vendor directly, to the vendor's own Raast QR or account, before the same deadline, and then tap "I've paid". The vendor confirms "Payment received" within 15 minutes, which issues the pickup code. If they don't, the food stays held and our team phones both sides. No commission is charged during the pilot.</p>

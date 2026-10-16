@@ -17,27 +17,33 @@ lead: Questions about listing food, joining as an NGO, working with us or writin
       </div>
       <div class="stack">
         <h2 class="display display--card" id="details-title">Contact details</h2>
-        <dl class="key-facts">
-          <div><dt>Email</dt><dd><a href="mailto:{{ site.contact.email }}">{{ site.contact.email }}</a></dd></div>
-          {%- if site.contact.whatsapp != "" %}
-          <div><dt>WhatsApp</dt><dd><span class="nowrap">{{ site.contact.whatsapp }}</span></dd></div>
-          {%- endif %}
-          <div><dt>Hours</dt><dd>{{ site.contact.hours }}</dd></div>
-          <div><dt>Reply time</dt><dd>{{ site.contact.reply_time | capitalize }}</dd></div>
-          <div><dt>{% if site.company.registered_office != "" %}Registered office{% else %}City{% endif %}</dt><dd>{% if site.company.registered_office != "" %}{{ site.company.registered_office }}{% else %}{{ site.contact.city }}. Our registered office address will be given here once the company is incorporated.{% endif %}</dd></div>
-          <div><dt>Press</dt><dd>Use the form and choose Press as the topic</dd></div>
-        </dl>
-        <div class="card card--outline">
-          <span class="card__icon">{% include icon.html name="scale" size=22 %}</span>
-          <h3>Complaints</h3>
-          <p>Tell us what went wrong using the form, with Complaint as the topic, or by email. We acknowledge every complaint within 1 working day and resolve it within 5 working days.{% if site.company.grievance_officer != "" %} Complaints are handled by our grievance officer, {{ site.company.grievance_officer }}.{% endif %}</p>
-          <p><a class="text-link" href="{{ '/legal/complaints/' | relative_url }}">Read the Complaints and Disputes policy {% include icon.html name="arrow-right" size=18 %}</a></p>
+        <div>
+          <dl class="key-facts">
+            <div><dt>Email</dt><dd><a href="mailto:{{ site.contact.email }}">{{ site.contact.email }}</a></dd></div>
+            {%- if site.contact.whatsapp != "" %}
+            <div><dt>WhatsApp</dt><dd><span class="nowrap">{{ site.contact.whatsapp }}</span></dd></div>
+            {%- endif %}
+            <div><dt>Hours</dt><dd>{{ site.contact.hours }}</dd></div>
+            <div><dt>Reply time</dt><dd>{{ site.contact.reply_time | capitalize }}</dd></div>
+            <div><dt>{% if site.company.registered_office != "" %}Registered office{% else %}City{% endif %}</dt><dd>{% if site.company.registered_office != "" %}{{ site.company.registered_office }}{% else %}{{ site.contact.city }}. Our registered office address will be given here once the company is incorporated.{% endif %}</dd></div>
+            <div><dt>Press</dt><dd>Use the form and choose Press as the topic</dd></div>
+          </dl>
         </div>
-        <div class="card card--outline">
-          <span class="card__icon">{% include icon.html name="shield" size=22 %}</span>
-          <h3>Security reports</h3>
-          <p>If you think you've found a security flaw in this website, email us the details rather than sharing them in public. Our security policy explains what to include and how we treat reports made in good faith.</p>
-          <p><a class="text-link" href="{{ '/legal/security/' | relative_url }}">Read the Security and Responsible Disclosure policy {% include icon.html name="arrow-right" size=18 %}</a></p>
+        <div>
+          <ul class="ledger">
+            <li>
+              {% include icon.html name="scale" size=20 %}
+              <h3>Complaints</h3>
+              <p>Tell us what went wrong using the form, with Complaint as the topic, or by email. We acknowledge every complaint within 1 working day and resolve it within 5 working days.{% if site.company.grievance_officer != "" %} Complaints are handled by our grievance officer, {{ site.company.grievance_officer }}.{% endif %}</p>
+              <p><a class="text-link" href="{{ '/legal/complaints/' | relative_url }}">Read the Complaints and Disputes policy {% include icon.html name="arrow-right" size=18 %}</a></p>
+            </li>
+            <li>
+              {% include icon.html name="shield" size=20 %}
+              <h3>Security reports</h3>
+              <p>If you think you've found a security flaw in this website, email us the details rather than sharing them in public. Our security policy explains what to include and how we treat reports made in good faith.</p>
+              <p><a class="text-link" href="{{ '/legal/security/' | relative_url }}">Read the Security and Responsible Disclosure policy {% include icon.html name="arrow-right" size=18 %}</a></p>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
@@ -49,17 +55,14 @@ lead: Questions about listing food, joining as an NGO, working with us or writin
     {% include section-head.html eyebrow="Want to join?" title="Create an account instead" id="register-links-title" lead="To list or claim food, create an account: it asks for exactly what we need. To partner with us, use the partner form." %}
     <div class="grid grid--3">
       <a class="card card--link" href="{{ site.app_url }}#/signup/vendor">
-        <span class="card__icon">{% include icon.html name="store" size=22 %}</span>
         <h3>I have surplus food</h3>
         <p>For restaurants, bakeries, grocers and cafes in Islamabad. Hotels and caterers will join later.</p>
       </a>
       <a class="card card--link" href="{{ site.app_url }}#/signup/ngo">
-        <span class="card__icon">{% include icon.html name="heart" size=22 %}</span>
         <h3>I feed people</h3>
         <p>For registered NGOs, shelters, community kitchens, food banks and orphanages.</p>
       </a>
       <a class="card card--link" href="{{ '/partners/' | relative_url }}">
-        <span class="card__icon">{% include icon.html name="users" size=22 %}</span>
         <h3>Become a partner</h3>
         <p>For companies, groups and anyone who'd like to help in another way.</p>
       </a>

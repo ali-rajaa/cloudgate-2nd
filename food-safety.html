@@ -14,10 +14,9 @@ actions:
 <section class="section section--tight" aria-labelledby="scope-title">
   <div class="container">
     {% include section-head.html eyebrow="What can be listed" title="We start with low-risk food" id="scope-title" lead="Food categories open in stages. Cooked food waits until the pilot has shown the rules work." %}
-    <div class="grid grid--3">
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="check" size=22 %}</span>
-        <h3>From the start of the pilot</h3>
+    <div class="bento">
+      <div class="tile tile--lead tile--plain">
+        <div class="tile__head">{% include icon.html name="check" size=22 %}<h3>From the start of the pilot</h3></div>
         <ul class="check-list">
           <li>Tandoor breads: naan, roti, paratha, sheermal</li>
           <li>Plain bakery: bread, buns, rusk, plain cake</li>
@@ -27,9 +26,8 @@ actions:
           <li>Drinks and juices</li>
         </ul>
       </div>
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="clock" size=22 %}</span>
-        <h3>From 1 February 2027</h3>
+      <div class="tile">
+        <div class="tile__head">{% include icon.html name="clock" size=20 %}<h3>From 1 February 2027</h3></div>
         <p>Cooked food opens 4 weeks after the pilot starts, but only if there has been no food incident in that time:</p>
         <ul>
           <li>Cooked rice: biryani, pulao</li>
@@ -37,9 +35,8 @@ actions:
           <li>Fried snacks and iftar items: samosa, pakora, rolls</li>
         </ul>
       </div>
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="thermometer" size=22 %}</span>
-        <h3>Later, in Phase 2</h3>
+      <div class="tile">
+        <div class="tile__head">{% include icon.html name="thermometer" size=20 %}<h3>Later, in Phase 2</h3></div>
         <p>Foods that need a strict cold chain open after launch:</p>
         <ul>
           <li>Bakery with cream, custard or filling</li>
@@ -57,19 +54,20 @@ actions:
         {% include section-head.html eyebrow="Never allowed" title="What can't be listed" id="banned-title" lead="Some food is never allowed, whatever the category. Raw meat, poultry and fish are also left out while the platform starts." %}
         <p>Before publishing, every vendor confirms two statements: "This food was never served to customers and is not a plate return" and "This food has been stored correctly and is safe to eat."</p>
       </div>
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="x" size=22 %}</span>
-        <h3>Not allowed on Rizq Rasan</h3>
-        <ul>
-          <li>Food past its use-by date</li>
-          <li>Home-cooked food</li>
-          <li>Plate returns or part-eaten food</li>
-          <li>Opened dairy drinks</li>
-          <li>Recalled products</li>
-          <li>Alcohol and tobacco</li>
-          <li>Raw meat, poultry and fish, for now</li>
-          <li>Frozen food, except packaged goods up to their label date</li>
-        </ul>
+      <div class="stack">
+        <h3 class="display display--card">Not allowed on Rizq Rasan</h3>
+        <div>
+          <ul class="ledger ledger--2">
+            <li>{% include icon.html name="x" size=20 %}<span>Food past its use-by date</span></li>
+            <li>{% include icon.html name="x" size=20 %}<span>Home-cooked food</span></li>
+            <li>{% include icon.html name="x" size=20 %}<span>Plate returns or part-eaten food</span></li>
+            <li>{% include icon.html name="x" size=20 %}<span>Opened dairy drinks</span></li>
+            <li>{% include icon.html name="x" size=20 %}<span>Recalled products</span></li>
+            <li>{% include icon.html name="x" size=20 %}<span>Alcohol and tobacco</span></li>
+            <li>{% include icon.html name="x" size=20 %}<span>Raw meat, poultry and fish, for now</span></li>
+            <li>{% include icon.html name="x" size=20 %}<span>Frozen food, except packaged goods up to their label date</span></li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -190,48 +188,46 @@ actions:
 </section>
 
 <section id="vendors" class="section section--sunk" aria-labelledby="vendors-title">
-  <div class="container">
+  <div class="container offset">
     {% include section-head.html eyebrow="For vendors" title="Rules for vendors" id="vendors-title" lead="The vendor is responsible for the food until it's handed over. These rules apply to every listing." %}
-    <div class="grid grid--2">
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="shield" size=22 %}</span>
-        <h3>Before you list</h3>
-        <ul>
-          <li>Hold a valid Islamabad Food Authority licence. We check it before you can list.</li>
-          <li>List only food that was never served to customers.</li>
-          <li>Pick the right category, so the right time limit applies.</li>
-          <li>Tell us within 24 hours about any food incident or action by the Islamabad Food Authority.</li>
-        </ul>
-      </div>
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="camera" size=22 %}</span>
-        <h3>Describe it honestly</h3>
-        <ul>
-          <li>Add 1 to 3 real photos of the food. The first photo is required.</li>
-          <li>Give the quantity and an estimated weight.</li>
-          <li>Enter when it was cooked or baked, and copy the use-by or best-before date from the pack for packaged goods and drinks.</li>
-          <li>Mark allergens and whether it contains beef, mutton, chicken or fish, so NGOs can serve it safely. Halal shows as "vendor-declared" unless you upload a halal certificate.</li>
-        </ul>
-      </div>
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="thermometer" size=22 %}</span>
-        <h3>Store and pack it safely</h3>
-        <ul>
-          <li>Keep chilled food at 5°C or below and hot-held food at 60°C or above until handover.</li>
-          <li>Say how it's packed: sealed containers, foil trays, or loose, in which case the NGO brings its own containers.</li>
-          <li>Cooked food stored chilled must have been chilled within 2 hours of cooking.</li>
-        </ul>
-      </div>
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="clock" size=22 %}</span>
-        <h3>Set a safe pickup window</h3>
-        <ul>
-          <li>The window must be at least 30 minutes long.</li>
-          <li>Pickup must end at least 30 minutes before the food's safe-until time.</li>
-          <li>Pickup must end at least 60 minutes after you publish, so NGOs have time to claim, pay and travel.</li>
-          <li>Hand food over only when the collector gives the right 4-digit code, and let them check it first.</li>
-        </ul>
-      </div>
+    <div>
+      <ul class="ledger">
+        <li>{% include icon.html name="shield" size=20 %}
+          <h3>Before you list</h3>
+          <ul>
+            <li>Hold a valid Islamabad Food Authority licence. We check it before you can list.</li>
+            <li>List only food that was never served to customers.</li>
+            <li>Pick the right category, so the right time limit applies.</li>
+            <li>Tell us within 24 hours about any food incident or action by the Islamabad Food Authority.</li>
+          </ul>
+        </li>
+        <li>{% include icon.html name="camera" size=20 %}
+          <h3>Describe it honestly</h3>
+          <ul>
+            <li>Add 1 to 3 real photos of the food. The first photo is required.</li>
+            <li>Give the quantity and an estimated weight.</li>
+            <li>Enter when it was cooked or baked, and copy the use-by or best-before date from the pack for packaged goods and drinks.</li>
+            <li>Mark allergens and whether it contains beef, mutton, chicken or fish, so NGOs can serve it safely. Halal shows as "vendor-declared" unless you upload a halal certificate.</li>
+          </ul>
+        </li>
+        <li>{% include icon.html name="thermometer" size=20 %}
+          <h3>Store and pack it safely</h3>
+          <ul>
+            <li>Keep chilled food at 5°C or below and hot-held food at 60°C or above until handover.</li>
+            <li>Say how it's packed: sealed containers, foil trays, or loose, in which case the NGO brings its own containers.</li>
+            <li>Cooked food stored chilled must have been chilled within 2 hours of cooking.</li>
+          </ul>
+        </li>
+        <li>{% include icon.html name="clock" size=20 %}
+          <h3>Set a safe pickup window</h3>
+          <ul>
+            <li>The window must be at least 30 minutes long.</li>
+            <li>Pickup must end at least 30 minutes before the food's safe-until time.</li>
+            <li>Pickup must end at least 60 minutes after you publish, so NGOs have time to claim, pay and travel.</li>
+            <li>Hand food over only when the collector gives the right 4-digit code, and let them check it first.</li>
+          </ul>
+        </li>
+      </ul>
     </div>
   </div>
 </section>
@@ -239,36 +235,32 @@ actions:
 <section id="ngos" class="section" aria-labelledby="ngos-title">
   <div class="container">
     {% include section-head.html eyebrow="For NGOs" title="Rules for NGOs" id="ngos-title" lead="Once the food is handed over, the NGO is responsible for it. These rules apply to every pickup." %}
-    <div class="grid grid--2">
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="alert" size=22 %}</span>
-        <h3>Check it at pickup</h3>
+    <div class="bento">
+      <div class="tile tile--lead">
+        <div class="tile__head">{% include icon.html name="alert" size=22 %}<h3>Check it at pickup</h3></div>
         <ul>
           <li>Look at the food, smell it and check its temperature before the pickup code is entered.</li>
           <li>If anything seems unsafe, don't take it. Tap "Refuse food" and add a photo. You're refunded in full straight away.</li>
           <li>If the listing says the food is loose, bring your own clean containers.</li>
         </ul>
       </div>
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="truck" size=22 %}</span>
-        <h3>Carry it safely</h3>
+      <div class="tile">
+        <div class="tile__head">{% include icon.html name="truck" size=20 %}<h3>Carry it safely</h3></div>
         <ul>
           <li>Take the food straight to your kitchen or distribution point.</li>
           <li>Keep chilled food cold and hot food hot on the way.</li>
         </ul>
       </div>
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="clock" size=22 %}</span>
-        <h3>Serve it in time</h3>
+      <div class="tile">
+        <div class="tile__head">{% include icon.html name="clock" size=20 %}<h3>Serve it in time</h3></div>
         <ul>
           <li>Serve or refrigerate cooked food as soon as it arrives.</li>
           <li>Never serve food after its safe-until time.</li>
           <li>If you cook or reheat food, you may need your own Islamabad Food Authority licence. We'll confirm this before launch.</li>
         </ul>
       </div>
-      <div class="card">
-        <span class="card__icon">{% include icon.html name="heart" size=22 %}</span>
-        <h3>Give it, never sell it</h3>
+      <div class="tile">
+        <div class="tile__head">{% include icon.html name="heart" size=20 %}<h3>Give it, never sell it</h3></div>
         <ul>
           <li>Food claimed through Rizq Rasan is for the people you serve. Reselling it means permanent removal.</li>
           <li>Keep a simple log of where the food went.</li>

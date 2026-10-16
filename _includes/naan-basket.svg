@@ -1,0 +1,61 @@
+<svg class="listing-card__art" viewBox="0 0 480 270" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="nb-dots" width="9" height="9" patternUnits="userSpaceOnUse">
+      <circle cx="4.5" cy="4.5" r="1.3" fill="#9C5E22" opacity="0.55"/>
+    </pattern>
+    <pattern id="nb-weave" width="22" height="12" patternUnits="userSpaceOnUse">
+      <path d="M0 6 Q5.5 0 11 6 T22 6" fill="none" stroke="#7E4F22" stroke-width="2" opacity="0.35"/>
+    </pattern>
+    <clipPath id="nb-sheermal-a"><circle cx="318" cy="118" r="50"/></clipPath>
+    <clipPath id="nb-sheermal-b"><circle cx="372" cy="176" r="42"/></clipPath>
+  </defs>
+
+  <!-- Counter: kraft paper on a wooden board -->
+    <rect x="-20" y="-30" width="520" height="330" fill="#D9C39C" transform="rotate(-3 240 140)"/>
+  <path d="M-10 70 L490 44 M-10 150 L490 124 M-10 226 L490 200" stroke="#C7AE84" stroke-width="1.5" opacity="0.7"/>
+
+  <!-- Basket -->
+  <ellipse cx="240" cy="158" rx="214" ry="108" fill="#9A6431"/>
+  <ellipse cx="240" cy="158" rx="214" ry="108" fill="url(#nb-weave)"/>
+  <ellipse cx="240" cy="152" rx="192" ry="92" fill="#B57A40"/>
+  <ellipse cx="240" cy="152" rx="192" ry="92" fill="url(#nb-weave)"/>
+
+  <!-- Cloth -->
+  <path d="M70 150 C 90 92, 170 66, 250 70 C 330 74, 410 96, 420 150 C 400 210, 320 236, 240 236 C 150 236, 84 206, 70 150 Z" fill="#F4EBDA"/>
+  <path d="M96 128 L404 128 M86 172 L414 172" stroke="#2E4537" stroke-width="5" opacity="0.18"/>
+
+  <!-- Naan: long, blistered flatbreads -->
+  <g>
+    <path d="M86 176 C 92 120, 170 92, 236 104 C 268 110, 270 140, 240 158 C 196 186, 112 214, 86 176 Z" fill="#E5B672" stroke="#C88A43" stroke-width="3"/>
+    <g fill="#8A561F" opacity="0.6">
+      <ellipse cx="132" cy="160" rx="9" ry="5" transform="rotate(-20 132 160)"/>
+      <ellipse cx="178" cy="128" rx="7" ry="4" transform="rotate(-25 178 128)"/>
+      <ellipse cx="212" cy="140" rx="10" ry="5" transform="rotate(-30 212 140)"/>
+      <ellipse cx="150" cy="186" rx="6" ry="3.5"/>
+    </g>
+    <path d="M118 170 C 150 150, 190 128, 228 122" fill="none" stroke="#B87A35" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2 9"/>
+  </g>
+  <g>
+    <path d="M150 214 C 150 170, 220 140, 290 146 C 326 150, 330 178, 300 194 C 254 220, 176 240, 150 214 Z" fill="#EDC484" stroke="#C88A43" stroke-width="3"/>
+    <g fill="#8A561F" opacity="0.55">
+      <ellipse cx="196" cy="200" rx="8" ry="4.5" transform="rotate(-15 196 200)"/>
+      <ellipse cx="246" cy="170" rx="10" ry="5" transform="rotate(-20 246 170)"/>
+      <ellipse cx="282" cy="182" rx="6" ry="3.5"/>
+    </g>
+    <path d="M178 210 C 214 192, 250 172, 292 166" fill="none" stroke="#B87A35" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2 9"/>
+  </g>
+
+  <!-- Sheermal: round, glazed, docked with a ring of dots -->
+  <g>
+    <circle cx="318" cy="118" r="50" fill="#D08A35" stroke="#A9661F" stroke-width="3"/>
+    <circle cx="318" cy="118" r="38" fill="#E3A24C"/>
+    <g clip-path="url(#nb-sheermal-a)"><circle cx="318" cy="118" r="34" fill="url(#nb-dots)"/></g>
+    <path d="M292 98 C 300 88, 316 84, 330 88" fill="none" stroke="#F6D49A" stroke-width="5" stroke-linecap="round" opacity="0.8"/>
+  </g>
+  <g>
+    <circle cx="372" cy="176" r="42" fill="#C98232" stroke="#A9661F" stroke-width="3"/>
+    <circle cx="372" cy="176" r="31" fill="#DE9A43"/>
+    <g clip-path="url(#nb-sheermal-b)"><circle cx="372" cy="176" r="28" fill="url(#nb-dots)"/></g>
+    <path d="M351 160 C 358 152, 370 149, 382 152" fill="none" stroke="#F6D49A" stroke-width="4.5" stroke-linecap="round" opacity="0.8"/>
+  </g>
+</svg>

@@ -6,7 +6,7 @@ version: "0.1 (draft)"
 effective: from launch (22 March 2027)
 summary:
   - Every business and NGO is checked before it can list or claim food. We verify the organisation, not the person.
-  - Vendors need an NTN and an Islamabad Food Authority licence. NGOs need a registration we accept, or Ministry of Interior registration for international NGOs.
+  - Vendors need the owner's CNIC and one proof that the business is real. NGOs need a registration we accept and the CNIC of the person in charge.
   - Upload clear JPG, PNG or PDF files of up to 10 MB each. We aim to decide within 2 working days of a complete application.
   - NGOs start in Tier C and move up as they build a record. Every account is re-verified every 12 months.
   - Only our verification team sees your documents, through links that expire after 5 minutes. You can appeal any decision.
@@ -19,7 +19,7 @@ Accounts are open now. Create one and upload your documents through it, and veri
 
 Rizq Rasan sells food rather than giving it away, so Pakistan's food sale laws apply in full. Every business that lists food must be properly registered and licensed, and every organisation that claims food must be a genuine non-profit that serves or gives the food to people for free.
 
-Verification also protects everyone against fraud, resale of food and misuse of charities. Charities are a focus of Pakistan's anti-terror-financing rules, and since July 2025 FBR rules bar online marketplaces from serving sellers without an NTN.
+Verification also protects everyone against fraud, resale of food and misuse of charities. Charities are a focus of Pakistan's anti-terror-financing rules. FBR's 2025 rules for online marketplaces may require an NTN before we can pay a business through the platform; we will confirm this with our lawyer before payments move onto the platform, and ask for an NTN then if it is needed.
 
 Verification lowers the risk of dealing with a bad actor, but it cannot guarantee how any organisation will behave. Our [Disclaimer]({{ '/legal/disclaimer/' | relative_url }}) explains this.
 
@@ -27,7 +27,7 @@ Verification lowers the risk of dealing with a bad actor, but it cannot guarante
 
 - **Every vendor and every NGO.** No organisation can list food, see listings or claim food until we have approved it.
 - **The organisation, not the person.** The organisation is the account holder. It is what we verify, and it is responsible for everything done through its account.
-- **The person who signs.** Everyone who signs for an organisation must be at least 18 years old and allowed to act for it, shown by a board resolution or an authority letter. We check their CNIC.
+- **The person who signs.** Everyone who signs for an organisation must be at least 18 years old and allowed to act for it. We check their CNIC. If they aren't the owner or the head of the organisation, we also ask for an authority letter.
 - **Staff, collectors and payers.** A vendor's counter staff, an NGO's 1 to 5 collectors and its up to 3 named payers are not verified one by one. The organisation that adds them is responsible for them.
 
 Who can join:
@@ -41,13 +41,10 @@ Neither the organisation nor anyone who signs for it may appear on the UN Securi
 
 | Document | Who needs it | Notes |
 | --- | --- | --- |
-| Business registration | Every vendor | A company sends its SECP certificate. A partnership sends its partnership deed. A sole proprietor sends their CNIC and a signed declaration that they own the business |
-| NTN | Every vendor, mandatory | We check its status on FBR's Active Taxpayer List |
-| Islamabad Food Authority licence | Every vendor, mandatory | Give its expiry date when you upload it |
-| Department of Tourist Services registration | Restaurants and cafes | Give its expiry date where it has one |
-| Authority to sign | Every vendor | A board resolution or authority letter naming the person who signs, and that person's CNIC |
-| Bank letter | Every vendor | An account maintenance certificate in the business name. Payouts go only to this account |
-| Address proof | Every vendor | For the pickup point you will list from |
+| Owner's CNIC | Every vendor | Front and back in one photo or file |
+| One proof of the business | Every vendor | Any one of: Islamabad Food Authority licence, NTN certificate, SECP certificate or partnership deed, or a recent utility bill for the shop |
+| Where NGOs pay you | Every vendor | A Raast ID or an IBAN, entered in the form |
+| Islamabad Food Authority licence | Optional | Recommended. It helps us approve you faster |
 | Halal certificate | Optional | Your listings then show "halal-certified" instead of "vendor-declared" |
 
 ## 4. Documents for NGOs
@@ -70,13 +67,9 @@ International NGOs register with the Ministry of Interior, not the Economic Affa
 ### What to send
 
 1. **Registration certificate** under one of the routes above.
-2. **Constitution, trust deed or memorandum.**
-3. **Office bearers:** a list of them, and an authority letter naming who signs for you.
-4. **Signatory:** the CNIC of the person who signs.
-5. **NTN,** if you have one.
-6. **Bank letter:** an account certificate in your organisation's name.
-7. **Address proof,** a short description of your kitchen or distribution site, and how many people you serve each day.
-8. **For Tier A only:** your Pakistan Centre for Philanthropy certificate or FBR approval under section 2(36).
+2. **The CNIC of the person in charge.**
+3. **An authority letter,** only if someone other than the head of the organisation will use Rizq Rasan.
+4. **For Tier A only:** your Pakistan Centre for Philanthropy certificate or FBR approval under section 2(36).
 
 If you cook or reheat food, you may also need an Islamabad Food Authority licence. We will confirm this with a lawyer before launch and update this policy.
 
@@ -85,7 +78,6 @@ If you cook or reheat food, you may also need an Islamabad Food Authority licenc
 - **One upload for each document,** by camera or from a file, in your account's onboarding task list. You can save and come back at any time.
 - **File types:** JPG, PNG or PDF, up to 10 MB each. A file over 10 MB will not upload.
 - **Readable and complete:** send every page, uncropped, with names, numbers and dates easy to read. The names and numbers must match what you entered in the form.
-- **Expiry dates:** where a document has one, enter it when you upload. We use it to remind you before it runs out.
 - **Genuine documents only:** never upload a document that is forged, altered or belongs to someone else. Uploading forged documents means permanent removal from Rizq Rasan.
 
 ## 6. The checks we run
@@ -94,9 +86,8 @@ Our verification team reviews every application by hand, with a checklist for ea
 
 - **Matching:** we compare names, numbers and dates across your documents and your form.
 - **Registers:** we search SECP's online register for companies, including Section 42 companies. Where no online register exists, we call the registrar.
-- **Tax:** we check your NTN on FBR's Active Taxpayer List.
-- **Licences:** we keep a copy of your Islamabad Food Authority licence and Department of Tourist Services registration on file, and we spot-check licences with the Islamabad Food Authority.
-- **Bank account:** we check that the bank letter is in the organisation's own name.
+- **Tax:** if you send an NTN, we check it on FBR's Active Taxpayer List.
+- **Licences:** if you send an Islamabad Food Authority licence, we keep a copy on file and may spot-check it with the Authority.
 - **Sanctions screening:** we screen every NGO, and every signatory of a vendor or NGO, against the UN Security Council sanctions list and Pakistan's proscribed-organisations and Fourth Schedule lists.
 - **A call or visit:** for each of our first 20 partners, we also hold a video call or visit your premises, kitchen or distribution site.
 
@@ -141,8 +132,8 @@ Later, Rizq Rasan may offer pay-later invoices to Tier A NGOs with a strong reli
 
 - **Tell us about changes.** Keep your details and documents up to date, and tell us when your signatory, address, registration or bank account changes. Upload the new document in your account.
 - **Payout accounts.** A vendor's payout account must always be in the business name. When it changes, payouts pause for 48 hours and the owner gets an email, to stop fraud.
-- **Expiry reminders.** We email you 30 days before a document expires, so you have time to upload a new one. Every month, our team also reviews documents that are about to expire.
-- **Expired documents.** You must hold valid licences and registration at all times. If a required document expires and you have not uploaded a new one, you no longer meet our eligibility rules, and we can suspend your account until you do.
+- **Expiry reminders.** If a document you sent has an expiry date, our team notes it and reminds you before it runs out, so you have time to upload a new one.
+- **Expired documents.** Keep the documents you sent up to date. If a required document expires and you have not uploaded a new one, you no longer meet our eligibility rules, and we can suspend your account until you do.
 - **Every 12 months.** We re-verify every organisation once a year. We ask you to confirm your details, replace any out-of-date documents, and we run our checks again, including sanctions screening.
 
 ## 10. Who can see your documents
@@ -159,7 +150,7 @@ Later, Rizq Rasan may offer pay-later invoices to Tier A NGOs with a strong reli
 We may reject an application when, for example:
 
 - the organisation is not a food business or a registered non-profit operating in Islamabad;
-- a mandatory document, such as a vendor's NTN or Islamabad Food Authority licence, is missing;
+- a required document, such as the owner's CNIC or proof that the business is real, is missing;
 - the documents do not match each other or cannot be checked;
 - the organisation or a signatory appears on a sanctions or proscribed list;
 - an NGO would sell food on, rather than serve or give it for free.

@@ -33,7 +33,7 @@ lead: A business lists good food it couldn't sell. A verified NGO claims it, pay
         </li>
         <li>
           <h3>An NGO claims it</h3>
-          <p>The first organisation to tap Claim gets the food, and it is held for them while they pay. The vendor gets a WhatsApp message.</p>
+          <p>The first organisation to tap Claim gets the food, and it is held for them while they pay. The vendor gets a notification and an email.</p>
           <span class="meta">9:12 pm</span>
         </li>
         <li>
@@ -53,7 +53,7 @@ lead: A business lists good food it couldn't sell. A verified NGO claims it, pay
         </li>
         <li>
           <h3>The vendor is paid</h3>
-          <p>Once the order is Completed and the payment has settled, the vendor's 95% goes out in the next Monday or Thursday payout, by bank transfer to the business's own account.</p>
+          <p>Once the order is Completed and the payment has settled, the vendor's 80% goes out in the next Monday or Thursday payout, by bank transfer to the business's own account.</p>
           <span class="meta">Within 6 working days of pickup</span>
         </li>
       </ol>
@@ -112,7 +112,7 @@ lead: A business lists good food it couldn't sell. A verified NGO claims it, pay
       </ul>
       <div class="notice notice--info" role="note">
         {% include icon.html name="alert" size=20 %}
-        <p><strong>During the January 2027 pilot,</strong> NGOs will pay the vendor directly, to the vendor's own Raast QR or account, before the same deadline, and then tap "I've paid". The vendor confirms "Payment received" within 15 minutes, which issues the pickup code. If they don't, the food stays held and our team phones both sides. No commission is charged during the pilot.</p>
+        <p><strong>During the January 2027 pilot,</strong> NGOs will pay the vendor directly, to the vendor's Raast ID or bank account, before the same deadline, and then tap "I've paid". The vendor confirms "Payment received" within 15 minutes, which issues the pickup code. If they don't, the food stays held and our team phones both sides. No commission is charged during the pilot.</p>
       </div>
     </div>
   </div>
@@ -124,8 +124,8 @@ lead: A business lists good food it couldn't sell. A verified NGO claims it, pay
     <div class="split">
       <ul class="check-list">
         <li>The code appears for the NGO as soon as its payment is confirmed, with the vendor's address, a map link and phone number. It stays readable on the phone if the signal is weak.</li>
-        <li>The NGO sends a collector pass to its driver by WhatsApp. The driver needs no account: the pass shows the code, the address and the pickup time.</li>
-        <li>At the counter, the driver checks the food's look, smell and temperature first. If it looks unsafe, they tap "Refuse food" on the pass and add a photo, and the NGO is refunded in full.</li>
+        <li>The NGO sends the code, address and pickup time to its driver on WhatsApp with one tap. The driver needs no account.</li>
+        <li>At the counter, the driver checks the food's look, smell and temperature first. If it looks unsafe, they don't take it, and the NGO taps "Refuse unsafe food" on the order; our team checks it within 24 hours and refunds it in full.</li>
         <li>If the food is fine, the driver gives the code. The vendor or their counter staff type it in, see the NGO, the collector's name and "Paid", confirm the quantity, and tap Confirm handover.</li>
         <li>The vendor never sees the code in advance. They can only check a code that is typed in, so food can't be handed to the wrong person.</li>
       </ul>
@@ -133,7 +133,6 @@ lead: A business lists good food it couldn't sell. A verified NGO claims it, pay
         <div><dt>Length</dt><dd>4 digits</dd></div>
         <div><dt>Unique</dt><dd>For each vendor, each day</dd></div>
         <div><dt>Wrong tries</dt><dd>5 wrong tries in 10 minutes lock entry for 10 minutes</dd></div>
-        <div><dt>Collector pass</dt><dd>Works until 24 hours after the pickup window ends</dd></div>
         <div><dt>Someone else turns up</dt><dd>The vendor sees the expected collector's name and can call the NGO</dd></div>
         <div><dt>Undo</dt><dd>10 seconds after tapping Confirm handover</dd></div>
       </dl>
@@ -143,13 +142,13 @@ lead: A business lists good food it couldn't sell. A verified NGO claims it, pay
 
 <section class="section" aria-labelledby="money-title">
   <div class="container">
-    {% include section-head.html eyebrow="Where the money goes" title="The vendor keeps 95%, and Rizq Rasan keeps 5%" id="money-title" lead="The NGO pays the listing price, with nothing added on top. Rizq Rasan's 5% commission comes out of that price, and the vendor receives the rest." %}
+    {% include section-head.html eyebrow="Where the money goes" title="The vendor keeps 80%, and Rizq Rasan keeps 20%" id="money-title" lead="The NGO pays the listing price, with nothing added on top. Rizq Rasan's 20% commission comes out of that price, and the vendor receives the rest." %}
     <div class="split">
       <div class="stack">
-        <div class="split-bar" role="img" aria-label="Of Rs 1,200 paid by the NGO, the vendor receives Rs 1,140 and Rizq Rasan Rs 60"><span class="split-bar__vendor">Vendor Rs 1,140</span><span class="split-bar__fee">Rs 60</span></div>
-        <p><strong>NGO pays Rs 1,200 · Vendor receives Rs 1,140 · Rizq Rasan Rs 60</strong></p>
-        <p>The commission is 5% of the listing price, with services tax included, rounded down to the whole rupee. The vendor's 95% is before any tax the law requires us to withhold, which is shown line by line on their statement.</p>
-        <p>Rizq Rasan pays the payment gateway's fees out of its 5% on normal sales. There's no sign-up fee and no monthly charge.</p>
+        <div class="split-bar" role="img" aria-label="Of Rs 1,200 paid by the NGO, the vendor receives Rs 960 and Rizq Rasan Rs 240"><span class="split-bar__vendor">Vendor Rs 960</span><span class="split-bar__fee">Rs 240</span></div>
+        <p><strong>NGO pays Rs 1,200 · Vendor receives Rs 960 · Rizq Rasan Rs 240</strong></p>
+        <p>The commission is 20% of the listing price, rounded down to the whole rupee in the vendor's favour.</p>
+        <p>Rizq Rasan pays the payment gateway's fees out of its 20% on normal sales. There's no sign-up fee and no monthly charge.</p>
       </div>
       <dl class="key-facts">
         <div><dt>The NGO pays</dt><dd>The listing price: at least Rs 1,000 and no more than half of retail</dd></div>
@@ -209,7 +208,7 @@ lead: A business lists good food it couldn't sell. A verified NGO claims it, pay
             </tr>
             <tr>
               <th scope="row">The vendor is closed or the food isn't ready</th>
-              <td>The collector reports it from the collector pass. If the vendor doesn't reply within 2 hours, the NGO is refunded and the vendor gets a strike.</td>
+              <td>The NGO reports it from the order. If the vendor doesn't reply within 2 hours, the NGO is refunded and the vendor gets a strike.</td>
               <td>In full</td>
             </tr>
             <tr>
@@ -219,7 +218,7 @@ lead: A business lists good food it couldn't sell. A verified NGO claims it, pay
             </tr>
             <tr>
               <th scope="row">The food looks unsafe at pickup</th>
-              <td>The collector taps "Refuse food" on the collector pass and adds a photo. Our team reviews the case, and if the refusal is upheld, the vendor gets a strike.</td>
+              <td>The collector doesn't take it, and the NGO taps "Refuse unsafe food" on the order. Our team reviews the case, and if the refusal is upheld, the vendor gets a strike.</td>
               <td>In full, straight away</td>
             </tr>
             <tr>

@@ -1,5 +1,5 @@
 // Onboarding: create the organisation, add details, upload documents, submit for review.
-import { db, state, h, field, busy, toast, rpc, select, go, notice, pageHead, badge, uploadFile, normalisePhone, phoneDisplay, refreshOrg, friendly } from './core.js';
+import { db, state, h, field, busy, toast, rpc, select, go, notice, pageHead, badge, uploadFile, normalisePhone, phoneDisplay, refreshOrg, friendly, spinner } from './core.js';
 
 export function routes(register) {
   register('/start', { title: 'Set up your account', render: start });
@@ -10,31 +10,43 @@ export const SECTORS = ['Blue Area', 'F-5', 'F-6', 'F-6 Markaz (Supermarket)', '
   'G-5', 'G-6', 'G-6 Markaz (Melody)', 'G-7', 'G-8', 'G-8 Markaz', 'G-9', 'G-9 Markaz (Karachi Company)', 'G-10', 'G-10 Markaz', 'G-11', 'G-11 Markaz', 'G-13', 'G-14',
   'I-8', 'I-8 Markaz', 'I-9', 'I-10', 'E-7', 'E-11', 'DHA', 'Bahria Town', 'Other'];
 
+// What each side uploads. Kept short on purpose: many small businesses have no
+// NTN, SECP registration or Food Authority licence yet, so any one proof that
+// the business is real is enough (the server checks the same rules).
 export const DOCS = {
   vendor: [
-    ['registration', 'Business registration', 'SECP certificate, partnership deed, or sole proprietor details'],
-    ['ntn', 'NTN certificate', 'From FBR\'s Active Taxpayer List'],
-    ['ifa_licence', 'Islamabad Food Authority licence', 'Required for every food business'],
-    ['dts', 'Department of Tourist Services registration', 'Restaurants and cafes only'],
-    ['signatory_cnic', 'CNIC of the person signing', 'Front and back in one file'],
-    ['authority_letter', 'Authority letter', 'Only if the signatory isn\'t the owner'],
-    ['bank_letter', 'Bank letter', 'For the account in the business\'s name'],
-    ['address_proof', 'Proof of address', 'A utility bill or rent agreement'],
+    ['signatory_cnic', 'Your CNIC', 'The owner\'s CNIC, front and back in one photo or file'],
+    ['registration', 'Proof of your business', 'Any one of these: Food Authority licence, NTN certificate, business registration, or a recent utility bill for the shop'],
+    ['ifa_licence', 'Islamabad Food Authority licence', 'If you have one, it helps us approve you faster'],
   ],
   ngo: [
-    ['registration', 'Registration certificate', 'Societies Act, Trusts Act, Section 42 company, or Ministry of Interior for international NGOs'],
-    ['constitution', 'Constitution or trust deed', ''],
-    ['office_bearers', 'List of office bearers', ''],
-    ['authority_letter', 'Authority letter or board resolution', 'Naming the person who will use Rizq Rasan'],
-    ['signatory_cnic', 'CNIC of the person signing', 'Front and back in one file'],
-    ['address_proof', 'Proof of address', 'A utility bill or rent agreement'],
+    ['registration', 'Registration certificate', 'Societies Act, Trusts Act, Section 42 company, or the Social Welfare Department'],
+    ['signatory_cnic', 'CNIC of the person in charge', 'Front and back in one photo or file'],
+    ['authority_letter', 'Authority letter', 'Only if someone other than the head of the organisation will use Rizq Rasan'],
   ],
 };
-const REQUIRED = { vendor: ['registration', 'ntn', 'ifa_licence', 'signatory_cnic', 'bank_letter'], ngo: ['registration', 'authority_letter', 'signatory_cnic'] };
+const REQUIRED = { vendor: ['signatory_cnic', 'registration'], ngo: ['registration', 'signatory_cnic'] };
+// A business's proof can be any of these (older applications used separate slots).
+const BUSINESS_PROOF = ['registration', 'ifa_licence', 'ntn', 'address_proof', 'bank_letter', 'dts'];
+// Labels for documents uploaded under the older, longer list, so admins still see a name.
+export const DOC_LABELS = {
+  registration: 'Registration or proof of business', ntn: 'NTN certificate', ifa_licence: 'Islamabad Food Authority licence',
+  dts: 'Department of Tourist Services registration', signatory_cnic: 'CNIC', authority_letter: 'Authority letter',
+  bank_letter: 'Bank letter', address_proof: 'Proof of address', constitution: 'Constitution or trust deed', office_bearers: 'List of office bearers',
+};
 
 let creating = null;
+// Set once "already belongs" came back but the organisation still didn't load,
+// so set-up stops instead of trying again in a loop.
+let orgMissing = false;
 async function start() {
-  if (state.org) { go('/onboarding'); return h('div'); }
+  if (state.org) { orgMissing = false; go('/onboarding'); return spinner(); }
+  if (orgMissing) {
+    return h('section.app-narrow', pageHead('We couldn\'t open your organisation', null),
+      notice('warning', 'Your account is already linked to an organisation, but it didn\'t load. Try again in a moment. If it keeps happening, contact us and we\'ll sort it out.'),
+      h('p.button-row', h('button.btn.btn--primary', { type: 'button', onclick: () => location.reload() }, 'Try again'),
+        h('a.btn.btn--secondary', { href: '../contact/' }, 'Contact us')));
+  }
   // Details from sign-up: saved on this device, or with the account (when the
   // email link is opened on another device).
   const meta = state.user?.user_metadata || {};
@@ -65,10 +77,10 @@ async function start() {
   });
   // Details given at sign-up on this device: create the organisation straight away.
   if (pending?.type && pending?.name) {
-    try { await create(); return h('div'); }
+    try { await create(); return spinner(); }
     catch (e) {
       // Already made (another tab, or an earlier visit): load it instead of showing an error.
-      if (/already belongs/i.test(String(e?.message || e))) { window.dispatchEvent(new Event('rr:state')); return h('div'); }
+      if (/already belongs/i.test(String(e?.message || e))) { orgMissing = true; window.dispatchEvent(new Event('rr:state')); return spinner(); }
       toast(friendly(e), 'error');
     }
   }
@@ -76,7 +88,7 @@ async function start() {
 }
 
 async function onboarding({ app }) {
-  if (!state.org) { go('/start'); return h('div'); }
+  if (!state.org) { go('/start'); return spinner(); }
   await refreshOrg();
   const o = state.org;
   const docs = await select(db.from('documents').select('*').eq('organisation_id', o.id).order('created_at'));
@@ -99,9 +111,9 @@ async function onboarding({ app }) {
 
   // Section 1: details
   const f = {
-    legal_name: field({ name: 'legal_name', label: 'Registered name', value: o.legal_name || '', hint: 'As written on your registration' }),
+    legal_name: field({ name: 'legal_name', label: 'Registered name', value: o.legal_name || '', hint: 'If it\'s different from the name people know' }),
     registration_number: field({ name: 'registration_number', label: 'Registration number', value: o.registration_number || '' }),
-    ntn: field({ name: 'ntn', label: 'NTN', value: o.ntn || '', required: o.type === 'vendor', hint: o.type === 'vendor' ? 'Every business needs an NTN' : 'If you have one' }),
+    ntn: field({ name: 'ntn', label: 'NTN', value: o.ntn || '', hint: 'If you have one' }),
     phone: field({ name: 'phone', label: 'Contact mobile', type: 'tel', required: true, value: phoneDisplay(o.phone), inputmode: 'tel' }),
     email: field({ name: 'email', label: 'Contact email', type: 'email', value: o.email || state.user.email }),
     address: field({ name: 'address', label: o.type === 'vendor' ? 'Pickup address' : 'Address', required: true, value: o.address || '', full: true,
@@ -135,7 +147,6 @@ async function onboarding({ app }) {
     if (!tel) return f.phone.error('Enter a Pakistani mobile number, like 0300 1234567.');
     if (!f.address.value()) return f.address.error('Enter the address.');
     if (!f.sector.value()) return f.sector.error('Choose the area.');
-    if (o.type === 'vendor' && !f.ntn.value()) return f.ntn.error('Enter your NTN.');
     const fields = {};
     for (const [k, x] of Object.entries(f)) fields[k] = k === 'phone' ? tel : String(x.value() ?? '');
     if (coords) { fields.lat = String(coords.lat); fields.lng = String(coords.lng); }
@@ -162,7 +173,7 @@ async function onboarding({ app }) {
     });
     const latest = mine[mine.length - 1];
     docList.append(h('li.app-doc',
-      h('div', h('p.app-doc__name', label, REQUIRED[o.type].includes(kind) ? null : h('span.field__optional', ' (if it applies)')), hint ? h('p.app-doc__hint', hint) : null,
+      h('div', h('p.app-doc__name', label, REQUIRED[o.type].includes(kind) ? null : h('span.field__optional', ' (optional)')), hint ? h('p.app-doc__hint', hint) : null,
         latest?.status === 'rejected' && latest.reason ? h('p.field__error', latest.reason) : null),
       h('div.app-doc__end', latest ? h('span.badge', { class: latest.status === 'approved' ? 'badge--good' : latest.status === 'rejected' ? 'badge--bad' : 'badge--wait' },
         latest.status === 'uploaded' ? 'Uploaded' : latest.status === 'approved' ? 'Checked' : 'Needs a new file') : null, btn, input)));
@@ -192,8 +203,9 @@ async function onboarding({ app }) {
   }
 
   // Submit
-  const missing = REQUIRED[o.type].filter((k) => !docs.some((d) => d.kind === k && d.status !== 'rejected'));
-  const ready = o.phone && o.address && o.sector && (o.type === 'ngo' || o.ntn) && missing.length === 0 && (o.type === 'ngo' || o.raast_id || o.bank_iban);
+  const has = (kinds) => docs.some((d) => kinds.includes(d.kind) && d.status !== 'rejected');
+  const missing = REQUIRED[o.type].filter((k) => !has(o.type === 'vendor' && k === 'registration' ? BUSINESS_PROOF : [k]));
+  const ready = o.phone && o.address && o.sector && missing.length === 0 && (o.type === 'ngo' || o.raast_id || o.bank_iban);
   const submitBtn = h('button.btn.btn--accent', { type: 'button', disabled: !ready || locked || !owner, onclick: () => busy(submitBtn, async () => {
     await rpc('submit_for_review', { p_org: o.id });
     toast('Application submitted.');

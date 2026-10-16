@@ -1,13 +1,13 @@
 ---
 title: Vendor Agreement
 order: 3
-description: The agreement every food business accepts before it lists on Rizq Rasan, covering food safety, listing rules, our 5% commission, payouts, refunds and strikes.
+description: The agreement every food business accepts before it lists on Rizq Rasan, covering food safety, listing rules, our 20% commission, payouts, refunds and strikes.
 version: "0.1 (draft)"
 effective: from launch (22 March 2027)
 summary:
   - You are the seller. The food must be safe, legal and as described until the NGO's collector takes it.
   - You appoint Rizq Rasan as your limited agent to collect payment. When an NGO pays us for an order, it has paid you.
-  - We keep 5% of the listing price, services tax included. You receive 95%, less any tax the law requires us to withhold and the cost of any refund you caused.
+  - We keep 20% of the listing price, services tax included. You receive 80%, less any tax the law requires us to withhold and the cost of any refund you caused.
   - We pay every Monday and Thursday to a bank account in your business name, and aim to pay within 6 working days of pickup.
   - Cancelling a paid order, being closed or not ready, handing over more than 10% short, or an upheld food-safety complaint gives you a strike.
 ---
@@ -94,13 +94,13 @@ Before live payments start, this structure will be confirmed in writing with Pay
 
 ## 8. Our commission and what you receive
 
-Rizq Rasan keeps a commission of 5% of the listing price, services tax included, rounded down to the whole rupee in your favour, and pays the gateway's fee on normal sales out of it. You receive 95% of the listing price, before any tax the law requires us to withhold. Tax withheld and the costs of refunds you caused (section 10) are deducted from your share and shown line by line. There is no sign-up, monthly or listing fee, and NGOs pay the listing price with nothing added.
+Rizq Rasan keeps a commission of 20% of the listing price, services tax included, rounded down to the whole rupee in your favour, and pays the gateway's fee on normal sales out of it. You receive 80% of the listing price, before any tax the law requires us to withhold. Tax withheld and the costs of refunds you caused (section 10) are deducted from your share and shown line by line. There is no sign-up, monthly or listing fee, and NGOs pay the listing price with nothing added.
 
 | Listing price (NGO pays) | Rizq Rasan's commission | You receive, before tax withheld by law |
 | --- | --- | --- |
-| Rs 1,200 | Rs 60 | Rs 1,140 |
-| Rs 1,250 | Rs 62, rounded down | Rs 1,188 |
-| Rs 10,000 | Rs 500 | Rs 9,500 |
+| Rs 1,200 | Rs 240 | Rs 960 |
+| Rs 1,234 | Rs 246, rounded down | Rs 988 |
+| Rs 10,000 | Rs 2,000 | Rs 8,000 |
 
 A change to the commission rate applies only to listings published after it takes effect. Try the [commission calculator]({{ '/pricing/#calculator' | relative_url }}).
 
@@ -132,7 +132,7 @@ Gateways keep their fee when a payment is refunded, so whoever caused a refund b
 
 - **Cancelling after payment.** Cancel only if you truly cannot hand the food over, and as early as you can. We offer the NGO up to 3 similar listings.
 - **Closed or not ready.** If the collector finds you closed or the food not ready within the window, they report it from the collector pass. If you don't reply within 2 hours, the NGO is refunded in full and you get a strike. If you reply, we decide it as a dispute.
-- **Short handover.** Enter the real quantity at handover. For example, you list 40 naan for Rs 2,000 and hand over 30. The NGO gets Rs 500 back automatically, our commission falls to Rs 75, and you receive Rs 1,425 less the refund costs on the Rs 500. Being 25% short, you also get a strike.
+- **Short handover.** Enter the real quantity at handover. For example, you list 40 naan for Rs 2,000 and hand over 30. The NGO gets Rs 500 back automatically, our commission falls to Rs 300, and you receive Rs 1,200 less the refund costs on the Rs 500. Being 25% short, you also get a strike.
 - **Recovering what you owe.** Refund costs you caused come out of your next payout, with a credit note where tax was charged on reversed commission. If there is no payout to deduct from, for example after you close your account, we invoice you.
 
 The [Payments and Refunds]({{ '/legal/payments/' | relative_url }}) policy sets out every case and how long each refund takes.

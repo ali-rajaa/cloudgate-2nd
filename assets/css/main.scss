@@ -176,9 +176,7 @@ li { text-wrap: pretty; }
 .btn:disabled:not([aria-busy="true"]), .btn[aria-disabled="true"]:not([aria-busy="true"]) { opacity: 0.55; cursor: not-allowed; }
 
 /* ---------- Activity indicator ----------
-   The eight-spoke wheel from iOS. The spokes don't sweep round: the bright one
-   steps to the next spoke eight times a second, so it reads as working without
-   smooth motion. It's a mask, so it takes the colour of the text around it, and
+   An eight-spoke wheel that turns smoothly, about once a second. It's a mask, so it takes the colour of the text around it, and
    it fades in after --activity-delay, so a quick load never flashes it.
    Used on its own (.activity) and by busy buttons and the Urdu toggle. */
 .activity, .btn[aria-busy="true"]::before, .lang-toggle[aria-busy="true"]::after {
@@ -186,10 +184,10 @@ li { text-wrap: pretty; }
   background: currentColor;
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M12 2.75v4.5'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-45 12 12)' stroke-opacity='0.9'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-90 12 12)' stroke-opacity='0.8'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-135 12 12)' stroke-opacity='0.7'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-180 12 12)' stroke-opacity='0.6'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-225 12 12)' stroke-opacity='0.5'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-270 12 12)' stroke-opacity='0.4'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-315 12 12)' stroke-opacity='0.3'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M12 2.75v4.5'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-45 12 12)' stroke-opacity='0.9'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-90 12 12)' stroke-opacity='0.8'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-135 12 12)' stroke-opacity='0.7'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-180 12 12)' stroke-opacity='0.6'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-225 12 12)' stroke-opacity='0.5'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-270 12 12)' stroke-opacity='0.4'/%3E%3Cpath d='M12 2.75v4.5' transform='rotate(-315 12 12)' stroke-opacity='0.3'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
-  animation: activity-step 1s steps(8) infinite, activity-in 200ms ease-out var(--activity-delay, 0ms) both;
+  animation: activity-turn 0.9s linear infinite, activity-in 200ms ease-out var(--activity-delay, 0ms) both;
 }
 .activity--large { width: 2rem; height: 2rem; color: var(--muted); }
-@keyframes activity-step { to { transform: rotate(360deg); } }
+@keyframes activity-turn { to { transform: rotate(360deg); } }
 @keyframes activity-in { from { opacity: 0; } }
 .text-link { display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 650; text-decoration: none; }
 .text-link:hover { text-decoration: underline; }
@@ -201,6 +199,21 @@ li { text-wrap: pretty; }
   -webkit-tap-highlight-color: transparent; transition: background-color 120ms ease, transform 120ms ease;
 }
 .icon-button:active { transform: scale(0.92); background: var(--surface-sunk); }
+
+/* ---------- Verse line: one quiet line of the Qur'an above the header ---------- */
+.ayah { background: var(--ink-deep); color: #E9DFC7; }
+.ayah__line {
+  display: flex; align-items: baseline; justify-content: center; gap: 0.35rem 1rem;
+  max-width: calc(var(--container) + 2 * var(--gutter)); margin: 0 auto; padding: 0.3rem var(--gutter) 0.35rem;
+  white-space: nowrap;
+}
+.ayah__ar { font-family: "Amiri", var(--font-urdu); font-size: 1.125rem; line-height: 2.1; color: #F2E6C9; }
+.ayah__en { font-family: var(--font-display); font-style: italic; font-size: 0.875rem; color: #C9D3CC; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.ayah__ref { font-style: normal; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #9FB0A5; }
+.ayah__ref::before { content: "·"; margin-inline-end: 1rem; color: #6F8577; }
+@media (max-width: 760px) { .ayah__en { display: none; } .ayah__line { gap: 0.6rem; } .ayah__ref::before { margin-inline-end: 0.6rem; } }
+@media (max-width: 440px) { .ayah__ar { font-size: 0.95rem; } .ayah__ref { font-size: 0.6875rem; letter-spacing: 0.03em; } }
+@media (max-width: 350px) { .ayah__ref { display: none; } }
 
 /* ---------- Header: a solid bar that gains a hairline once content is underneath ---------- */
 .site-header {
@@ -349,11 +362,6 @@ html.has-sheet { overflow: hidden; }
 @media (min-width: 960px) { .hero__grid { grid-template-columns: 1.15fr 0.85fr; } }
 .hero__urdu { text-align: left; margin-bottom: 0.5rem; font-family: var(--font-urdu); font-size: clamp(1.5rem, 3vw, 2rem); line-height: 1.8; color: var(--ink); opacity: 0.85; }
 .hero__visual { position: relative; display: grid; justify-items: center; }
-/* A plain offset block behind the example card: a ground for it to sit on, nothing more. */
-.hero__visual::before {
-  content: ""; position: absolute; inset: 14% -4% -7% 18%; z-index: -1; border-radius: 2rem;
-  background: var(--surface-sunk); border: 1px solid var(--divider);
-}
 .hero__meta { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; margin-top: 1.75rem; color: var(--muted); font-size: 0.9375rem; }
 .hero__meta span { display: inline-flex; align-items: center; gap: 0.4rem; }
 .page-hero { padding-block: clamp(3rem, 7vw, 5.5rem) clamp(1.5rem, 4vw, 2.5rem); }
@@ -472,14 +480,11 @@ html.has-sheet { overflow: hidden; }
   transform: rotate(-1.2deg);
 }
 .listing-card__photo {
-  position: relative; aspect-ratio: 16 / 9; display: grid; place-items: end start; padding: 0.9rem;
-  background:
-    radial-gradient(circle at 25% 40%, #E7C48F 0 16%, transparent 17%),
-    radial-gradient(circle at 48% 58%, #D9A86A 0 18%, transparent 19%),
-    radial-gradient(circle at 72% 38%, #E9C995 0 15%, transparent 16%),
-    radial-gradient(circle at 60% 78%, #CF9A5C 0 12%, transparent 13%),
-    linear-gradient(135deg, #8A5A2E, #5E3B1C);
+  position: relative; aspect-ratio: 16 / 9; display: grid; place-items: end start; padding: 0.9rem; overflow: hidden;
+  background: #D9C39C;
 }
+.listing-card__art { position: absolute; inset: 0; width: 100%; height: 100%; }
+.listing-card__photo-label { position: relative; }
 .listing-card__photo-label {
   display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.3rem 0.6rem; border-radius: var(--radius-pill);
   background: #1B241F; color: #fff; font-size: 0.75rem; font-weight: 600;
@@ -782,8 +787,8 @@ td.num, th.num { text-align: end; font-variant-numeric: tabular-nums; white-spac
 .timeline .meta { display: inline-block; margin-top: 0.4rem; font-size: 0.875rem; font-weight: 600; color: var(--ink); }
 .split-bar { display: flex; height: 3.5rem; overflow: hidden; border-radius: 1rem; font-weight: 700; }
 .split-bar > span { display: flex; align-items: center; padding-inline: 1rem; white-space: nowrap; }
-.split-bar__vendor { flex: 95; background: var(--ink); color: var(--on-ink); }
-.split-bar__fee { flex: 5; min-width: 4.5rem; justify-content: center; background: var(--accent); color: var(--on-ink); }
+.split-bar__vendor { flex: 80; background: var(--ink); color: var(--on-ink); }
+.split-bar__fee { flex: 20; min-width: 4.5rem; justify-content: center; background: var(--accent); color: var(--on-ink); }
 .key-facts { display: grid; gap: 1px; margin: 0; overflow: hidden; border-radius: var(--radius-card); background: var(--divider); }
 @media (min-width: 640px) { .key-facts { grid-template-columns: 1fr 1fr; } }
 .key-facts > div { padding: 1.1rem 1.25rem; background: var(--surface); }
@@ -855,9 +860,9 @@ html.lang-ur .phone-field, html.lang-ur .money-field { text-align: left; }
 /* ---------- Accessibility preferences ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
-  /* The activity wheel is status, not decoration, and it steps rather than moves, so it keeps going (as on iOS). */
+  /* The activity wheel is status, not decoration, so it keeps turning (as on iOS). */
   .activity, .btn[aria-busy="true"]::before, .lang-toggle[aria-busy="true"]::after {
-    animation: activity-step 1s steps(8) infinite, activity-in 200ms ease-out var(--activity-delay, 0ms) both !important;
+    animation: activity-turn 0.9s linear infinite, activity-in 200ms ease-out var(--activity-delay, 0ms) both !important;
   }
   .btn, .card--link, .text-link .icon, .accordion__chevron, .footer-col__chevron { transition: none !important; }
   .btn:active, .card--link:active { transform: none; }

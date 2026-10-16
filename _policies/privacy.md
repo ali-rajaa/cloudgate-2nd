@@ -32,7 +32,7 @@ This policy explains how Rizq Rasan handles personal data: what we collect, why,
 The public pages of this website are information pages. Accounts and logging in are on the platform at /app/, which the rest of this policy covers.
 
 - **No cookies and no tracking.** It sets no cookies and uses no analytics, advertising or tracking tools. Our [Cookie Policy]({{ '/legal/cookies/' | relative_url }}) explains what the platform saves in your browser to keep you logged in.
-- **Fonts.** Our two typefaces load from Google Fonts. To send them, Google receives your IP address and basic details about your browser.
+- **Fonts.** Our typefaces load from Google Fonts. To send them, Google receives your IP address and basic details about your browser.
 - **Urdu translation.** If you press the "اردو" button, Google Translate translates the page. Google receives your IP address, browser details and the page text, and sets a `googtrans` cookie to remember your choice until you switch back to English. Nothing loads unless you press the button. The translation is automatic, and the English text is the official version.
 - **Hosting.** GitHub hosts this website. Like any web host, it receives your IP address when your browser asks for a page. We do not receive those records.
 

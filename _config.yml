@@ -43,6 +43,10 @@ forms:
 # Supabase project (Settings > API): the project URL and the anon public key.
 # Both are safe to publish; access is controlled by the database's rules.
 # While they are empty, /app/ says sign-in is switched off on this copy of the site.
+# Rizq Rasan's commission on each sale, in percent. The calculator uses it; the
+# backend's own rate is the commission_percent setting (supabase/migrations).
+commission_percent: 20
+
 platform:
   supabase_url: "https://ldzxxujxlzjuptzuxdcc.supabase.co"
   supabase_anon_key: "sb_publishable_oAL_pvsTv0oG1P89CsorOw_yHgEORpv"

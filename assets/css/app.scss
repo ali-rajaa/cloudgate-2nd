@@ -319,7 +319,7 @@ h1[tabindex="-1"]:focus { outline: none; }
 .app-empty__title { font-family: var(--font-display); font-size: 1.375rem; color: var(--ink); margin-bottom: 0.4rem; }
 .app-empty p + p { margin-top: 0.75rem; color: var(--muted); }
 /* A screen that's loading shows the wheel only if it takes longer than a moment. */
-.app-loading { display: grid; place-items: center; padding: 4rem 0; --activity-delay: 300ms; }
+.app-loading { display: grid; place-items: center; min-height: min(60vh, 32rem); padding: 2rem 0; --activity-delay: 200ms; }
 .no-js .app-loading--start { display: none; }
 
 /* ---------- Documents ---------- */

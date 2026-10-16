@@ -3,9 +3,9 @@ business:
   - title: List what's left
     text: Snap a photo, set a recovery price and a pickup window. It takes under a minute on your phone.
   - title: An NGO claims and pays
-    text: A verified NGO nearby claims it and pays straight away. You get a WhatsApp message to get the food ready.
+    text: A verified NGO nearby claims it and pays straight away. You get a notification and an email to get the food ready.
   - title: Hand over and get paid
-    text: Type the NGO's 4-digit pickup code at the counter. Your 95%, before any tax withheld by law, goes out in the first Monday or Thursday payout after the order is completed and the payment has settled.
+    text: Type the NGO's 4-digit pickup code at the counter. Your 80% goes out in the first Monday or Thursday payout after the order is completed and the payment has settled.
 ngo:
   - title: Find food near you
     text: See verified listings within your area, sorted by the pickup that ends soonest.

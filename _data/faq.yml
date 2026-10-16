@@ -6,14 +6,13 @@
     - q: Who can list food on Rizq Rasan?
       home: true
       a: >-
-        Restaurants, bakeries, grocers and cafes in Islamabad with an NTN and an
-        Islamabad Food Authority licence. Restaurants and cafes also need their Department of Tourist
-        Services registration. We check every business before it can list.
+        Restaurants, bakeries, grocers and cafes in Islamabad. You need your CNIC and one proof that
+        the business is real, such as a Food Authority licence, an NTN or a utility bill for the shop.
+        We check every business before it can list.
     - q: How much do I earn from a listing?
       a: >-
         You set a recovery price of at least Rs 1,000 and no more than half the food's retail value.
-        You keep 95% of that price. Any tax the law requires us to withhold is shown line by line on
-        your statement.
+        You keep 80% of that price.
     - q: When do I get paid?
       a: >-
         Payouts go out every Monday and Thursday by bank transfer to an account in your business name,
@@ -44,7 +43,7 @@
       a: >-
         A small recovery price covers the vendor's packing and handover time, which keeps them
         listing food instead of throwing it away. Prices are capped at half of retail value, so you
-        always save at least 50%. Rizq Rasan's 5% comes out of that price, not on top.
+        always save at least 50%. Rizq Rasan's 20% comes out of that price, not on top.
     - q: How much can we claim?
       a: >-
         New organisations start with up to 2 claims a day. After the first month or 10 completed
@@ -52,8 +51,8 @@
         Pakistan Centre for Philanthropy or approved by FBR under section 2(36) have no daily limit.
     - q: Who collects the food?
       a: >-
-        Anyone you choose. Add up to five drivers or volunteers as collectors. They get a WhatsApp
-        link with the pickup code, address and time, and don't need an account.
+        Anyone you choose. Add up to five drivers or volunteers as collectors. You send them the
+        pickup code, address and time on WhatsApp with one tap, and they don't need an account.
     - q: Can we sell food we collect?
       a: >-
         No. Food claimed through Rizq Rasan must be served or given to people for free. Reselling it
@@ -91,12 +90,12 @@
       home: true
       a: >-
         Every category has a time limit, cooked food can spend at most 2 hours at room temperature,
-        and we start with low-risk food such as bread, bakery, produce and packaged goods. Vendors must
-        hold a food licence, and collectors check the food before taking it.
+        and we start with low-risk food such as bread, bakery, produce and packaged goods. Every business
+        is checked by a person before it can list, and collectors check the food before taking it.
     - q: What if the food looks unsafe at pickup?
       a: >-
-        Don't take it. Tap "Refuse food" on the collector pass and add a photo. You are refunded in
-        full straight away, and our team looks into it.
+        Don't take it. Tap "Refuse unsafe food" on the order. You are refunded in full straight away,
+        and our team looks into it.
     - q: Is the food halal?
       a: >-
         Vendors declare whether food is halal. Listings show "halal-certified" only when the vendor

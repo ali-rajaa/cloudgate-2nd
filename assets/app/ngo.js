@@ -589,7 +589,7 @@ async function claimPage({ params, query }) {
         : 'You cancelled in good time. Your full refund is on its way.';
       case 'cancelled_by_vendor': return `The business cancelled this order${d.ended_reason ? ': ' + d.ended_reason : ''}. ` + (d.paid_at
         ? (direct ? 'They must return your payment. Contact us if they don\'t within 1 working day.' : 'You will get a full refund.') : 'Nothing was charged.');
-      case 'refused_at_pickup': return 'You refused this food at pickup as unsafe. Our team reviews it within 24 hours and you get a full refund if it is upheld.';
+      case 'refused_at_pickup': return 'You refused this food at pickup as unsafe. You\'ve been refunded in full, and our team reviews it within 24 hours.';
       case 'no_show': return `${d.ended_reason || 'Marked as not collected'}. Payments are not refunded for no-shows. If this is wrong, report a problem within 24 hours.`;
       default: return null;
     }

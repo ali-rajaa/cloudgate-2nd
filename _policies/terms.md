@@ -96,11 +96,11 @@ An NGO can release a claim before paying with no penalty. Leaving 3 claims to ex
 
 - **How NGOs pay.** NGOs pay the full listing price when they claim, through our payment gateway PayFast: by Raast (the default) or a JazzCash or Easypaisa wallet. Card payments may be added later. Cash at pickup is never accepted.
 - **What we never see.** You pay on PayFast's own page or in your bank's app. We never receive or store your card, bank or wallet login details.
-- **Our fee.** Rizq Rasan keeps a commission of 5% of the listing price, services tax included, rounded down to the whole rupee. It comes out of the vendor's share. NGOs pay the listing price with nothing added. There is no sign-up fee and no monthly charge.
+- **Our fee.** Rizq Rasan keeps a commission of 20% of the listing price, services tax included, rounded down to the whole rupee. It comes out of the vendor's share. NGOs pay the listing price with nothing added. There is no sign-up fee and no monthly charge.
 - **Gateway fees.** On normal sales we pay the gateway's fee out of our commission. When a payment is refunded, the gateway keeps its fee, so whoever caused the refund bears it.
-- **Vendor payouts.** The vendor receives 95% of the listing price, less any tax the law requires us to withhold and the cost of any refund the vendor caused. Payouts go every Monday and Thursday, and we aim to pay within 6 working days of pickup.
+- **Vendor payouts.** The vendor receives 80% of the listing price, less any tax the law requires us to withhold and the cost of any refund the vendor caused. Payouts go every Monday and Thursday, and we aim to pay within 6 working days of pickup.
 
-For example: NGO pays Rs 1,200 · Vendor receives Rs 1,140 · Rizq Rasan Rs 60.
+For example: NGO pays Rs 1,200 · Vendor receives Rs 960 · Rizq Rasan Rs 240.
 
 Receipts are always issued in the NGO's name. Our [Payments and Refunds]({{ '/legal/payments/' | relative_url }}) policy and the [Pricing]({{ '/pricing/' | relative_url }}) page give more detail.
 

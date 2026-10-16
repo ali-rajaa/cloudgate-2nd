@@ -542,7 +542,7 @@
   });
 
   /* ---------------------------------------------------------------------------
-     Pricing calculator: 5% commission, rounded down to the whole rupee.
+     Pricing calculator: the commission (data-commission, in percent), rounded down to the whole rupee.
   --------------------------------------------------------------------------- */
   function rupees(n) {
     return 'Rs ' + String(Math.max(0, Math.round(n))).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -554,12 +554,13 @@
     var vendor = calc.querySelector('[data-calc-vendor]');
     var fee = calc.querySelector('[data-calc-fee]');
     var hint = calc.querySelector('[data-calc-hint]');
+    var rate = Number(calc.getAttribute('data-commission')) / 100 || 0;
     var defaultHint = hint ? hint.textContent : '';
 
     function update() {
       var price = Math.floor(Number(input.value));
       if (!isFinite(price) || price < 0) price = 0;
-      var commission = Math.floor(price * 0.05);
+      var commission = Math.floor(price * rate);
       total.textContent = rupees(price);
       vendor.textContent = rupees(price - commission);
       fee.textContent = rupees(commission);
@@ -818,8 +819,9 @@
   /* ---------------------------------------------------------------------------
      Language: English by default. The اردو button translates the page into
      Urdu with Google Translate, which is only loaded once someone asks for it.
-     The choice is remembered in Google's "googtrans" cookie, so later pages
-     open in Urdu too. The switch is smooth: the page fades while Google works,
+     The choice is saved on this device the moment it's made (and in Google's
+     "googtrans" cookie), so every later page opens in Urdu until English is
+     chosen; head.html starts loading Google early on those pages. The switch is smooth: the page fades while Google works,
      the layout flips to right to left only once the Urdu text has arrived, and
      if Google can't be reached the page simply stays in English with a note.
   --------------------------------------------------------------------------- */
@@ -834,10 +836,17 @@
       'https://translate.googleapis.com/translate_a/element.js?cb=rizqTranslateInit',
       'https://translate.google.com/translate_a/element.js?cb=rizqTranslateInit'
     ];
-    var TIMEOUT = 12000;
+    var TIMEOUT = 8000;
     var started = false, finished = false, timer = 0;
 
-    function wantsUrdu() { return /(?:^|;\s*)googtrans=\/en\/ur(?:;|$)/.test(document.cookie); }
+    function wantsUrdu() {
+      try { if (localStorage.getItem('rr-lang') === 'ur') return true; } catch (e) {}
+      return /(?:^|;\s*)googtrans=\/en\/ur(?:;|$)/.test(document.cookie);
+    }
+    function remember(urdu) {
+      try { if (urdu) localStorage.setItem('rr-lang', 'ur'); else localStorage.removeItem('rr-lang'); } catch (e) {}
+      setCookie(urdu ? '/en/ur' : '');
+    }
 
     // Google may store its cookie on the host, on ".host" and on parent domains.
     function cookieDomains() {
@@ -907,19 +916,29 @@
       root.classList.add('lang-ur');
       root.classList.remove('lang-pending', 'lang-loading');
       setButtons('ur');
-      setCookie('/en/ur');
+      remember(true);
       showNote('یہ صفحہ خودکار طور پر اردو میں ترجمہ کیا گیا ہے۔ سرکاری متن انگریزی میں ہے۔' +
         '<button type="button" lang="en" dir="ltr" data-lang-english>English</button>', 'info');
       window.dispatchEvent(new Event('resize'));
     }
 
-    // Google could not be reached: stay in English, no reload, and say why.
+    // Slow: show the page in English for now and keep waiting; Urdu still
+    // replaces it if Google gets there. The choice is kept for the next page.
+    function urduSlow() {
+      if (finished) return;
+      root.classList.remove('lang-pending', 'lang-loading');
+      setButtons('ur'); // so English can be chosen while waiting
+      showNote('Urdu is taking a while on this connection. The page will switch as soon as it arrives.' +
+        '<button type="button" data-note-close>Close</button>', 'problem');
+    }
+
+    // Google could not be reached at all (blocked): stay in English and say why.
     function urduFailed() {
       if (finished) return;
       finished = true;
       started = false; // a tap on اردو tries again for real
       clearTimeout(timer);
-      setCookie('');
+      remember(false);
       root.classList.remove('lang-pending', 'lang-loading', 'lang-ur');
       root.setAttribute('lang', 'en');
       root.setAttribute('dir', 'ltr');
@@ -974,7 +993,7 @@
       setButtons('loading');
       root.classList.add('lang-loading');
       loadUrduFont();
-      timer = setTimeout(urduFailed, TIMEOUT);
+      timer = setTimeout(urduSlow, TIMEOUT);
       var holder = document.getElementById('google_translate_element');
       if (!holder) {
         holder = document.createElement('div');
@@ -982,23 +1001,29 @@
         holder.hidden = true;
         document.body.appendChild(holder);
       }
-      window.rizqTranslateInit = function () {
+      function init() {
         try {
           new window.google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'ur', autoDisplay: false }, 'google_translate_element');
           pickUrdu();
         } catch (err) { urduFailed(); }
-      };
-      loadScript(0);
+      }
+      window.rizqTranslateInit = init;
+      // head.html may already have loaded (or be loading) Google's script for this page.
+      var early = document.getElementById('rizq-translate');
+      if (window.rizqTranslateLoaded && window.google && window.google.translate) init();
+      else if (!early || window.rizqTranslateError) loadScript(early ? 1 : 0);
+      else early.addEventListener('error', function () { loadScript(1); });
     }
 
     function toUrdu() {
+      remember(true); // saved now, so a page opened before Google finishes is in Urdu too
       startTranslation();
     }
 
     // Undoing Google's changes reliably needs a fresh copy of the page.
     // Fade out first so the reload feels like a page turn, not a crash.
     function toEnglish() {
-      setCookie('');
+      remember(false);
       root.classList.add('lang-loading');
       setTimeout(function () { location.reload(); }, reducedMotion() ? 0 : 160);
     }
@@ -1006,7 +1031,7 @@
     Array.prototype.forEach.call(toggles, function (b) {
       b.addEventListener('click', function () {
         if (b.getAttribute('aria-busy') === 'true') return;
-        if (root.classList.contains('lang-ur') || wantsUrdu() && finished) toEnglish();
+        if (root.classList.contains('lang-ur') || wantsUrdu()) toEnglish();
         else toUrdu();
       });
     });

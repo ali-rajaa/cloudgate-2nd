@@ -1,13 +1,13 @@
 ---
 title: Payments and Refunds
 order: 5
-description: How NGOs pay, the payment deadline, our 5% commission, when vendors are paid, and every refund case with who bears the cost and how fast it happens.
+description: How NGOs pay, the payment deadline, our 20% commission, when vendors are paid, and every refund case with who bears the cost and how fast it happens.
 version: "0.1 (draft)"
 effective: from launch (22 March 2027)
 summary:
   - NGOs pay the full listing price when they claim, by Raast or a JazzCash or Easypaisa wallet through PayFast. Cash at pickup is never accepted.
   - The payment deadline is 30 minutes after claiming, or 15 minutes before pickup ends if that comes first. Unpaid food goes back on offer and nothing is charged.
-  - Rizq Rasan keeps 5% of the listing price, services tax included. Vendors receive 95%, less any tax withheld by law, in payouts every Monday and Thursday.
+  - Rizq Rasan keeps 20% of the listing price, services tax included. Vendors receive 80%, less any tax withheld by law, in payouts every Monday and Thursday.
   - Every refund case is set out below. Whoever causes a refund bears the gateway's fee, and an NGO that doesn't turn up gets no refund.
 ---
 This policy explains how money will move on Rizq Rasan from launch: how NGOs pay, what we keep, when vendors are paid, and what happens to the money when an order goes wrong. It forms part of our [Terms of Service]({{ '/legal/terms/' | relative_url }}) and applies alongside the [Vendor Agreement]({{ '/legal/vendor-agreement/' | relative_url }}) and the [NGO Agreement]({{ '/legal/ngo-agreement/' | relative_url }}). During the pilot, payments work differently, as section 12 explains.
@@ -62,21 +62,21 @@ If a payment method stops working, it can't be chosen at checkout. If all paymen
 
 ## 5. Our commission and the vendor's share
 
-- **Commission.** Rizq Rasan keeps 5% of the listing price, services tax included, rounded down to the whole rupee in the vendor's favour. It comes out of the vendor's share. There is no sign-up fee and no monthly charge.
-- **Vendor's share.** The vendor receives 95% of the listing price, less any tax the law requires us to withhold and the cost of any refund the vendor caused. Each deduction is shown line by line.
+- **Commission.** Rizq Rasan keeps 20% of the listing price, services tax included, rounded down to the whole rupee in the vendor's favour. It comes out of the vendor's share. There is no sign-up fee and no monthly charge.
+- **Vendor's share.** The vendor receives 80% of the listing price, less any tax the law requires us to withhold and the cost of any refund the vendor caused. Each deduction is shown line by line.
 - **Price limits.** Every listing is priced at no less than Rs 1,000 and no more than 50% of the food's retail value.
 
 | Listing price | NGO pays | Vendor receives | Rizq Rasan |
 | --- | --- | --- | --- |
-| Rs 1,200 | Rs 1,200 | Rs 1,140 | Rs 60 |
-| Rs 1,250 | Rs 1,250 | Rs 1,188 | Rs 62 |
-| Rs 10,000 | Rs 10,000 | Rs 9,500 | Rs 500 |
+| Rs 1,200 | Rs 1,200 | Rs 960 | Rs 240 |
+| Rs 1,234 | Rs 1,234 | Rs 988 | Rs 246 |
+| Rs 10,000 | Rs 10,000 | Rs 8,000 | Rs 2,000 |
 
 The vendor amounts are before any tax withheld. Our [commission calculator]({{ '/pricing/#calculator' | relative_url }}) works out any other price. If we ever change the commission, the change applies only to listings published after it takes effect, and we will email you at least 14 days ahead.
 
 ## 6. Gateway fees
 
-The payment gateway charges a fee on every payment, and the fee depends on the method. Raast costs least, which is why it is the default. On a normal sale, Rizq Rasan pays the fee out of its 5%, so it never comes out of the vendor's share or adds to the NGO's price.
+The payment gateway charges a fee on every payment, and the fee depends on the method. Raast costs least, which is why it is the default. On a normal sale, Rizq Rasan pays the fee out of its 20%, so it never comes out of the vendor's share or adds to the NGO's price.
 
 When a payment is refunded, the gateway keeps its fee, so whoever caused the refund bears it, as the table in section 9 shows.
 
@@ -109,7 +109,7 @@ If a vendor caused a refund, the gateway fee and any tax already withheld are de
 
 ## 8. Tax
 
-- **Services tax on our commission** is included in the 5%. Every payout comes with a tax invoice for the commission.
+- **Services tax on our commission** is included in the 20%. Every payout comes with a tax invoice for the commission.
 - **Tax withheld from vendors.** If the law requires us, or our payment gateway, to withhold tax from a vendor's share, we deduct it and show it line by line on the payout statement, as the vendor's record of it.
 - **Reporting to FBR.** Since 1 July 2025, FBR rules bar online marketplaces from serving sellers without an NTN and require monthly statements on sellers. That is why every vendor needs an NTN. Where these rules apply to us, we report to FBR as they require.
 - **Still to be confirmed.** Whether the 1% e-commerce tax that payment intermediaries withhold, and the monthly statements, apply to surplus food sold to NGOs, and the services tax rate on our commission, will be confirmed by a tax adviser before live payments start, and this section updated.

@@ -1,8 +1,8 @@
 {%- comment -%}
   Commission calculator. Updates on every keystroke (continuous feedback).
-  Commission = 5% rounded down to the whole rupee; vendor receives the rest before any tax withheld by law.
+  Commission = site.commission_percent, rounded down to the whole rupee; the vendor receives the rest.
 {%- endcomment -%}
-<div class="calculator" id="calculator" data-calculator>
+<div class="calculator" id="calculator" data-calculator data-commission="{{ site.commission_percent }}">
   <div class="calculator__input">
     <label for="calc-price" class="field__label">Listing price</label>
     <div class="money-field">
@@ -18,12 +18,11 @@
     </div>
     <div class="calculator__row calculator__row--vendor">
       <dt>You receive</dt>
-      <dd data-calc-vendor>Rs 1,140</dd>
+      <dd data-calc-vendor>Rs 960</dd>
     </div>
     <div class="calculator__row">
-      <dt>Rizq Rasan (5%)</dt>
-      <dd data-calc-fee>Rs 60</dd>
+      <dt>Rizq Rasan ({{ site.commission_percent }}%)</dt>
+      <dd data-calc-fee>Rs 240</dd>
     </div>
   </dl>
-  <p class="calculator__note">Your share is before any tax the law requires us to withhold, which is shown line by line on your statement.</p>
 </div>

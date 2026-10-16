@@ -4,7 +4,7 @@ import {
   db, state, h, field, dialog, busy, toast, rpc, select, pageHead, notice, empty, badge, icon, link, go,
   rs, dateTime, date, untilText, minutesLeft, statusLabel, phoneDisplay, AppError, friendly,
 } from './core.js';
-import { DOCS } from './onboarding.js';
+import { DOC_LABELS } from './onboarding.js';
 
 export function routes(register) {
   const r = (path, title, render) => register(path, { title, roles: ['admin'], render });
@@ -229,7 +229,7 @@ async function organisation({ params, app }) {
     select(db.from('orders').select('id, status, price_rs, created_at, listings(title)').or(`vendor_id.eq.${o.id},ngo_id.eq.${o.id}`).order('created_at', { ascending: false }).limit(10)),
   ]);
   const people = members.length ? await select(db.from('profiles').select('id, full_name, phone').in('id', members.map((m) => m.user_id))) : [];
-  const docLabels = Object.fromEntries((DOCS[o.type] || []).map(([k, label]) => [k, label]));
+  const docLabels = DOC_LABELS;
   const activeStrikes = strikes.filter((s) => !s.forgiven_at && new Date(s.expires_at) > new Date());
 
   // Details

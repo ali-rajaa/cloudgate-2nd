@@ -343,7 +343,7 @@ async function newListing() {
       h('div', h('dt', 'Rizq Rasan'), h('dd', rs(sp.commission))));
     splitNote.textContent = s.payment_mode === 'direct'
       ? 'During the pilot NGOs pay you directly by Raast or bank transfer' + (sp.commission ? '.' : ', and Rizq Rasan takes no commission.')
-      : `Rizq Rasan keeps ${s.commission_percent}% (services tax included). Payouts go to your bank on Mondays and Thursdays.`;
+      : `Rizq Rasan keeps ${s.commission_percent}%. Payouts go to your bank on Mondays and Thursdays.`;
     const retail = Number(p.retail.value()) || 0;
     priceMax.textContent = retail ? `For this listing the price can be ${rs(minPrice)} to ${rs(Math.floor(retail * share))}.` : '';
   }
@@ -1067,7 +1067,7 @@ async function earnings() {
   const td = (label, content, cls) => h('td', { 'data-label': label, class: cls || null }, content);
   const payoutTable = lines.length ? h('section.app-section', { id: 'vd-payouts' },
     h('div.vd-section-head', h('h2.app-h2', 'Payouts'), h('button.btn.btn--secondary.btn--sm', { type: 'button', onclick: () => csvDownload('rizq-rasan-earnings.csv',
-      [['Order', 'Reference', 'Date', 'Gross', 'Commission', 'Tax and deductions', 'Net', 'Status', 'Bank reference'],
+      [['Order', 'Reference', 'Date', 'Gross', 'Commission', 'Deductions', 'Net', 'Status', 'Bank reference'],
         ...lineRows.map((r) => [r.title, r.ref, date(r.when), r.gross, r.commission, r.tax, r.net, LINE_STATUS[r.status]?.[0] || r.status, r.bank || ''])]) }, 'Download CSV')),
     h('p.app-muted', 'Payouts go to your bank account on Mondays and Thursdays, once the order is complete.'),
     h('div.app-table-wrap.vd-tablewrap', h('table.app-table.vd-table',

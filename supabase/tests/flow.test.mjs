@@ -46,10 +46,18 @@ async function setSetting(key, value) {
 async function makeOrg(u, type, name, extra) {
   const org = await must(u.client, 'create_organisation', { p_type: type, p_name: name, p_business_kind: type === 'vendor' ? 'Bakery' : 'NGO', p_phone: '+923001234567' });
   await must(u.client, 'update_organisation', { p_org: org, p_fields: { address: 'Shop 12, Street 3', sector: 'F-7 Markaz', lat: 33.7215, lng: 73.0566, ntn: '1234567-8', ...extra } });
-  const path = `${org}/registration-${run}.pdf`;
-  const up = await u.client.storage.from('documents').upload(path, new Blob(['%PDF-1.4 test'], { type: 'application/pdf' }), { contentType: 'application/pdf' });
-  if (up.error) throw new Error('upload: ' + up.error.message);
-  await must(u.client, 'add_document', { p_org: org, p_kind: 'registration', p_path: path });
+  for (const kind of ['registration', 'signatory_cnic']) {
+    const path = `${org}/${kind}-${run}.pdf`;
+    const up = await u.client.storage.from('documents').upload(path, new Blob(['%PDF-1.4 test'], { type: 'application/pdf' }), { contentType: 'application/pdf' });
+    if (up.error) throw new Error('upload: ' + up.error.message);
+    await must(u.client, 'add_document', { p_org: org, p_kind: kind, p_path: path });
+    // The CNIC is required: submitting with only the business proof is refused.
+    if (kind === 'registration' && !makeOrg.checkedCnic) {
+      makeOrg.checkedCnic = true;
+      const early = await rpc(u.client, 'submit_for_review', { p_org: org });
+      ok(early.error && /CNIC/.test(early.error.message), 'an application without the CNIC is refused', early.error);
+    }
+  }
   await must(u.client, 'submit_for_review', { p_org: org });
   return org;
 }
@@ -214,7 +222,7 @@ await setSetting('payment_mode', 'payfast');
 const listing2 = await must(vendorU.client, 'create_listing', listingArgs(vendor, { p_title: 'Plain buns, 60', p_category: 'plain_bakery', p_price_rs: 2000, p_retail_value_rs: 5000 }));
 const order2 = await must(ngoU.client, 'claim_listing', { p_ngo: ngo, p_listing: listing2 });
 det = await must(ngoU.client, 'order_details', { p_order: order2 });
-ok(det.payment_mode === 'payfast' && det.commission_rs === 100 && det.vendor_share_rs === 1900, '5% commission rounded down in gateway mode', det);
+ok(det.payment_mode === 'payfast' && det.commission_rs === 400 && det.vendor_share_rs === 1600, '20% commission in gateway mode', det);
 r = await rpc(ngoU.client, 'record_gateway_payment', { p_order: order2, p_reference: 'x', p_amount: 2000, p_method: 'raast', p_event_id: 'e', p_body: {}, p_signature_valid: true, p_success: true });
 ok(!!r.error, 'only the server can record a gateway payment');
 const ev = `evt-${run}`;
@@ -230,7 +238,7 @@ det = await must(ngoU.client, 'order_details', { p_order: order2 });
 await must(vendorU.client, 'verify_pickup_code', { p_vendor: vendor, p_code: det.pickup_code });
 await must(ngoU.client, 'ngo_confirm_receipt', { p_order: order2 });
 const line = (await vendorU.client.from('payout_lines').select('*').eq('order_id', order2).single()).data;
-ok(line && line.net_rs === 1900 && line.status === 'eligible', 'business\'s 95% becomes payable after completion', line);
+ok(line && line.net_rs === 1600 && line.status === 'eligible', 'business\'s 80% becomes payable after completion', line);
 
 // ---------------------------------------------------------------------------
 console.log('\n7. Payout batch needs two admins');

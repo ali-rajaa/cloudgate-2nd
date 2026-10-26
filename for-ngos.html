@@ -64,7 +64,7 @@ actions:
 
 <section class="section" aria-labelledby="tiers-title">
   <div class="container">
-    {% include section-head.html eyebrow="Trust tiers" title="Claim limits grow as you build a record" id="tiers-title" lead="Every organisation starts in Tier C, with low limits while it builds a record. The limits rise once you've shown you pay and collect reliably." %}
+    {% include section-head.html title="Claim limits grow as you build a record" id="tiers-title" lead="Every organisation starts in Tier C, with low limits while it builds a record. The limits rise once you've shown you pay and collect reliably." %}
     <div class="stack">
       <div class="table-wrap">
         <table>
@@ -107,7 +107,7 @@ actions:
 
 <section class="section section--sunk" aria-labelledby="ngo-documents-title">
   <div class="container offset">
-    {% include section-head.html eyebrow="Documents" title="What you'll need to send" id="ngo-documents-title" lead="Two documents, from your phone. Verification takes 2 working days. If something is missing, we'll tell you exactly what, and only that part needs redoing." %}
+    {% include section-head.html title="What you'll need to send" id="ngo-documents-title" lead="Two documents, from your phone. Verification takes 2 working days. If something is missing, we'll tell you exactly what, and only that part needs redoing." %}
     <div class="stack">
       <ul class="check-list">
         <li><strong>Registration certificate</strong> under one of the routes above.</li>
@@ -124,7 +124,7 @@ actions:
 
 <section class="section" aria-labelledby="claim-title">
   <div class="container">
-    {% include section-head.html eyebrow="Claim and pay" title="How to claim and pay" id="claim-title" lead="Paying when you claim is what holds the food for you. Raast is the default because the money arrives in seconds." %}
+    {% include section-head.html title="How to claim and pay" id="claim-title" lead="Paying when you claim is what holds the food for you. Raast is the default because the money arrives in seconds." %}
     <div class="split">
       <ol class="timeline">
         <li>
@@ -174,7 +174,7 @@ actions:
   <div class="container">
     <div class="split">
       <div>
-        {% include section-head.html eyebrow="Collectors" title="Your drivers need no account" id="collectors-title" lead="Add 1 to 5 drivers or volunteers by name and mobile number. For each claim, you choose who collects and send them the pickup details on WhatsApp with one tap." %}
+        {% include section-head.html title="Your drivers need no account" id="collectors-title" lead="Add 1 to 5 drivers or volunteers by name and mobile number. For each claim, you choose who collects and send them the pickup details on WhatsApp with one tap." %}
         <div class="stack">
           <p>If someone else turns up, the vendor sees your collector's name and can call you.</p>
           <p>After pickup, the food is your responsibility: carry it safely, serve or refrigerate cooked food as soon as it arrives, and keep a simple distribution log.</p>
@@ -198,7 +198,7 @@ actions:
 
 <section class="section" aria-labelledby="noshow-title">
   <div class="container offset">
-    {% include section-head.html eyebrow="Pickup and no-show rules" title="Cancellations and no-shows" id="noshow-title" lead="Once you've paid, the vendor sets the food aside for you. These rules keep that fair on both sides." %}
+    {% include section-head.html title="Cancellations and no-shows" id="noshow-title" lead="Once you've paid, the vendor sets the food aside for you. These rules keep that fair on both sides." %}
     <div class="stack">
       <ul class="ledger">
         <li>{% include icon.html name="check" size=20 %}<h3>Cancel early, full refund</h3><p>Cancel at least 60 minutes before pickup starts and you get your money back in full. The food goes back to other organisations.</p></li>
@@ -230,7 +230,7 @@ actions:
 
 <section class="section section--sunk" aria-labelledby="ngo-faq-title">
   <div class="container container--narrow">
-    {% include section-head.html eyebrow="FAQ" title="Questions NGOs ask" id="ngo-faq-title" %}
+    {% include section-head.html title="Questions NGOs ask" id="ngo-faq-title" %}
     {%- for g in site.data.faq %}
       {%- if g.id == "ngos" or g.id == "payments" %}
     <div class="faq-group stack">
@@ -245,7 +245,7 @@ actions:
 
 <section id="register" class="section register" aria-labelledby="ngo-register-title">
   <div class="container container--narrow">
-    {% include section-head.html eyebrow="Get started" title="Create your account" id="ngo-register-title" lead="It takes two minutes. Then you add your documents in the app, and we check every account by hand within 2 working days. Listing and claiming start at launch on 22 March 2027." %}
+    {% include section-head.html title="Create your account" id="ngo-register-title" lead="It takes two minutes. Then you add your documents in the app, and we check every account by hand within 2 working days. Listing and claiming start at launch on 22 March 2027." %}
     <div class="button-row">
       <a class="btn btn--primary" href="{{ site.app_url }}#/signup/ngo">Create an NGO account</a>
       <a class="btn btn--secondary" href="{{ site.app_url }}#/login">Log in</a>

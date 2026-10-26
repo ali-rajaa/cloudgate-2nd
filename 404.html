@@ -4,7 +4,6 @@ permalink: /404.html
 layout: page
 noindex: true
 sitemap: false
-eyebrow: Page not found
 heading: We can't find that page
 lead: The page may have moved, or there may be a typo in the address. These links should help you find what you need.
 actions:
@@ -15,7 +14,7 @@ actions:
 ---
 <section class="section section--tight" aria-labelledby="useful-title">
   <div class="container container--narrow">
-    {% include section-head.html eyebrow="Useful pages" title="Try one of these" id="useful-title" %}
+    {% include section-head.html title="Try one of these" id="useful-title" %}
     <div class="grid grid--2">
       <a class="card card--link" href="{{ '/how-it-works/' | relative_url }}">
         <h3>How it works</h3>

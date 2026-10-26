@@ -2,14 +2,13 @@
 title: Impact
 permalink: /impact/
 description: How Rizq Rasan will count food rescued, meals, CO2e avoided and active partners, and the published method behind each number.
-eyebrow: Impact
 heading: How we'll measure our impact
 lead: Every completed pickup will add to four public totals. This page explains how each one is worked out.
 ---
 {%- if site.impact.published %}
 <section class="section section--tight section--sunk" aria-labelledby="totals-title">
   <div class="container">
-    {% include section-head.html eyebrow="So far" title="Totals to date" id="totals-title" lead="Updated weekly, when our team publishes the latest figures." %}
+    {% include section-head.html title="Totals to date" id="totals-title" lead="Updated weekly, when our team publishes the latest figures." %}
     <div class="grid grid--4">
       <figure class="stat"><p class="stat__value">{{ site.impact.kg_rescued }}<span class="stat__unit"> kg</span></p><figcaption class="stat__label">of food rescued</figcaption></figure>
       <figure class="stat"><p class="stat__value">{{ site.impact.meals }}</p><figcaption class="stat__label">meal equivalents, at 420 g a meal</figcaption></figure>
@@ -29,7 +28,7 @@ lead: Every completed pickup will add to four public totals. This page explains 
 
 <section class="section" aria-labelledby="method-title">
   <div class="container offset">
-    {% include section-head.html eyebrow="Method" title="How each number is worked out" id="method-title" lead="Every number starts from the weight of food collected, and the others are worked out from it with published factors. Totals come straight from completed orders, so nobody types them in by hand." %}
+    {% include section-head.html title="How each number is worked out" id="method-title" lead="Every number starts from the weight of food collected, and the others are worked out from it with published factors. Totals come straight from completed orders, so nobody types them in by hand." %}
     <div>
       <ul class="ledger">
         <li>
@@ -75,14 +74,14 @@ lead: Every completed pickup will add to four public totals. This page explains 
 
 <section id="sdgs" class="section section--sunk" aria-labelledby="sdg-title">
   <div class="container">
-    {% include section-head.html eyebrow="Our goals" title="The five UN goals we report on" id="sdg-title" lead="Each goal is matched to a figure that comes from the platform's own records, not from a survey or a guess." %}
+    {% include section-head.html title="The five UN goals we report on" id="sdg-title" lead="Each goal is matched to a figure that comes from the platform's own records, not from a survey or a guess." %}
     {% include sdgs.html %}
   </div>
 </section>
 
 <section class="section" aria-labelledby="reports-title">
   <div class="container">
-    {% include section-head.html eyebrow="Reports" title="What you'll be able to see" id="reports-title" %}
+    {% include section-head.html title="What you'll be able to see" id="reports-title" %}
     <div class="bento">
       <div class="tile tile--lead">
         <div class="tile__head">{% include icon.html name="doc" size=22 %}<h3>Everyone, later</h3></div>

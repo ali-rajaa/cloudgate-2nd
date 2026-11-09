@@ -48,10 +48,10 @@ function brand() {
     h('div.auth-brand__body',
       h('p.auth-brand__urdu', { lang: 'ur', dir: 'rtl', translate: 'no' }, 'رزق رسان'),
       h('p.auth-brand__headline', 'From surplus to sustenance.'),
-      h('p.auth-brand__lead', 'Good food from Islamabad\'s restaurants, bakeries and grocers reaches people who need it, instead of the bin.'),
+      h('p.auth-brand__lead', 'Stores and bakeries share what\'s left. Cafeterias, canteens and people nearby collect it for less.'),
       h('ol.auth-brand__steps',
-        step('01', 'List.', 'Businesses list good food left at the end of the day.'),
-        step('02', 'Claim.', 'Verified NGOs claim it and pay no more than half of retail.'),
+        step('01', 'List.', 'Vendors list their surplus: a lot, single items, or free.'),
+        step('02', 'Claim.', 'Verified collectors claim it and pay up to half of retail.'),
         step('03', 'Collect.', 'A 4-digit pickup code confirms every handover.'))),
     h('p.auth-brand__foot', 'Islamabad. Every account is checked by a person.'));
 }
@@ -344,7 +344,7 @@ function login() {
     title: 'Welcome back',
     lead: 'Log in to list food, claim it, or check on an order.',
     body: form,
-    foot: h('p', 'Trouble logging in? ', h('a', { href: site('contact/') }, 'Contact us')),
+    foot: h('p', 'Trouble logging in? ', h('a', { href: site('about/#contact') }, 'Contact us')),
   });
 }
 
@@ -357,16 +357,24 @@ const PERSONA = {
     agreement: ['legal/vendor-agreement/', 'Vendor Agreement'],
     note: 'No sign-up fee or monthly charge. Listing your surplus takes under a minute.',
   },
-  ngo: {
-    org: 'Organisation name',
-    agreement: ['legal/ngo-agreement/', 'NGO Agreement'],
-    note: 'Free to join. Every business is checked before it can list, and you pay only the listing price.',
+  organization: {
+    org: 'Organization name',
+    agreement: ['legal/collector-agreement/', 'Collector Agreement'],
+    note: 'Free to join. Every vendor is checked before it can list, and you pay only the listing price.',
+  },
+  individual: {
+    org: null,
+    agreement: ['legal/collector-agreement/', 'Collector Agreement'],
+    note: 'Free to join. Listings open to the public after launch, and we\'ll tell you when.',
   },
 };
-const NO_PERSONA = { org: 'Business or organisation name', agreement: ['legal/', 'Vendor or NGO Agreement'], note: '' };
+const NO_PERSONA = { org: 'Business or organization name', agreement: ['legal/', 'Vendor or Collector Agreement'], note: '' };
+// Old links used /signup/ngo for the side that claims food.
+const TYPE_ALIASES = { ngo: 'organization' };
 
 function signup({ params }) {
-  let type = PERSONA[params.type] ? params.type : null;
+  const asked = TYPE_ALIASES[params.type] || params.type;
+  let type = PERSONA[asked] ? asked : null;
   const persona = () => PERSONA[type] || NO_PERSONA;
   const parts = formParts();
 
@@ -380,8 +388,9 @@ function signup({ params }) {
   const types = h('fieldset.auth-type',
     h('legend.field__label', 'Which describes you?'),
     h('div.auth-type__options',
-      option('vendor', 'Food business', 'Restaurant, bakery, grocer or cafe'),
-      option('ngo', 'NGO or charity', 'Shelter, food bank or community kitchen')),
+      option('vendor', 'Vendor', 'I have surplus to share: store, bakery, restaurant or cafe'),
+      option('organization', 'Organization', 'We need supplies: cafeteria, canteen, office or bulk buyer'),
+      option('individual', 'Individual', 'I want supplies for myself')),
     typeError, personaNote);
   const radios = () => [...types.querySelectorAll('.auth-type__input')];
   const typeField = {
@@ -400,7 +409,11 @@ function signup({ params }) {
 
   const name = check(field({ name: 'name', label: 'Your name', required: true, autocomplete: 'name' }), (v) => (v ? '' : 'Enter your name.'));
   const phone = check(field({ name: 'phone', label: 'Mobile number', type: 'tel', required: true, inputmode: 'tel', autocomplete: 'tel-national', placeholder: '0300 1234567' }), phoneProblem);
-  const org = check(field({ name: 'org', label: persona().org, required: true, autocomplete: 'organization' }), (v) => (v.length >= 2 ? '' : 'Enter the name people know you by.'));
+  const org = check(field({ name: 'org', label: persona().org || 'Business or organization name', required: true, autocomplete: 'organization' }),
+    (v) => (type === 'individual' || v.length >= 2 ? '' : 'Enter the name people know you by.'));
+  // Individuals don't name an organization: their account goes by their own name.
+  const showOrg = () => { org.wrap.hidden = type === 'individual'; };
+  showOrg();
   const email = emailField({ autocomplete: 'email' });
   const avoid = () => personalWords({ email: email.value(), name: name.value(), org: org.value() });
   const password = check(passwordField({ label: 'Password', autocomplete: 'new-password', hint: 'At least 8 characters. Longer is stronger: a few unrelated words work well.' }),
@@ -420,7 +433,8 @@ function signup({ params }) {
   types.addEventListener('change', (e) => {
     type = e.target.value;
     typeField.validate();
-    org.wrap.querySelector('.field__label').firstChild.textContent = persona().org;
+    if (persona().org) org.wrap.querySelector('.field__label').firstChild.textContent = persona().org;
+    showOrg();
     [agreementLink.href, agreementLink.textContent] = [site(persona().agreement[0]), persona().agreement[1]];
     personaNote.textContent = persona().note;
     history.replaceState(null, '', '#/signup/' + type);
@@ -437,13 +451,16 @@ function signup({ params }) {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!validateAll([typeField, name, phone, org, email, password, confirm, terms])) return;
-    const details = { type, name: name.value(), org: org.value(), email: email.value(), phone: normalisePhone(phone.value()) };
-    localStorage.setItem('rr-pending-org', JSON.stringify({ type: details.type, name: details.org, phone: details.phone }));
+    // Organizations and individuals are both collectors ('ngo' in the database), told apart by kind.
+    const orgType = type === 'vendor' ? 'vendor' : 'ngo';
+    const kind = type === 'vendor' ? null : type;
+    const details = { type: orgType, kind, name: name.value(), org: type === 'individual' ? name.value() : org.value(), email: email.value(), phone: normalisePhone(phone.value()) };
+    localStorage.setItem('rr-pending-org', JSON.stringify({ type: details.type, kind: details.kind, name: details.org, phone: details.phone }));
     const res = await send(submit, parts, 'Creating your account…', () => db.auth.signUp({
       email: details.email, password: password.value(),
       options: {
         // The organisation goes with the account too, so setup works on any device.
-        data: { full_name: details.name, phone: details.phone, org_type: details.type, org_name: details.org },
+        data: { full_name: details.name, phone: details.phone, org_type: details.type, org_kind: details.kind, org_name: details.org },
         emailRedirectTo: redirectBase() + '#/start',
       },
     }));
@@ -553,7 +570,7 @@ function linkExpired() {
     body: h('div.auth-stack',
       h('a.btn.btn--primary.btn--block', { href: '#/login' }, 'Log in'),
       h('a.btn.btn--secondary.btn--block', { href: '#/forgot-password' }, 'Ask for a new password reset link')),
-    foot: h('p', 'Still stuck? ', h('a', { href: site('contact/') }, 'Contact us')),
+    foot: h('p', 'Still stuck? ', h('a', { href: site('about/#contact') }, 'Contact us')),
   });
 }
 

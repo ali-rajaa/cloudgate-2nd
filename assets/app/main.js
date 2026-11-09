@@ -34,7 +34,7 @@ function homeFor() {
 
 const NAV = {
   vendor: [['/vendor', 'Today'], ['/vendor/listings', 'Listings'], ['/vendor/new', 'List food'], ['/vendor/pickups', 'Pickups'], ['/vendor/earnings', 'Earnings']],
-  ngo: [['/ngo', 'Find food'], ['/ngo/claims', 'My claims'], ['/ngo/collectors', 'Collectors']],
+  ngo: [['/ngo', 'Find supplies'], ['/ngo/claims', 'My claims'], ['/ngo/collectors', 'Drivers']],
   admin: [['/admin', 'Overview'], ['/admin/verifications', 'Verifications'], ['/admin/organisations', 'Organisations'], ['/admin/orders', 'Orders'],
     ['/admin/disputes', 'Problems'], ['/admin/payments', 'Payments'], ['/admin/payouts', 'Payouts'], ['/admin/settings', 'Settings']],
 };
@@ -44,7 +44,8 @@ function renderNav(current) {
   nav.replaceChildren();
   if (!state.user) return;
   const items = [];
-  if (state.org && state.org.status === 'approved') items.push(...NAV[state.role]);
+  // Individuals collect for themselves, so they have no drivers to manage.
+  if (state.org && state.org.status === 'approved') items.push(...NAV[state.role].filter(([p]) => !(p === '/ngo/collectors' && state.org.collector_kind === 'individual')));
   if (state.admin) items.push(...(state.org ? [['/admin', 'Admin']] : NAV.admin));
   const list = h('ul.app-nav__list');
   for (const [path, label] of items) {
@@ -215,7 +216,7 @@ async function start() {
     view.replaceChildren(h('div.app-empty',
       h('p.app-empty__title', 'The platform isn\'t connected yet'),
       h('p', 'Sign-in is switched off on this copy of the site. Contact us and we\'ll help you get started.'),
-      h('p', h('a.btn.btn--primary', { href: '../contact/' }, 'Contact us'))));
+      h('p', h('a.btn.btn--primary', { href: '../about/#contact' }, 'Contact us'))));
     return;
   }
   if (clientMissing) {

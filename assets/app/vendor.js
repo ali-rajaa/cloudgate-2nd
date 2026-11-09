@@ -62,7 +62,8 @@ async function count(query) {
 }
 
 const SETTING_KEYS = ['payment_mode', 'commission_percent', 'charge_commission_in_direct_mode', 'min_price_rs', 'max_price_share_of_retail',
-  'min_listing_lead_minutes', 'min_pickup_window_minutes', 'safe_until_margin_minutes', 'cooked_food_open', 'hot_months', 'reliability_floor'];
+  'min_listing_lead_minutes', 'min_pickup_window_minutes', 'safe_until_margin_minutes', 'cooked_food_open', 'hot_months', 'reliability_floor',
+  'public_listings_open'];
 async function loadSettings() {
   const rows = await select(db.from('settings').select('key, value').in('key', SETTING_KEYS));
   return Object.fromEntries(rows.map((r) => [r.key, r.value]));
@@ -118,12 +119,12 @@ function reliabilityText(score) {
 function paymentButtons(o, after) {
   const yes = h('button.btn.btn--primary.btn--sm', { type: 'button', onclick: () => busy(yes, async () => {
     await rpc('vendor_confirm_payment', { p_order: o.id, p_received: true });
-    toast('Payment confirmed. The NGO can now see its pickup code.');
+    toast('Payment confirmed. The collector can now see their pickup code.');
     await after();
   }) }, icon('check', 18), ' Payment received');
   const no = h('button.btn.btn--secondary.btn--sm', { type: 'button', onclick: async () => {
-    const ok = await dialog({ title: 'Payment not received?', text: 'We\'ll ask the NGO to check its payment and tell our team. Check your bank or Raast account first.', confirm: 'Not received', danger: true });
-    if (ok) busy(no, async () => { await rpc('vendor_confirm_payment', { p_order: o.id, p_received: false }); toast('The NGO has been asked to check its payment.'); await after(); });
+    const ok = await dialog({ title: 'Payment not received?', text: 'We\'ll ask the collector to check their payment and tell our team. Check your bank or Raast account first.', confirm: 'Not received', danger: true });
+    if (ok) busy(no, async () => { await rpc('vendor_confirm_payment', { p_order: o.id, p_received: false }); toast('The collector has been asked to check their payment.'); await after(); });
   } }, 'Not received');
   return [yes, no];
 }
@@ -135,7 +136,7 @@ function collectionButtons(o, after) {
     await after();
   }) }, 'Yes, they collected');
   const no = h('button.btn.btn--secondary.btn--sm', { type: 'button', onclick: async () => {
-    const ok = await dialog({ title: 'Nobody collected the food?', text: 'The order becomes a no-show. The NGO gets a strike and isn\'t refunded. They can report a problem within 24 hours if they disagree.', confirm: 'No, not collected', danger: true });
+    const ok = await dialog({ title: 'Nobody collected the food?', text: 'The order becomes a no-show. The collector gets a strike and isn\'t refunded. They can report a problem within 24 hours if they disagree.', confirm: 'No, not collected', danger: true });
     if (ok) busy(no, async () => { await rpc('vendor_answer_collection', { p_order: o.id, p_collected: false }); toast('Marked as not collected.'); await after(); });
   } }, 'No, not collected');
   return [yes, no];
@@ -146,7 +147,7 @@ function orderMeta(o) {
   switch (o.status) {
     case 'payment_due': return [until(o.payment_deadline, 'Pay within'), ' · Don\'t hand over the food until it shows as paid'];
     case 'payment_processing': return o.payment_mode === 'direct'
-      ? [`NGO says it paid ${o.ngo_marked_paid_at ? 'at ' + time(o.ngo_marked_paid_at) : ''}`, o.ngo_payment_reference ? ` · Reference ${o.ngo_payment_reference}` : '']
+      ? [`Collector says they paid ${o.ngo_marked_paid_at ? 'at ' + time(o.ngo_marked_paid_at) : ''}`, o.ngo_payment_reference ? ` · Reference ${o.ngo_payment_reference}` : '']
       : ['The payment is being confirmed'];
     case 'paid': return ['Pickup ', windowText(l.pickup_start, l.pickup_end), ' · ', until(l.pickup_end)];
     case 'awaiting_collection_answer': return [`Pickup ended at ${time(l.pickup_end)}, ${date(l.pickup_end)}. No code was entered.`];
@@ -163,7 +164,7 @@ function orderItem(o, d, actions) {
     thumb(firstPhoto(l.listing_photos)),
     h('div.vd-item__body',
       h('a.app-list__title.vd-item__title', { href: '#/vendor/orders/' + o.id }, l.title || 'Order ' + ref(o.id)),
-      h('p.app-list__text', d?.ngo?.name || 'An NGO', collector ? ` · Collector: ${collector}` : '', ' · ', h('strong', rs(o.price_rs))),
+      h('p.app-list__text', d?.ngo?.name || 'A collector', collector ? ` · Driver: ${collector}` : '', ' · ', h('strong', rs(o.price_rs))),
       h('p.app-list__meta', orderMeta(o))),
     h('div.vd-item__end', badge(o.status), actions?.length ? h('div.vd-actions', actions) : null));
 }
@@ -223,7 +224,7 @@ async function today() {
       h('ul.app-list', list.map((o) => orderItem(o, parties.get(o.id), actions(o))))) : null;
 
     const sections = [
-      section('vd-confirm', 'Payments to confirm', 'Check your bank or Raast account, then confirm. The NGO sees its pickup code only after you confirm.', toConfirm, (o) => paymentButtons(o, refresh)),
+      section('vd-confirm', 'Payments to confirm', 'Check your bank or Raast account, then confirm. The collector sees their pickup code only after you confirm.', toConfirm, (o) => paymentButtons(o, refresh)),
       section('vd-ask', 'Did they collect?', 'The pickup window has ended and no code was entered.', toAsk, (o) => collectionButtons(o, refresh)),
       section('vd-due', 'Pickups due', 'Paid and ready. Hand over the food when the collector gives you the right code.', due, (o) => actionsFor(o, refresh)),
       section('vd-waiting', 'Claimed, waiting for payment', 'Keep the food aside. Don\'t hand it over until it shows as paid.', waiting, () => []),
@@ -232,7 +233,7 @@ async function today() {
     let lead = null;
     if (!sections.length) {
       lead = everCount === 0
-        ? empty('List your first surplus in under a minute', 'Take a photo, set a price and a pickup time. Verified NGOs nearby can claim it straight away.', h('a.btn.btn--primary', { href: '#/vendor/new' }, 'List food'))
+        ? empty('List your first surplus in under a minute', 'Take a photo, set a price and a pickup time. Verified collectors nearby can claim it straight away.', h('a.btn.btn--primary', { href: '#/vendor/new' }, 'List food'))
         : h('div.vd-quiet', icon('check'), h('p', liveCount ? 'Nothing needs you right now. New claims show up here as they happen.' : 'Nothing needs you right now. List food when you have surplus.'));
     }
 
@@ -264,6 +265,7 @@ async function newListing() {
   const open = cats.filter((c) => c.opens === 'pilot' || (c.opens === 'cooked' && s.cooked_food_open === true));
   const catById = (id) => cats.find((c) => c.id === id);
   const minPrice = Number(s.min_price_rs || 1000), share = Number(s.max_price_share_of_retail || 0.5);
+  const publicOpen = s.public_listings_open === true;
   const lead = Number(s.min_listing_lead_minutes || 60), minWindow = Number(s.min_pickup_window_minutes || 30), margin = Number(s.safe_until_margin_minutes || 30);
 
   // Step 1: photos
@@ -294,7 +296,7 @@ async function newListing() {
   drawPhotos();
   cleanups.push(() => photos.forEach((p) => URL.revokeObjectURL(p.url)));
   const step1 = h('div.vd-step',
-    h('p.app-muted', 'A clear photo of the actual food helps NGOs decide quickly. The first photo is required; add up to 3.'),
+    h('p.app-muted', 'A clear photo of the actual food helps collectors decide quickly. The first photo is required; add up to 3.'),
     photoGrid, photoErr);
 
   // Step 2: what it is
@@ -324,25 +326,48 @@ async function newListing() {
   const startDefault = roundTo(Date.now() + 15 * 60000, 15, true);
   const p = {
     retail: field({ name: 'retail', label: 'Retail value (Rs)', type: 'number', required: true, min: 1, step: 1, inputmode: 'numeric', hint: 'What this food would sell for in your shop.' }),
-    price: field({ name: 'price', label: 'Price for NGOs (Rs)', type: 'number', required: true, min: minPrice, step: 1, inputmode: 'numeric', hint: `From ${rs(minPrice)}, and at most half the retail value.` }),
+    price: field({ name: 'price', label: 'Price for collectors (Rs)', type: 'number', required: true, min: minPrice, step: 1, inputmode: 'numeric', hint: `From ${rs(minPrice)}, and at most half the retail value.` }),
     storage: field({ name: 'storage', label: 'How it is kept', type: 'select', required: true, value: 'room', options: Object.entries(STORAGE).map(([value, label]) => ({ value, label })) }),
     prepared: field({ name: 'prepared', label: 'Prepared at', type: 'datetime-local', required: true, value: toLocalInput(prepDefault), hint: 'When it was cooked, baked or opened.' }),
     safe: field({ name: 'safe', label: 'Safe until', type: 'datetime-local', required: true }),
     start: field({ name: 'start', label: 'Pickup from', type: 'datetime-local', required: true, value: toLocalInput(startDefault) }),
     end: field({ name: 'end', label: 'Pickup until', type: 'datetime-local', required: true, value: toLocalInput(new Date(startDefault.getTime() + 2 * 3600000)) }),
     instructions: field({ name: 'instructions', label: 'Packaging and pickup notes', type: 'textarea', full: true, rows: 2, placeholder: 'Bring two crates. Ask for the manager at the back counter.' }),
+    free: field({ name: 'free', label: 'Give it away for Rs 0 (for example as part of a CSR programme)', type: 'checkbox' }),
+    audience: field({ name: 'audience', label: 'Who can claim', type: 'select', required: true, value: 'organizations', options: [
+      { value: 'organizations', label: 'Organizations only' },
+      { value: 'public', label: publicOpen ? 'The public only' : 'The public only (opens after launch)' },
+      { value: 'both', label: publicOpen ? 'Organizations and the public' : 'Organizations and the public (opens after launch)' }] }),
+    soldAs: field({ name: 'sold_as', label: 'Sold as', type: 'select', required: true, value: 'lot', options: [
+      { value: 'lot', label: 'One lot, claimed whole' },
+      { value: 'items', label: publicOpen ? 'Single items' : 'Single items (opens with public listings)' }] }),
   };
+  // Until public listings open, only organizations can claim and listings go as one lot.
+  if (!publicOpen) {
+    p.audience.input.querySelectorAll('option[value="public"], option[value="both"]').forEach((o) => { o.disabled = true; });
+    p.soldAs.input.querySelector('option[value="items"]').disabled = true;
+  }
+  p.audience.input.querySelector('option[value=""]')?.remove();
+  p.soldAs.input.querySelector('option[value=""]')?.remove();
+  const isFree = () => p.free.value();
+  const priceNow = () => (isFree() ? 0 : p.price.value());
+  p.free.input.addEventListener('change', () => {
+    p.price.input.disabled = isFree();
+    p.price.wrap.hidden = isFree();
+    p.price.error('');
+    drawSplit();
+  });
   const splitBox = h('dl.app-split', { 'aria-live': 'polite', id: 'vd-split' });
   const splitNote = h('p.field__hint');
   const priceMax = h('span');
   function drawSplit() {
-    const sp = moneySplit(p.price.value(), s);
+    const sp = moneySplit(priceNow(), s);
     splitBox.replaceChildren(
-      h('div', h('dt', 'NGO pays'), h('dd', rs(sp.price))),
+      h('div', h('dt', 'Collector pays'), h('dd', rs(sp.price))),
       h('div', h('dt', 'You receive'), h('dd', rs(sp.share))),
       h('div', h('dt', 'Rizq Rasan'), h('dd', rs(sp.commission))));
     splitNote.textContent = s.payment_mode === 'direct'
-      ? 'During the pilot NGOs pay you directly by Raast or bank transfer' + (sp.commission ? '.' : ', and Rizq Rasan takes no commission.')
+      ? 'During the pilot collectors pay you directly by Raast or bank transfer' + (sp.commission ? '.' : ', and Rizq Rasan takes no commission.')
       : `Rizq Rasan keeps ${s.commission_percent}%. Payouts go to your bank on Mondays and Thursdays.`;
     const retail = Number(p.retail.value()) || 0;
     priceMax.textContent = retail ? `For this listing the price can be ${rs(minPrice)} to ${rs(Math.floor(retail * share))}.` : '';
@@ -403,7 +428,9 @@ async function newListing() {
 
   const step3 = h('div.vd-step.form__grid',
     h('div.vd-grid2', p.retail.wrap, p.price.wrap),
+    p.free.wrap,
     h('div.field.field--full', h('p.field__hint', priceMax), splitBox, splitNote),
+    h('div.vd-grid2', p.audience.wrap, p.soldAs.wrap),
     h('div.vd-grid2', p.storage.wrap, p.prepared.wrap),
     p.safe.wrap,
     h('div.vd-grid2', p.start.wrap, p.end.wrap),
@@ -415,13 +442,13 @@ async function newListing() {
   const preview = h('div.vd-preview');
   const summary = h('div.vd-summary', { hidden: true, role: 'alert', tabindex: '-1' });
   const step4 = h('div.vd-step',
-    h('p.app-muted', 'This is what NGOs will see.'),
+    h('p.app-muted', 'This is what collectors will see.'),
     preview,
     h('div.vd-ticks', tick1.wrap, tick2.wrap));
 
   function drawPreview() {
     const c = catById(f.category.value());
-    const sp = moneySplit(p.price.value(), s);
+    const sp = moneySplit(priceNow(), s);
     const start = fromLocalInput(p.start.input.value), end = fromLocalInput(p.end.input.value), safe = fromLocalInput(p.safe.input.value);
     const editLink = (n) => h('button.vd-linkbtn', { type: 'button', onclick: () => show(n) }, 'Change');
     preview.replaceChildren(
@@ -431,12 +458,13 @@ async function newListing() {
           h('h3.app-card__title', f.title.value()),
           h('p.app-card__meta', h('span', qty(f.quantity.value(), f.unit.value())), f.feeds.value() ? h('span', `Feeds about ${f.feeds.value()}`) : null, h('span', `${f.weight.value()} kg`)),
           h('p.app-card__meta', h('span', icon('clock', 16), windowText(start, end)), h('span', icon('pin', 16), org.sector || '')),
-          h('p.app-card__price', h('span.app-card__amount', rs(sp.price)), h('span.app-card__retail', rs(p.retail.value())), h('span.vd-sub', 'retail value')))),
+          h('p.app-card__price', h('span.app-card__amount', sp.price ? rs(sp.price) : 'Free'), h('span.app-card__retail', rs(p.retail.value())), h('span.vd-sub', 'retail value')))),
       h('dl.key-facts.vd-facts',
         fact('Photos', `${photos.length} of 3`, ' ', editLink(0)),
         fact('Category', c?.name || '', ' ', editLink(1)),
         fact('Dietary', dietText(dietary()), ' ', editLink(1)),
-        fact('Money', `NGO pays ${rs(sp.price)} · You receive ${rs(sp.share)} · Rizq Rasan ${rs(sp.commission)}`, ' ', editLink(2)),
+        fact('Money', sp.price ? `Collector pays ${rs(sp.price)} · You receive ${rs(sp.share)} · Rizq Rasan ${rs(sp.commission)}` : 'Free (Rs 0). Nobody pays and no commission is charged.', ' ', editLink(2)),
+        fact('Who can claim', { organizations: 'Organizations only', public: 'The public only', both: 'Organizations and the public' }[p.audience.input.value], ' · ', p.soldAs.input.value === 'items' ? 'single items' : 'one lot', ' ', editLink(2)),
         fact('Kept', STORAGE[p.storage.input.value] || '', ' ', editLink(2)),
         fact('Safe until', safe ? dateTime(safe) : '', ' ', editLink(2)),
         p.instructions.value() ? fact('Notes', p.instructions.value()) : null));
@@ -473,7 +501,7 @@ async function newListing() {
     if (n === 2) {
       const retail = p.retail.value(), price = p.price.value();
       if (!(Number.isInteger(retail) && retail > 0)) err(p.retail, 'Enter the retail value in whole rupees.');
-      if (!Number.isInteger(price) || price <= 0) err(p.price, 'Enter the price in whole rupees.');
+      if (isFree()) { /* Rs 0: nothing to check */ } else if (!Number.isInteger(price) || price <= 0) err(p.price, 'Enter the price in whole rupees, or give it away for Rs 0.');
       else if (price < minPrice) err(p.price, `Listings start at ${rs(minPrice)}.`);
       else if (Number.isInteger(retail) && price > Math.floor(retail * share)) err(p.price, `The price can be at most half of the retail value (${rs(Math.floor(retail * share))} for this listing).`);
       const c = catById(f.category.value());
@@ -538,6 +566,7 @@ async function newListing() {
     [/Pickup must end|pickup window/i, p.end, 2],
     [/safe-until/i, p.safe, 2],
     [/Listings start at|at most half/i, p.price, 2],
+    [/organizations only|public listings|Single items/i, p.audience, 2],
     [/preparation time/i, p.prepared, 2],
     [/room temperature|when stored|cannot be listed when/i, p.storage, 2],
     [/category|can.t be listed|Cooked food/i, f.category, 1],
@@ -560,11 +589,12 @@ async function newListing() {
     try {
       id = await rpc('create_listing', {
         p_vendor: org.id, p_title: f.title.value(), p_category: f.category.value(), p_quantity: Number(f.quantity.value()), p_unit: f.unit.value(),
-        p_weight_kg: Number(f.weight.value()), p_retail_value_rs: p.retail.value(), p_price_rs: p.price.value(), p_storage: p.storage.input.value,
+        p_weight_kg: Number(f.weight.value()), p_retail_value_rs: p.retail.value(), p_price_rs: priceNow(), p_storage: p.storage.input.value,
         p_prepared_at: fromLocalInput(p.prepared.input.value), p_safe_until: fromLocalInput(p.safe.input.value),
         p_pickup_start: fromLocalInput(p.start.input.value), p_pickup_end: fromLocalInput(p.end.input.value),
         p_description: f.description.value() || null, p_feeds_about: f.feeds.value() === '' ? null : f.feeds.value(),
         p_dietary: dietary(), p_instructions: p.instructions.value() || null,
+        p_audience: p.audience.input.value, p_sold_as: p.soldAs.input.value,
       });
     } catch (e) { serverError(friendly(e)); return; }
     let failed = 0;
@@ -575,7 +605,7 @@ async function newListing() {
       } catch { failed++; }
     }
     if (failed) toast(`Your listing is live, but ${failed === 1 ? 'a photo' : failed + ' photos'} didn't upload. Add ${failed === 1 ? 'it' : 'them'} from the listing page.`, 'error');
-    else toast('Listed. NGOs nearby can see it now.');
+    else toast('Listed. Collectors nearby can see it now.');
     go('/vendor/listings/' + id);
   }
 
@@ -589,15 +619,15 @@ async function newListing() {
 
   storageOptions();
   show(0);
-  return h('section.app-narrow.vd', pageHead('List food', 'Takes about a minute. NGOs see it as soon as you publish.'), form);
+  return h('section.app-narrow.vd', pageHead('List food', 'Takes about a minute. Collectors see it as soon as you publish.'), form);
 }
 
 // ---------------------------------------------------------------------------
 // My listings
 // ---------------------------------------------------------------------------
 const LISTING_TABS = [
-  { id: 'live', label: 'Live', statuses: ['live'], empty: ['Nothing live right now', 'List surplus food and NGOs nearby can claim it.'] },
-  { id: 'claimed', label: 'Claimed', statuses: ['claimed'], empty: ['No claimed listings', 'When an NGO claims your food it shows here until it is handed over.'] },
+  { id: 'live', label: 'Live', statuses: ['live'], empty: ['Nothing live right now', 'List surplus food and collectors nearby can claim it.'] },
+  { id: 'claimed', label: 'Claimed', statuses: ['claimed'], empty: ['No claimed listings', 'When a collector claims your food it shows here until it is handed over.'] },
   { id: 'done', label: 'Done', statuses: ['completed'], empty: ['Nothing handed over yet', 'Completed handovers show here.'] },
   { id: 'ended', label: 'Ended', statuses: ['expired', 'withdrawn', 'removed'], empty: ['Nothing has ended', 'Listings that were withdrawn or not claimed in time show here.'] },
   { id: 'drafts', label: 'Drafts', statuses: ['draft'], empty: ['No drafts', 'Listings are published as soon as you finish the form.'] },
@@ -699,18 +729,18 @@ async function listing({ params, app }) {
       actions.push(add, input);
     }
     const withdraw = h('button.btn.btn--danger', { type: 'button', onclick: async () => {
-      const ok = await dialog({ title: 'Withdraw this listing?', text: 'NGOs will stop seeing it straight away. This can\'t be undone, but you can list the food again.', confirm: 'Withdraw listing', danger: true });
+      const ok = await dialog({ title: 'Withdraw this listing?', text: 'Collectors will stop seeing it straight away. This can\'t be undone, but you can list the food again.', confirm: 'Withdraw listing', danger: true });
       if (ok) busy(withdraw, async () => { await rpc('withdraw_listing', { p_listing: l.id }); toast('Listing withdrawn.'); app.refresh(); });
     } }, 'Withdraw');
     actions.push(withdraw);
   }
 
   // Timeline
-  const events = [{ at: l.created_at, title: 'Listed', text: `Live for NGOs at ${rs(l.price_rs)}` }];
+  const events = [{ at: l.created_at, title: 'Listed', text: `Live for collectors at ${rs(l.price_rs)}` }];
   for (const o of orders) {
-    const who = o.id === current?.id && d?.ngo?.name ? d.ngo.name : 'An NGO';
+    const who = o.id === current?.id && d?.ngo?.name ? d.ngo.name : 'A collector';
     events.push({ at: o.created_at, title: 'Claimed', text: `${who} claimed it. Order ${ref(o.id)}.` });
-    if (o.ngo_marked_paid_at) events.push({ at: o.ngo_marked_paid_at, title: 'NGO says it paid', text: o.ngo_payment_reference ? `Reference ${o.ngo_payment_reference}` : '' });
+    if (o.ngo_marked_paid_at) events.push({ at: o.ngo_marked_paid_at, title: 'Collector says they paid', text: o.ngo_payment_reference ? `Reference ${o.ngo_payment_reference}` : '' });
     if (o.paid_at) events.push({ at: o.paid_at, title: 'Paid', text: 'Ready to collect' });
     if (o.picked_up_at) events.push({ at: o.picked_up_at, title: 'Handed over', text: o.quantity_handed_over != null ? `${qty(o.quantity_handed_over, l.unit)} handed over` : '' });
     if (o.completed_at) events.push({ at: o.completed_at, title: statusLabel(o.status), text: '' });
@@ -728,9 +758,9 @@ async function listing({ params, app }) {
     actions.length ? h('div.vd-actions.vd-actions--page', actions) : null,
     current ? h('section.app-section', { id: 'vd-order' }, h('h2.app-h2', 'Order'),
       h('a.card.card--link.vd-ordercard', { href: '#/vendor/orders/' + current.id },
-        h('div', h('p.app-list__title', d?.ngo?.name || 'An NGO'),
+        h('div', h('p.app-list__title', d?.ngo?.name || 'A collector'),
           h('p.app-list__text', `Order ${ref(current.id)} · ${rs(current.price_rs)}`),
-          d?.collector?.name ? h('p.app-list__meta', 'Collector: ' + d.collector.name) : null),
+          d?.collector?.name ? h('p.app-list__meta', 'Driver: ' + d.collector.name) : null),
         h('div.vd-item__end', badge(current.status), icon('arrow')))) : null,
     h('section.app-section', h('h2.app-h2', 'Details'),
       h('dl.key-facts',
@@ -755,7 +785,7 @@ async function listing({ params, app }) {
 // ---------------------------------------------------------------------------
 const PICKUP_TABS = [
   { id: 'hand', label: 'To hand over', statuses: ['paid', 'awaiting_collection_answer'], empty: ['Nothing to hand over', 'Paid orders show here, ready for the collector.'] },
-  { id: 'payment', label: 'Awaiting payment', statuses: ['payment_due', 'payment_processing'], empty: ['No claims waiting for payment', 'When an NGO claims your food it shows here until it has paid.'] },
+  { id: 'payment', label: 'Awaiting payment', statuses: ['payment_due', 'payment_processing'], empty: ['No claims waiting for payment', 'When a collector claims your food it shows here until it has paid.'] },
   { id: 'done', label: 'Handed over', statuses: ['picked_up', 'completed', 'completed_unconfirmed'], empty: ['Nothing handed over yet', 'Orders show here after you enter the pickup code.'] },
   { id: 'problems', label: 'Problems', statuses: ['refused_at_pickup', 'no_show', 'cancelled_by_vendor', 'cancelled_by_ngo'], empty: ['No problems', 'Cancelled orders, no-shows and problem reports show here.'] },
 ];
@@ -868,7 +898,7 @@ async function codeScreen() {
         res = await rpc('verify_pickup_code', { p_vendor: org.id, p_code: digits, p_quantity: quantity });
       } catch (e) {
         const m = friendly(e);
-        say(/locked/i.test(m) ? 'lock' : 'error', /locked/i.test(m) ? m + ' Ask the collector to check the code in their app, or call the NGO.' : m);
+        say(/locked/i.test(m) ? 'lock' : 'error', /locked/i.test(m) ? m + ' Ask the collector to check the code in their app, or call them.' : m);
         digits = ''; draw();
         return;
       }
@@ -894,11 +924,11 @@ async function codeScreen() {
     result.replaceChildren(h('div.card.vd-match', { role: 'status' },
       h('div.vd-match__head', h('span.vd-match__icon', icon('check', 28)), h('div', h('p.vd-match__title', 'Code matches. Hand over the food.'), h('p.app-muted', res.title))),
       h('dl.key-facts',
-        fact('NGO', d?.ngo?.name || 'NGO'),
-        fact('Collector', d?.collector?.name || 'Not named', d?.collector?.phone ? h('span.vd-sub', h('a', { href: 'tel:' + d.collector.phone }, phoneDisplay(d.collector.phone))) : null),
+        fact('Collector', d?.ngo?.name || 'Collector'),
+        fact('Driver', d?.collector?.name || 'Not named', d?.collector?.phone ? h('span.vd-sub', h('a', { href: 'tel:' + d.collector.phone }, phoneDisplay(d.collector.phone))) : null),
         fact('Paid', rs(res.price_rs)),
         fact('Quantity handed over', handed, h('span.vd-sub', full ? 'Everything listed' : `Listed: ${qty(d?.listing?.quantity, d?.listing?.unit)}`))),
-      h('p.app-muted', 'The NGO has been told. If anything goes wrong, report it from the order within 24 hours.'),
+      h('p.app-muted', 'The collector has been told. If anything goes wrong, report it from the order within 24 hours.'),
       h('div.vd-actions', again, h('a.btn.btn--secondary', { href: '#/vendor/orders/' + res.order_id }, 'View order'))));
   }
 
@@ -910,16 +940,16 @@ async function codeScreen() {
     expected.replaceChildren(h('h2.app-h2', 'Expected pickups'), rows.length
       ? h('ul.app-list', rows.map((o) => {
         const d = parties.get(o.id);
-        const call = d?.ngo?.phone ? h('a.btn.btn--secondary.btn--sm', { href: 'tel:' + d.ngo.phone }, icon('phone', 18), ' Call NGO') : null;
+        const call = d?.ngo?.phone ? h('a.btn.btn--secondary.btn--sm', { href: 'tel:' + d.ngo.phone }, icon('phone', 18), ' Call collector') : null;
         return h('li.app-list__item.vd-item',
           thumb(firstPhoto(o.listings?.listing_photos)),
           h('div.vd-item__body',
             h('p.app-list__title', o.listings?.title),
-            h('p.app-list__text', d?.ngo?.name || 'An NGO', d?.collector?.name ? ` · Collector: ${d.collector.name}` : ''),
+            h('p.app-list__text', d?.ngo?.name || 'A collector', d?.collector?.name ? ` · Driver: ${d.collector.name}` : ''),
             h('p.app-list__meta', windowText(o.listings?.pickup_start, o.listings?.pickup_end), ' · ', rs(o.price_rs))),
           h('div.vd-item__end', call));
       }))
-      : h('p.app-muted', 'No paid orders are waiting. A code only works once the NGO has paid.'));
+      : h('p.app-muted', 'No paid orders are waiting. A code only works once the collector has paid.'));
   }
   await loadExpected();
 
@@ -936,7 +966,7 @@ async function codeScreen() {
 // ---------------------------------------------------------------------------
 const PROBLEM_KINDS = [
   { value: 'payment', label: 'A payment problem' },
-  { value: 'conduct', label: 'The collector\'s or NGO\'s behaviour' },
+  { value: 'conduct', label: 'The collector\'s or collector\'s behaviour' },
   { value: 'other', label: 'Something else' },
 ];
 
@@ -955,14 +985,14 @@ async function order({ params, app }) {
   let banner = null, actions = [];
   if (status === 'payment_due') banner = notice('info', `Waiting for ${d.ngo.name} to pay. They have until ${time(d.payment_deadline)}. Don't hand over the food until it shows as paid.`);
   if (status === 'payment_processing' && d.payment_mode === 'direct') {
-    banner = notice('warning', `${d.ngo.name} says it paid ${rs(d.price_rs)}${d.ngo_payment_reference ? ` with reference ${d.ngo_payment_reference}` : ''}. Check your bank or Raast account, then confirm.`);
+    banner = notice('warning', `${d.ngo.name} says they paid ${rs(d.price_rs)}${d.ngo_payment_reference ? ` with reference ${d.ngo_payment_reference}` : ''}. Check your bank or Raast account, then confirm.`);
     actions = paymentButtons(o, refresh);
   } else if (status === 'payment_processing') banner = notice('info', 'The payment is being confirmed by the payment gateway.');
   if (status === 'paid') {
     banner = notice('info', `Paid. Hand over the food only when the collector gives you the right code. Pickup ${windowText(L.pickup_start, L.pickup_end)}.`);
     actions = [h('a.btn.btn--primary', { href: '#/vendor/pickups/code' }, icon('key', 18), ' Enter pickup code')];
   }
-  if (status === 'awaiting_collection_answer') { banner = notice('warning', 'The pickup window has ended and no code was entered. Did the NGO collect the food?'); actions = collectionButtons(o, refresh); }
+  if (status === 'awaiting_collection_answer') { banner = notice('warning', 'The pickup window has ended and no code was entered. Did the collector pick up the food?'); actions = collectionButtons(o, refresh); }
   if (status === 'picked_up') banner = notice('info', 'Handed over. The order completes 24 hours after pickup unless a problem is reported.');
 
   const cancellable = ACTIVE.includes(status);
@@ -972,16 +1002,16 @@ async function order({ params, app }) {
       title: 'Cancel this order?',
       text: afterPay
         ? `${d.ngo.name} has already paid. Cancelling now gives your business a strike, ` + (d.payment_mode === 'direct' ? 'and you must return their payment within 1 working day.' : 'and they are refunded in full from your share.')
-        : 'The NGO hasn\'t paid yet, so nothing is charged. The listing is withdrawn.',
+        : 'The collector hasn\'t paid yet, so nothing is charged. The listing is withdrawn.',
       confirm: 'Cancel order', cancel: 'Keep order', danger: true,
-      fields: [{ name: 'reason', label: 'Reason (the NGO will see it)', type: 'textarea', required: true }],
+      fields: [{ name: 'reason', label: 'Reason (the collector will see it)', type: 'textarea', required: true }],
     });
     if (v) busy(cancelBtn, async () => { await rpc('vendor_cancel_order', { p_order: d.id, p_reason: v.reason }); toast('Order cancelled.'); refresh(); });
   } }, 'Cancel order') : null;
 
   const reportBtn = !ENDED_ORDER.includes(status) || ['completed', 'completed_unconfirmed', 'no_show'].includes(status)
     ? h('button.btn.btn--secondary', { type: 'button', onclick: async () => {
-      const v = await dialog({ title: 'Report a problem', text: 'Our team reads every report. The NGO is asked for its side.', confirm: 'Send report', fields: [
+      const v = await dialog({ title: 'Report a problem', text: 'Our team reads every report. The collector is asked for their side.', confirm: 'Send report', fields: [
         { name: 'kind', label: 'What went wrong', type: 'select', required: true, options: PROBLEM_KINDS },
         { name: 'details', label: 'What happened', type: 'textarea', required: true, hint: 'A sentence or two. Include times and names if you can.' },
       ] });
@@ -1005,21 +1035,21 @@ async function order({ params, app }) {
     h('section.app-section',
       h('div.vd-orderhead', thumb(photo, L.title), h('div', h('p.app-list__title', h('a', { href: '#/vendor/listings/' + L.id }, L.title)), h('p.app-list__text', qty(L.quantity, L.unit), ' · ', windowText(L.pickup_start, L.pickup_end)))),
       h('dl.key-facts',
-        fact('NGO', d.ngo.name, h('span.vd-sub', d.ngo.badge)),
+        fact('Collector', d.ngo.name, h('span.vd-sub', d.ngo.badge)),
         fact('Contact', d.ngo.phone ? h('a', { href: 'tel:' + d.ngo.phone }, phoneDisplay(d.ngo.phone)) : 'Shown once paid'),
-        fact('Collector', d.collector?.name || 'Not named yet', d.collector?.phone ? h('span.vd-sub', h('a', { href: 'tel:' + d.collector.phone }, phoneDisplay(d.collector.phone))) : null),
+        fact('Driver', d.collector?.name || 'Not named yet', d.collector?.phone ? h('span.vd-sub', h('a', { href: 'tel:' + d.collector.phone }, phoneDisplay(d.collector.phone))) : null),
         fact('Price', rs(d.price_rs), h('span.vd-sub', `You receive ${rs(d.vendor_share_rs)} · Rizq Rasan ${rs(d.commission_rs)}`)),
-        fact('Payment', d.payment_mode === 'direct' ? 'Paid to you directly' : 'Through Rizq Rasan, paid out to your bank', d.ngo_payment_reference ? h('span.vd-sub', `NGO reference ${d.ngo_payment_reference}`) : null),
+        fact('Payment', d.payment_mode === 'direct' ? 'Paid to you directly' : 'Through Rizq Rasan, paid out to your bank', d.ngo_payment_reference ? h('span.vd-sub', `Collector reference ${d.ngo_payment_reference}`) : null),
         fact(status === 'payment_due' ? 'Pay by' : 'Pickup', status === 'payment_due' ? dateTime(d.payment_deadline) : windowText(L.pickup_start, L.pickup_end)))),
     h('section.app-section', h('h2.app-h2', 'Timeline'),
       h('ol.timeline.vd-timeline', events.map((e) => h('li', h('h3', e.title), e.text ? h('p', e.text) : null, e.at ? h('span.meta', dateTime(e.at)) : null)))),
     disputes.length ? h('section.app-section', { id: 'vd-disputes' }, h('h2.app-h2', 'Problem reports'),
       h('ul.app-list', disputes.map((x) => h('li.app-list__item',
-        h('div', h('p.app-list__title', x.raised_by_org === state.org.id ? 'You reported a problem' : 'The NGO reported a problem'),
+        h('div', h('p.app-list__title', x.raised_by_org === state.org.id ? 'You reported a problem' : 'The collector reported a problem'),
           h('p.app-list__meta', `${x.kind.replace(/_/g, ' ')} · ${dateTime(x.created_at)} · ${x.status === 'decided' ? 'Decided' : x.status === 'awaiting_reply' ? 'Waiting for a reply' : 'With our team'}`)),
         h('a.btn.btn--secondary.btn--sm', { href: '#/disputes/' + x.id }, 'View report'))))) : null,
     reportBtn || cancelBtn ? h('section.app-section', h('h2.app-h2', 'Something wrong?'),
-      afterPay && cancellable ? h('p.app-muted', 'Cancelling after the NGO has paid gives your business a strike. Three active strikes suspend the account.') : null,
+      afterPay && cancellable ? h('p.app-muted', 'Cancelling after the collector has paid gives your business a strike. Three active strikes suspend the account.') : null,
       h('div.vd-actions', reportBtn, cancelBtn)) : null);
 }
 
@@ -1084,17 +1114,17 @@ async function earnings() {
   const directTable = direct.length ? h('section.app-section', { id: 'vd-direct' },
     h('h2.app-h2', 'Paid to you directly'),
     h('div.app-table-wrap.vd-tablewrap', h('table.app-table.vd-table',
-      h('thead', h('tr', h('th', 'Order'), h('th.num', 'Paid'), h('th.num', 'Commission'), h('th.num', 'You keep'), h('th', 'Status'), h('th', 'NGO reference'))),
+      h('thead', h('tr', h('th', 'Order'), h('th.num', 'Paid'), h('th.num', 'Commission'), h('th.num', 'You keep'), h('th', 'Status'), h('th', 'Collector reference'))),
       h('tbody', direct.map((o) => h('tr',
         td('Order', [h('a', { href: '#/vendor/orders/' + o.id }, o.listings?.title || 'Order'), h('span.vd-sub', `${ref(o.id)} · ${date(o.paid_at)}`)]),
         td('Paid', rs(o.price_rs), 'num'), td('Commission', rs(o.commission_rs), 'num'), td('You keep', h('strong', rs(o.vendor_share_rs)), 'num'),
-        td('Status', badge(o.status)), td('NGO reference', o.ngo_payment_reference || '-')))),
+        td('Status', badge(o.status)), td('Collector reference', o.ngo_payment_reference || '-')))),
       h('tfoot', h('tr.vd-total', td('Order', 'Total'), td('Paid', rs(sum(keptDirect, 'price_rs')), 'num'), td('Commission', rs(sum(keptDirect, 'commission_rs')), 'num'),
-        td('You keep', h('strong', rs(sum(keptDirect, 'vendor_share_rs'))), 'num'), td('Status', ''), td('NGO reference', '')))))) : null;
+        td('You keep', h('strong', rs(sum(keptDirect, 'vendor_share_rs'))), 'num'), td('Status', ''), td('Collector reference', '')))))) : null;
 
   return h('section.vd',
-    pageHead('Earnings', directMode ? 'What NGOs have paid you.' : 'One row per order, from sale to payout.'),
-    directMode ? notice('info', 'During the pilot NGOs pay you directly by Raast or bank transfer, so Rizq Rasan sends you no payouts. You confirm each payment when it arrives.' + (s.charge_commission_in_direct_mode === true ? ' Commission on these sales is billed to you separately.' : ' There is no commission on these sales.')) : null,
+    pageHead('Earnings', directMode ? 'What collectors have paid you.' : 'One row per order, from sale to payout.'),
+    directMode ? notice('info', 'During the pilot collectors pay you directly by Raast or bank transfer, so Rizq Rasan sends you no payouts. You confirm each payment when it arrives.' + (s.charge_commission_in_direct_mode === true ? ' Commission on these sales is billed to you separately.' : ' There is no commission on these sales.')) : null,
     tiles,
     payoutTable,
     directTable,

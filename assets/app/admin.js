@@ -37,7 +37,7 @@ const DISPUTE_KINDS = { food_safety: 'Food safety', short_handover: 'Less than l
 const TIER_TEXT = { A: 'Tier A (trusted)', B: 'Tier B (established)', C: 'Tier C (new)' };
 
 const ref = (id) => 'RR-' + String(id).slice(0, 8).toUpperCase();
-const typeLabel = (t) => (t === 'vendor' ? 'Business' : 'NGO');
+const typeLabel = (t) => (t === 'vendor' ? 'Business' : 'Collector');
 const iban = (v) => (v ? String(v).replace(/(.{4})/g, '$1 ').trim() : '');
 const humanKey = (k) => k.charAt(0).toUpperCase() + k.slice(1).replace(/_/g, ' ').replace(/\brs\b/, '(Rs)').replace(/\bkm\b/, '(km)');
 const pktDate = (d = new Date()) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Karachi' }).format(d);
@@ -136,7 +136,7 @@ async function overview() {
 
   const totals = h('div.app-stats',
     [[Number(impact.kg_rescued).toLocaleString('en-US') + ' kg', 'Food rescued'], [Number(impact.meals).toLocaleString('en-US'), 'Meals'],
-      [Number(impact.co2e_kg).toLocaleString('en-US') + ' kg', 'CO2e avoided'], [rs(impact.rupees_saved), 'Saved by NGOs'],
+      [Number(impact.co2e_kg).toLocaleString('en-US') + ' kg', 'CO2e avoided'], [rs(impact.rupees_saved), 'Saved by collectors'],
       [String(impact.orders), 'Completed orders'], [String(impact.active_partners), 'Approved partners']]
       .map(([v, l]) => h('div.app-stat', h('div.app-stat__value', v), h('div.app-stat__label', l))));
 
@@ -183,7 +183,7 @@ function tabs2(items, active, onChange) {
 async function organisations({ query }) {
   const f = {
     q: field({ name: 'q', label: 'Search by name', type: 'search', value: query.q || '', placeholder: 'Bakery, kitchen...' }),
-    type: field({ name: 'type', label: 'Type', type: 'select', value: query.type || '', placeholder: 'All types', options: [{ value: 'vendor', label: 'Businesses' }, { value: 'ngo', label: 'NGOs' }] }),
+    type: field({ name: 'type', label: 'Type', type: 'select', value: query.type || '', placeholder: 'All types', options: [{ value: 'vendor', label: 'Businesses' }, { value: 'ngo', label: 'Collectors' }] }),
     status: field({ name: 'status', label: 'Status', type: 'select', value: query.status || '', placeholder: 'All statuses', options: ORG_STATUSES.map((s) => ({ value: s, label: statusLabel(s) })) }),
   };
   const results = h('div.adm-results');
@@ -215,7 +215,7 @@ async function organisations({ query }) {
   f.status.input.addEventListener('change', load);
   const form = h('form.app-filters.adm-filters', { role: 'search', onsubmit: (e) => { e.preventDefault(); load(); } }, f.q.wrap, f.type.wrap, f.status.wrap);
   await load();
-  return h('section', pageHead('Organisations', 'Every business and NGO. Open one to see its documents, strikes and orders.'), form, results);
+  return h('section', pageHead('Organisations', 'Every business and collector. Open one to see its documents, strikes and orders.'), form, results);
 }
 
 async function organisation({ params, app }) {
@@ -258,7 +258,7 @@ async function organisation({ params, app }) {
   };
   const approve = async (btn, restore = false) => {
     if (o.type === 'ngo' && !restore) {
-      const v = await dialog({ title: `Approve ${o.name}`, text: 'New NGOs usually start in Tier C. Choose a higher tier only if you have checked their track record.', confirm: 'Approve',
+      const v = await dialog({ title: `Approve ${o.name}`, text: 'New collectors usually start in Tier C. Choose a higher tier only if you have checked their track record.', confirm: 'Approve',
         fields: [{ name: 'tier', label: 'Trust tier', type: 'select', required: true, value: o.tier || 'C', options: ['C', 'B', 'A'].map((t) => ({ value: t, label: TIER_TEXT[t] })) }] });
       if (v) await setStatus(btn, 'approved', null, v.tier);
       return;
@@ -381,7 +381,7 @@ async function orders({ query }) {
     h('div.app-filters', st.wrap, md.wrap),
     rows(list.map((o) => row('/admin/orders/' + o.id, {
       title: o.listings?.title || ref(o.id),
-      text: `${o.vendor?.name || 'Business'} to ${o.ngo?.name || 'NGO'}`,
+      text: `${o.vendor?.name || 'Business'} to ${o.ngo?.name || 'Collector'}`,
       meta: [ref(o.id), rs(o.price_rs), o.payment_mode === 'direct' ? 'Direct' : 'PayFast', dateTime(o.created_at),
         o.status === 'payment_due' ? 'pay by ' + dateTime(o.payment_deadline) : null].filter(Boolean).join(' · '),
       end: statusBadge(o.status),
@@ -402,7 +402,7 @@ async function order({ params, app }) {
   // Timeline, oldest first.
   const ev = [
     [o.created_at, 'Claimed', `${d.ngo.name} claimed it for ${rs(o.price_rs)}`],
-    [o.ngo_marked_paid_at, 'NGO says it paid', o.ngo_payment_reference ? 'Reference ' + o.ngo_payment_reference : null],
+    [o.ngo_marked_paid_at, 'Collector says they paid', o.ngo_payment_reference ? 'Reference ' + o.ngo_payment_reference : null],
     ...pays.map((p) => [p.succeeded_at || p.created_at, p.status === 'failed' ? 'Payment failed' : 'Payment received', `${rs(p.amount_rs)} by ${p.method || p.gateway}${p.gateway_reference ? ' · ' + p.gateway_reference : ''}`]),
     [o.paid_at, 'Paid, ready to collect', null],
     [o.collection_asked_at, 'Business asked if it was collected', null],
@@ -423,7 +423,7 @@ async function order({ params, app }) {
     const cancel = (refund) => async (btn) => {
       await withReason(btn, {
         title: refund ? 'Cancel and refund' : 'Cancel without refund',
-        text: refund ? `The NGO gets ${rs(o.price_rs)} back. Both sides are told.` : 'Nothing is refunded. Both sides are told.',
+        text: refund ? `The collector gets ${rs(o.price_rs)} back. Both sides are told.` : 'Nothing is refunded. Both sides are told.',
         confirm: refund ? 'Cancel and refund' : 'Cancel order', hint: 'Both sides will see this.',
       }, async (reason) => { await rpc('admin_cancel_order', { p_order: o.id, p_reason: reason, p_refund: refund }); toast('Order cancelled.'); app.refresh(); });
     };
@@ -435,7 +435,7 @@ async function order({ params, app }) {
   if (['paid', 'awaiting_collection_answer'].includes(o.status)) {
     const b = h('button.btn.btn--secondary', { type: 'button' }, 'Reissue pickup code');
     b.addEventListener('click', async () => {
-      const ok = await dialog({ title: 'Reissue the pickup code?', text: 'The old code stops working and wrong-code locks are cleared. The NGO is told to open the order for the new code.', confirm: 'Reissue code' });
+      const ok = await dialog({ title: 'Reissue the pickup code?', text: 'The old code stops working and wrong-code locks are cleared. The collector is told to open the order for the new code.', confirm: 'Reissue code' });
       if (ok) busy(b, async () => { const code = await rpc('admin_reissue_code', { p_order: o.id }); toast('New pickup code: ' + code); app.refresh(); });
     });
     actions.push(b);
@@ -448,7 +448,7 @@ async function order({ params, app }) {
   }
 
   const money = h('dl.app-split',
-    h('div', h('dt', 'NGO pays'), h('dd', rs(o.price_rs))),
+    h('div', h('dt', 'Collector pays'), h('dd', rs(o.price_rs))),
     h('div', h('dt', 'Business receives'), h('dd', rs(o.vendor_share_rs))),
     h('div', h('dt', 'Rizq Rasan'), h('dd', rs(o.commission_rs))));
 
@@ -461,9 +461,9 @@ async function order({ params, app }) {
         section('Money', money),
         section('People', facts([
           ['Business', h('span', d.vendor.name, ' · ', d.vendor.badge)], ['Business phone', phoneDisplay(d.vendor.phone)], ['Pickup address', d.vendor.address],
-          ['NGO', h('span', d.ngo.name, ' · ', d.ngo.badge)], ['NGO phone', phoneDisplay(d.ngo.phone)],
-          ['Collector', d.collector ? `${d.collector.name} · ${phoneDisplay(d.collector.phone)}` : null],
-        ]), h('p.adm-links', link('/admin/organisations/' + o.vendor_id, 'Open business'), link('/admin/organisations/' + o.ngo_id, 'Open NGO'))),
+          ['Collector', h('span', d.ngo.name, ' · ', d.ngo.badge)], ['Collector phone', phoneDisplay(d.ngo.phone)],
+          ['Driver', d.collector ? `${d.collector.name} · ${phoneDisplay(d.collector.phone)}` : null],
+        ]), h('p.adm-links', link('/admin/organisations/' + o.vendor_id, 'Open business'), link('/admin/organisations/' + o.ngo_id, 'Open collector'))),
         section('Food', facts([
           ['Quantity', `${d.listing.quantity} ${d.listing.unit} · ${d.listing.weight_kg} kg`], ['Pickup', `${dateTime(d.listing.pickup_start)} to ${dateTime(d.listing.pickup_end)}`],
           ['Safe until', dateTime(d.listing.safe_until)], ['Storage', d.listing.storage], ['Listing', listing ? statusLabel(listing.status) + (listing.status_reason ? ' · ' + listing.status_reason : '') : null],
@@ -534,8 +534,8 @@ async function dispute({ params, app }) {
   ]);
   const names = await profileNames([x.decided_by]);
   const byNgo = x.raised_by_org === o.ngo_id;
-  const raiser = byNgo ? `${d.ngo.name} (NGO)` : `${d.vendor.name} (business)`;
-  const other = byNgo ? `${d.vendor.name} (business)` : `${d.ngo.name} (NGO)`;
+  const raiser = byNgo ? `${d.ngo.name} (collector)` : `${d.vendor.name} (business)`;
+  const other = byNgo ? `${d.vendor.name} (business)` : `${d.ngo.name} (collector)`;
   const refunded = refunds.filter((r) => r.status !== 'rejected').reduce((a, r) => a + r.amount_rs, 0);
   const maxRefund = Math.max(0, o.price_rs - refunded);
   const t = targetText(x);
@@ -544,11 +544,11 @@ async function dispute({ params, app }) {
   let form = null;
   if (!decided) {
     const fDecision = field({ name: 'decision', label: 'Decision', type: 'textarea', rows: 4, required: true, full: true, hint: 'Both sides see this. Say what you found and what happens next.' });
-    const fRefund = field({ name: 'refund', label: 'Refund to the NGO (Rs)', type: 'number', min: 0, max: maxRefund, step: 1, value: 0, inputmode: 'numeric',
+    const fRefund = field({ name: 'refund', label: 'Refund to the collector (Rs)', type: 'number', min: 0, max: maxRefund, step: 1, value: 0, inputmode: 'numeric',
       hint: maxRefund ? `Up to ${rs(maxRefund)}${refunded ? ` (${rs(refunded)} already refunded)` : ''}. Taken from the business's share.` : 'Already refunded in full.' });
     if (!maxRefund) fRefund.input.disabled = true;
     const fStrike = field({ name: 'strike', label: 'Strike', type: 'select', placeholder: 'No strike',
-      options: [{ value: o.vendor_id, label: `Strike for ${d.vendor.name} (business)` }, { value: o.ngo_id, label: `Strike for ${d.ngo.name} (NGO)` }] });
+      options: [{ value: o.vendor_id, label: `Strike for ${d.vendor.name} (business)` }, { value: o.ngo_id, label: `Strike for ${d.ngo.name} (collector)` }] });
     const submit = h('button.btn.btn--primary', { type: 'submit' }, 'Record decision');
     form = h('form.app-form.card', { novalidate: true }, h('div.form__grid', fDecision.wrap, fRefund.wrap, fStrike.wrap), submit);
     form.addEventListener('submit', async (e) => {
@@ -558,7 +558,7 @@ async function dispute({ params, app }) {
       if (!Number.isInteger(amount) || amount < 0) return fRefund.error('Enter whole rupees, or 0 for no refund.');
       if (amount > maxRefund) return fRefund.error(`The refund can be at most ${rs(maxRefund)}.`);
       const strikeOrg = fStrike.value() || null;
-      const summary = [amount ? `Refund ${rs(amount)} to the NGO.` : 'No refund.', strikeOrg ? `Strike for ${strikeOrg === o.vendor_id ? d.vendor.name : d.ngo.name}.` : 'No strike.'].join(' ');
+      const summary = [amount ? `Refund ${rs(amount)} to the collector.` : 'No refund.', strikeOrg ? `Strike for ${strikeOrg === o.vendor_id ? d.vendor.name : d.ngo.name}.` : 'No strike.'].join(' ');
       const ok = await dialog({ title: 'Record this decision?', text: summary + ' Both sides are told and it cannot be changed here.', confirm: 'Record decision' });
       if (!ok) return;
       busy(submit, async () => {
@@ -636,7 +636,7 @@ async function payments({ query, app }) {
       meta: ref(p.order_id) + ' · ' + dateTime(p.created_at), end: paymentBadge(p.status),
     })), empty('No payments yet', null));
   } else {
-    body = [h('p.app-muted', 'PayFast told us an amount that does not match the order. Check the payment in the PayFast portal and refund or contact the NGO.'),
+    body = [h('p.app-muted', 'PayFast told us an amount that does not match the order. Check the payment in the PayFast portal and refund or contact the collector.'),
       rows(events.map((e) => {
         const b = e.body || {};
         const orderId = /^[0-9a-f-]{36}$/i.test(b.basket_id || '') ? b.basket_id : null;
@@ -836,8 +836,8 @@ async function settings({ app }) {
 
   const modeCard = (s) => {
     const current = s.value;
-    const opts = [['direct', 'Direct', 'NGOs pay the business by Raast or bank transfer, and the business confirms the money arrived. No payouts.'],
-      ['payfast', 'PayFast', 'NGOs pay through the gateway. We hold the money and pay businesses in Monday and Thursday batches.']];
+    const opts = [['direct', 'Direct', 'Collectors pay the business by Raast or bank transfer, and the business confirms the money arrived. No payouts.'],
+      ['payfast', 'PayFast', 'Collectors pay through the gateway. We hold the money and pay businesses in Monday and Thursday batches.']];
     const radios = opts.map(([v, title, text]) => h('label.adm-choice', { class: v === current ? 'is-current' : '' },
       h('input', { type: 'radio', name: 'payment_mode', value: v, checked: v === current }),
       h('span', h('span.adm-choice__title', title, v === current ? h('span.chip', 'Current') : null), h('span.adm-choice__text', text))));
@@ -848,13 +848,13 @@ async function settings({ app }) {
       e.preventDefault();
       const v = form.payment_mode.value;
       const ok = await dialog({ title: `Switch to ${v === 'payfast' ? 'PayFast' : 'direct'} payments?`, danger: true, confirm: 'Switch payment mode',
-        text: 'Every new claim uses the new mode straight away. Claims already made keep their mode. Only switch after telling businesses and NGOs.' });
+        text: 'Every new claim uses the new mode straight away. Claims already made keep their mode. Only switch after telling businesses and collectors.' });
       if (ok) save(btn, s, v);
     });
     return h('article.adm-setting.adm-setting--mode', { dataset: { key: s.key } },
       h('div.adm-setting__head', h('h3.adm-setting__key', 'Payment mode'), h('code.adm-setting__code', s.key)),
       h('p.adm-setting__desc', s.description),
-      notice('warning', 'This changes how every NGO pays from the next claim. Switch only when the gateway is ready and partners have been told.'),
+      notice('warning', 'This changes how every collector pays from the next claim. Switch only when the gateway is ready and partners have been told.'),
       form, changed(s));
   };
 

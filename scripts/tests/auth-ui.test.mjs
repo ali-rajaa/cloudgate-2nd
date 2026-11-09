@@ -244,7 +244,7 @@ test('log in: keyboard order is email, password, Show, Forgot password, Log in',
 // Create an account
 // ---------------------------------------------------------------------------
 async function fillSignup(page, overrides = {}) {
-  const v = { name: 'Ayesha Khan', phone: '0300 1234567', org: 'Edhi Kitchen', email: 'ayesha@edhi.org', password: 'Bread & lentils 4 all', confirm: null, ...overrides };
+  const v = { name: 'Ayesha Khan', phone: '0300 1234567', org: 'Campus Cafeteria', email: 'ayesha@edhi.org', password: 'Bread & lentils 4 all', confirm: null, ...overrides };
   await page.getByLabel('Your name').fill(v.name);
   await page.getByLabel('Mobile number').fill(v.phone);
   await page.locator('input[name=org]').fill(v.org);
@@ -269,10 +269,10 @@ test('sign up: empty submit flags every field and the type cards, and focuses th
 test('sign up: choosing a type updates the labels, agreement and address without losing what you typed', async () => {
   const { page, close } = await open('/signup');
   await page.getByLabel('Your name').fill('Ayesha Khan');
-  await page.locator('.auth-type__input[value=ngo]').check();
-  assert.equal(await page.evaluate(() => location.hash), '#/signup/ngo');
-  assert.ok(await page.getByLabel('Organisation name').isVisible());
-  assert.match(await page.getByRole('link', { name: 'NGO Agreement' }).getAttribute('href'), /legal\/ngo-agreement\/$/);
+  await page.locator('.auth-type__input[value=organization]').check();
+  assert.equal(await page.evaluate(() => location.hash), '#/signup/organization');
+  assert.ok(await page.getByLabel('Organization name').isVisible());
+  assert.match(await page.getByRole('link', { name: 'Collector Agreement' }).getAttribute('href'), /legal\/collector-agreement\/$/);
   assert.match(await page.locator('.auth-persona').textContent(), /Free to join/);
   await page.locator('.auth-type__input[value=vendor]').check();
   assert.ok(await page.getByLabel('Business name').isVisible());
@@ -285,7 +285,8 @@ test('sign up: choosing a type updates the labels, agreement and address without
 });
 
 test('sign up: deep links preselect the type', async () => {
-  for (const [hash, label] of [['/signup/vendor', 'Business name'], ['/signup/ngo', 'Organisation name']]) {
+  // /signup/ngo is the old address for the claiming side; it now opens an organization account.
+  for (const [hash, label] of [['/signup/vendor', 'Business name'], ['/signup/organization', 'Organization name'], ['/signup/ngo', 'Organization name']]) {
     const { page, close } = await open(hash);
     assert.ok(await page.getByLabel(label).isVisible(), hash);
     await close();
@@ -293,7 +294,7 @@ test('sign up: deep links preselect the type', async () => {
 });
 
 test('sign up: the strength meter rises with length, and weak or personal passwords are refused', async () => {
-  const { page, close } = await open('/signup/ngo');
+  const { page, close } = await open('/signup/organization');
   await page.getByLabel('Your name').fill('Ayesha Khan');
   const password = page.getByLabel('Password', { exact: true });
   const score = () => page.locator('.auth-meter').getAttribute('data-score');
@@ -329,7 +330,7 @@ test('sign up: confirm password must match, and Show reveals both boxes', async 
 });
 
 test('sign up: sends clean details and opens Check your email', async () => {
-  const { page, calls, errors, close } = await open('/signup/ngo');
+  const { page, calls, errors, close } = await open('/signup/organization');
   await fillSignup(page, { email: '  Ayesha@Edhi.org ', phone: '+92 300 123 4567', password: ' spaces kept 4 sure ', confirm: ' spaces kept 4 sure ' });
   await page.getByRole('button', { name: 'Create account' }).click();
   await page.getByRole('heading', { name: 'Check your email' }).waitFor();
@@ -338,10 +339,26 @@ test('sign up: sends clean details and opens Check your email', async () => {
   const sent = calls.find((c) => c.name.startsWith('signup')).body;
   assert.equal(sent.email, 'Ayesha@Edhi.org');
   assert.equal(sent.password, ' spaces kept 4 sure ', 'passwords are never trimmed');
-  assert.deepEqual(sent.data, { full_name: 'Ayesha Khan', phone: '+923001234567', org_type: 'ngo', org_name: 'Edhi Kitchen' }, 'the organisation travels with the account');
+  assert.deepEqual(sent.data, { full_name: 'Ayesha Khan', phone: '+923001234567', org_type: 'ngo', org_kind: 'organization', org_name: 'Campus Cafeteria' }, 'the organization travels with the account');
   const pending = await page.evaluate(() => JSON.parse(localStorage.getItem('rr-pending-org')));
-  assert.deepEqual(pending, { type: 'ngo', name: 'Edhi Kitchen', phone: '+923001234567' });
+  assert.deepEqual(pending, { type: 'ngo', kind: 'organization', name: 'Campus Cafeteria', phone: '+923001234567' });
   assert.deepEqual(errors, []);
+  await close();
+});
+
+test('sign up: an individual needs no organization name and goes by their own name', async () => {
+  const { page, calls, close } = await open('/signup/individual');
+  assert.equal(await page.locator('input[name=org]').isVisible(), false);
+  await page.getByLabel('Your name').fill('Bilal Ahmed');
+  await page.getByLabel('Mobile number').fill('0300 1234567');
+  await page.getByLabel('Email').fill('bilal@gmail.com');
+  await page.getByLabel('Password', { exact: true }).fill('Bread & lentils 4 all');
+  await page.getByLabel('Confirm password').fill('Bread & lentils 4 all');
+  await page.locator('input[name=terms]').check();
+  await page.getByRole('button', { name: 'Create account' }).click();
+  await page.getByRole('heading', { name: 'Check your email' }).waitFor();
+  const sent = calls.find((c) => c.name.startsWith('signup')).body;
+  assert.deepEqual(sent.data, { full_name: 'Bilal Ahmed', phone: '+923001234567', org_type: 'ngo', org_kind: 'individual', org_name: 'Bilal Ahmed' });
   await close();
 });
 
@@ -359,7 +376,7 @@ test('sign up: an existing address is flagged on the email field', async () => {
 
 test('sign up: an address that already has an account is caught even when Supabase hides it', async () => {
   // With email confirmation on, Supabase answers with a stand-in user (no identities) and sends nothing.
-  const { page, close } = await open('/signup/ngo', { auth: { signup: (route, body) => json(route, 200, { ...USER, email: body.email, identities: [] }) } });
+  const { page, close } = await open('/signup/organization', { auth: { signup: (route, body) => json(route, 200, { ...USER, email: body.email, identities: [] }) } });
   await fillSignup(page);
   await page.getByRole('button', { name: 'Create account' }).click();
   await page.getByText('An account with this email already exists.').waitFor();

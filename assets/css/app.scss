@@ -202,8 +202,7 @@ h1[tabindex="-1"]:focus { outline: none; }
 /* Which describes you: two cards that work as radio buttons. */
 .auth-type { margin: 0; padding: 0; border: 0; min-width: 0; }
 .auth-type legend { padding: 0; margin-bottom: 0.55rem; }
-.auth-type__options { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
-@media (max-width: 22rem) { .auth-type__options { grid-template-columns: 1fr; } }
+.auth-type__options { display: grid; grid-template-columns: 1fr; gap: 0.5rem; }
 .auth-type__option {
   position: relative; display: grid; gap: 0.2rem; align-content: start; padding: 0.9rem 1rem 1rem; cursor: pointer;
   border: 1px solid var(--border); border-radius: 0.875rem; background: var(--surface);

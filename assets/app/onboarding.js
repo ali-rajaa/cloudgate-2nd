@@ -19,18 +19,23 @@ export const DOCS = {
     ['registration', 'Proof of your business', 'Any one of these: Food Authority licence, NTN certificate, business registration, or a recent utility bill for the shop'],
     ['ifa_licence', 'Islamabad Food Authority licence', 'If you have one, it helps us approve you faster'],
   ],
-  ngo: [
-    ['registration', 'Registration certificate', 'Societies Act, Trusts Act, Section 42 company, or the Social Welfare Department'],
+  organization: [
+    ['registration', 'Proof of the organization', 'Any one of these: registration certificate, NTN, an official letter, or a recent utility bill'],
     ['signatory_cnic', 'CNIC of the person in charge', 'Front and back in one photo or file'],
-    ['authority_letter', 'Authority letter', 'Only if someone other than the head of the organisation will use Rizq Rasan'],
+    ['authority_letter', 'Authority letter', 'Only if someone other than the head of the organization will use Rizq Rasan'],
+  ],
+  individual: [
+    ['signatory_cnic', 'Your CNIC', 'Front and back in one photo or file'],
   ],
 };
-const REQUIRED = { vendor: ['signatory_cnic', 'registration'], ngo: ['registration', 'signatory_cnic'] };
+const REQUIRED = { vendor: ['signatory_cnic', 'registration'], organization: ['registration', 'signatory_cnic'], individual: ['signatory_cnic'] };
+// Which document list applies: vendors, or the collector's kind ('ngo' in the database means collector).
+export const sideOf = (o) => (o.type === 'vendor' ? 'vendor' : o.collector_kind === 'individual' ? 'individual' : 'organization');
 // A business's proof can be any of these (older applications used separate slots).
 const BUSINESS_PROOF = ['registration', 'ifa_licence', 'ntn', 'address_proof', 'bank_letter', 'dts'];
 // Labels for documents uploaded under the older, longer list, so admins still see a name.
 export const DOC_LABELS = {
-  registration: 'Registration or proof of business', ntn: 'NTN certificate', ifa_licence: 'Islamabad Food Authority licence',
+  registration: 'Registration or proof of business or organization', ntn: 'NTN certificate', ifa_licence: 'Islamabad Food Authority licence',
   dts: 'Department of Tourist Services registration', signatory_cnic: 'CNIC', authority_letter: 'Authority letter',
   bank_letter: 'Bank letter', address_proof: 'Proof of address', constitution: 'Constitution or trust deed', office_bearers: 'List of office bearers',
 };
@@ -45,16 +50,19 @@ async function start() {
     return h('section.app-narrow', pageHead('We couldn\'t open your organisation', null),
       notice('warning', 'Your account is already linked to an organisation, but it didn\'t load. Try again in a moment. If it keeps happening, contact us and we\'ll sort it out.'),
       h('p.button-row', h('button.btn.btn--primary', { type: 'button', onclick: () => location.reload() }, 'Try again'),
-        h('a.btn.btn--secondary', { href: '../contact/' }, 'Contact us')));
+        h('a.btn.btn--secondary', { href: '../about/#contact' }, 'Contact us')));
   }
   // Details from sign-up: saved on this device, or with the account (when the
   // email link is opened on another device).
   const meta = state.user?.user_metadata || {};
   const pending = JSON.parse(localStorage.getItem('rr-pending-org') || 'null')
-    || (meta.org_type && meta.org_name ? { type: meta.org_type, name: meta.org_name, phone: meta.phone } : null);
-  const type = field({ name: 'type', label: 'Account type', type: 'select', required: true, value: pending?.type,
-    options: [{ value: 'vendor', label: 'Food business with surplus food' }, { value: 'ngo', label: 'NGO, shelter or kitchen that feeds people' }] });
-  const name = field({ name: 'name', label: 'Business or organisation name', required: true, value: pending?.name || '' });
+    || (meta.org_type && meta.org_name ? { type: meta.org_type, kind: meta.org_kind, name: meta.org_name, phone: meta.phone } : null);
+  // One choice here stands for the database's type and kind together.
+  const choice = pending?.type === 'vendor' ? 'vendor' : pending?.type ? (pending.kind === 'individual' ? 'individual' : 'organization') : '';
+  const type = field({ name: 'type', label: 'Account type', type: 'select', required: true, value: choice,
+    options: [{ value: 'vendor', label: 'Vendor: I have surplus to share' }, { value: 'organization', label: 'Organization: we need supplies' },
+      { value: 'individual', label: 'Individual: I want supplies for myself' }] });
+  const name = field({ name: 'name', label: 'Business, organization or your name', required: true, value: pending?.name || '' });
   const submit = h('button.btn.btn--primary', { type: 'submit' }, 'Continue');
   const form = h('form.app-form.card', { novalidate: true }, type.wrap, name.wrap, submit);
   const create = () => {
@@ -63,8 +71,10 @@ async function start() {
     return creating;
   };
   const createNow = async () => {
-    const id = await rpc('create_organisation', { p_type: type.value(), p_name: name.value(), p_business_kind: null, p_phone: pending?.phone || state.profile?.phone || null });
-    await rpc('accept_policies', { p_org: id, p_policies: ['terms', 'privacy', type.value() === 'vendor' ? 'vendor-agreement' : 'ngo-agreement'], p_version: '0.1' });
+    const vendor = type.value() === 'vendor';
+    const id = await rpc('create_organisation', { p_type: vendor ? 'vendor' : 'ngo', p_name: name.value(), p_business_kind: null,
+      p_phone: pending?.phone || state.profile?.phone || null, p_kind: vendor ? null : type.value() });
+    await rpc('accept_policies', { p_org: id, p_policies: ['terms', 'privacy', vendor ? 'vendor-agreement' : 'collector-agreement'], p_version: '0.1' });
     localStorage.removeItem('rr-pending-org');
     window.dispatchEvent(new Event('rr:state'));
     go('/onboarding');
@@ -96,8 +106,8 @@ async function onboarding({ app }) {
 
   if (o.status === 'approved') {
     return h('section.app-narrow', pageHead('You\'re approved', null),
-      notice('info', o.type === 'vendor' ? 'You can list surplus food now.' : 'You can find and claim food near you now.'),
-      h('p', h('a.btn.btn--primary', { href: o.type === 'vendor' ? '#/vendor/new' : '#/ngo' }, o.type === 'vendor' ? 'List food' : 'Find food')));
+      notice('info', o.type === 'vendor' ? 'You can list your surplus now.' : 'You can find and claim supplies near you now.'),
+      h('p', h('a.btn.btn--primary', { href: o.type === 'vendor' ? '#/vendor/new' : '#/ngo' }, o.type === 'vendor' ? 'List food' : 'Find supplies')));
   }
 
   const locked = ['pending_review', 'rejected', 'suspended', 'removed'].includes(o.status);
@@ -117,15 +127,18 @@ async function onboarding({ app }) {
     phone: field({ name: 'phone', label: 'Contact mobile', type: 'tel', required: true, value: phoneDisplay(o.phone), inputmode: 'tel' }),
     email: field({ name: 'email', label: 'Contact email', type: 'email', value: o.email || state.user.email }),
     address: field({ name: 'address', label: o.type === 'vendor' ? 'Pickup address' : 'Address', required: true, value: o.address || '', full: true,
-      placeholder: 'Shop 12, Street 3, F-7 Markaz', hint: o.type === 'ngo' ? 'Used only to work out distances. Businesses never see it.' : 'NGOs see this only after they pay.' }),
+      placeholder: 'Shop 12, Street 3, F-7 Markaz', hint: o.type === 'ngo' ? 'Used only to work out distances. Vendors never see it.' : 'Collectors see this only after they claim.' }),
     sector: field({ name: 'sector', label: 'Area', type: 'select', required: true, value: o.sector, options: SECTORS }),
   };
   if (o.type === 'vendor') {
     f.business_kind = field({ name: 'business_kind', label: 'Type of business', type: 'select', value: o.business_kind, options: ['Bakery', 'Restaurant', 'Grocer or supermarket', 'Cafe'] });
     f.pickup_instructions = field({ name: 'pickup_instructions', label: 'Pickup instructions', type: 'textarea', value: o.pickup_instructions || '', full: true, placeholder: 'Ask for the manager at the back counter' });
+  } else if (sideOf(o) === 'organization') {
+    f.business_kind = field({ name: 'business_kind', label: 'Type of organization', type: 'select', value: o.business_kind,
+      options: ['University cafeteria', 'School canteen', 'Office', 'Bulk buyer', 'Other'] });
   } else {
-    f.business_kind = field({ name: 'business_kind', label: 'Type of organisation', type: 'select', value: o.business_kind, options: ['NGO', 'Shelter', 'Community kitchen', 'Food bank', 'Orphanage', 'Other'] });
-    f.people_served_per_day = field({ name: 'people_served_per_day', label: 'People you serve each day', type: 'number', min: 1, value: o.people_served_per_day || '' });
+    // An individual's account needs no business details.
+    delete f.legal_name; delete f.registration_number; delete f.ntn;
   }
   const pin = h('p.field__hint', o.lat ? `Map pin saved (${o.lat.toFixed(4)}, ${o.lng.toFixed(4)}).` : 'No map pin yet. Add one so distances are accurate.');
   let coords = o.lat ? { lat: o.lat, lng: o.lng } : null;
@@ -156,7 +169,8 @@ async function onboarding({ app }) {
 
   // Section 2: documents
   const docList = h('ul.app-doclist');
-  for (const [kind, label, hint] of DOCS[o.type]) {
+  const side = sideOf(o);
+  for (const [kind, label, hint] of DOCS[side]) {
     const mine = docs.filter((d) => d.kind === kind);
     const input = h('input', { type: 'file', accept: 'image/jpeg,image/png,application/pdf', hidden: true });
     const btn = h('button.btn.btn--secondary.btn--sm', { type: 'button', disabled: locked, onclick: () => input.click() }, mine.length ? 'Replace' : 'Upload');
@@ -173,7 +187,7 @@ async function onboarding({ app }) {
     });
     const latest = mine[mine.length - 1];
     docList.append(h('li.app-doc',
-      h('div', h('p.app-doc__name', label, REQUIRED[o.type].includes(kind) ? null : h('span.field__optional', ' (optional)')), hint ? h('p.app-doc__hint', hint) : null,
+      h('div', h('p.app-doc__name', label, REQUIRED[side].includes(kind) ? null : h('span.field__optional', ' (optional)')), hint ? h('p.app-doc__hint', hint) : null,
         latest?.status === 'rejected' && latest.reason ? h('p.field__error', latest.reason) : null),
       h('div.app-doc__end', latest ? h('span.badge', { class: latest.status === 'approved' ? 'badge--good' : latest.status === 'rejected' ? 'badge--bad' : 'badge--wait' },
         latest.status === 'uploaded' ? 'Uploaded' : latest.status === 'approved' ? 'Checked' : 'Needs a new file') : null, btn, input)));
@@ -193,7 +207,7 @@ async function onboarding({ app }) {
       e.preventDefault();
       const iban = p.bank_iban.value().replace(/\s/g, '').toUpperCase();
       if (iban && !/^PK\d{2}[A-Z]{4}\d{16}$/.test(iban)) return p.bank_iban.error('A Pakistani IBAN has 24 characters and starts with PK.');
-      if (!iban && !p.raast_id.value()) return p.raast_id.error('Add a Raast ID or an IBAN so NGOs can pay you.');
+      if (!iban && !p.raast_id.value()) return p.raast_id.error('Add a Raast ID or an IBAN so collectors can pay you.');
       busy(savePay, async () => {
         await rpc('update_organisation', { p_org: o.id, p_fields: { raast_id: p.raast_id.value(), bank_account_title: p.bank_account_title.value(), bank_iban: iban } });
         toast('Payment details saved.'); app.refresh();
@@ -204,7 +218,7 @@ async function onboarding({ app }) {
 
   // Submit
   const has = (kinds) => docs.some((d) => kinds.includes(d.kind) && d.status !== 'rejected');
-  const missing = REQUIRED[o.type].filter((k) => !has(o.type === 'vendor' && k === 'registration' ? BUSINESS_PROOF : [k]));
+  const missing = REQUIRED[side].filter((k) => !has(side === 'vendor' && k === 'registration' ? BUSINESS_PROOF : [k]));
   const ready = o.phone && o.address && o.sector && missing.length === 0 && (o.type === 'ngo' || o.raast_id || o.bank_iban);
   const submitBtn = h('button.btn.btn--accent', { type: 'button', disabled: !ready || locked || !owner, onclick: () => busy(submitBtn, async () => {
     await rpc('submit_for_review', { p_org: o.id });
@@ -217,11 +231,11 @@ async function onboarding({ app }) {
   if (o.type === 'vendor' && !(o.raast_id || o.bank_iban)) todo.push('your payment details');
 
   return h('section.app-narrow',
-    pageHead(o.name, o.type === 'vendor' ? 'Business application' : 'Organisation application', badge(o.status)),
+    pageHead(o.name, o.type === 'vendor' ? 'Vendor application' : side === 'individual' ? 'Collector application' : 'Organization application', badge(o.status)),
     statusBox,
     h('section.app-section', h('h2.app-h2', '1. Details'), detailsForm),
     h('section.app-section', h('h2.app-h2', '2. Documents'), h('p.app-muted', 'JPG, PNG or PDF, up to 10 MB each. Only you and our review team can see them.'), docList),
-    paySection ? h('section.app-section', h('h2.app-h2', '3. Where NGOs pay you'), h('p.app-muted', 'NGOs pay you directly by Raast or bank transfer. You confirm when the money arrives.'), paySection) : null,
+    paySection ? h('section.app-section', h('h2.app-h2', '3. Where collectors pay you'), h('p.app-muted', 'Collectors pay you directly by Raast or bank transfer. You confirm when the money arrives.'), paySection) : null,
     locked ? null : h('section.app-section.app-submit', todo.length ? h('p.app-muted', 'Still needed: ' + todo.join(', ') + '.') : h('p.app-muted', 'Everything is in. Submit when you\'re ready.'), submitBtn),
     owner ? null : notice('info', 'Only the account owner can change these details.'));
 }

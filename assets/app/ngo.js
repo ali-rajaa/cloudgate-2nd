@@ -6,11 +6,11 @@ import {
 } from './core.js';
 
 export function routes(register) {
-  register('/ngo', { title: 'Find food', roles: ['ngo'], render: findFood });
+  register('/ngo', { title: 'Find supplies', roles: ['ngo'], render: findFood });
   register('/ngo/listings/:id', { title: 'Listing', roles: ['ngo'], render: listingDetail });
   register('/ngo/claims', { title: 'My claims', roles: ['ngo'], render: claims });
   register('/ngo/claims/:id', { title: 'Claim', roles: ['ngo'], render: claimPage });
-  register('/ngo/collectors', { title: 'Collectors', roles: ['ngo'], render: collectors });
+  register('/ngo/collectors', { title: 'Drivers', roles: ['ngo'], render: collectors });
 }
 
 // ---------------------------------------------------------------------------
@@ -106,11 +106,17 @@ async function findFood() {
   const token = begin();
   await refreshOrg();
   const [conf, cats, active] = await Promise.all([
-    settings(['browse_radius_km', 'cooked_food_open']),
+    settings(['browse_radius_km', 'cooked_food_open', 'public_listings_open']),
     select(db.from('categories').select('id, name, opens').order('sort')),
     select(db.from('orders').select('id, status, payment_deadline, listings(title, pickup_start, pickup_end)')
       .eq('ngo_id', state.org.id).in('status', ['payment_due', 'payment_processing', 'paid', 'awaiting_collection_answer']).order('created_at', { ascending: false })),
   ]);
+  // Individuals can claim only once public listings open.
+  if (state.org.collector_kind === 'individual' && conf.public_listings_open !== true) {
+    return h('section.ngo-find',
+      pageHead('Find supplies', 'Surplus from verified vendors near you.'),
+      empty('Opening to the public after launch', 'Listings go to organizations first. We\'ll email you as soon as individuals can claim too.'));
+  }
   const defaultRadius = Number(conf.browse_radius_km) || 5;
   const saved = store.get('rr-ngo-filters') || {};
   const filters = { radius: saved.radius || defaultRadius, category: saved.category || '', maxPrice: saved.maxPrice || '' };
@@ -178,7 +184,7 @@ async function findFood() {
   onWindow(token, 'visibilitychange', () => { if (document.visibilityState === 'visible') search(); }, document);
 
   return h('section.ngo-find',
-    pageHead('Find food', 'Surplus food from verified businesses near you.', h('a.btn.btn--secondary.btn--sm', { href: '#/ngo/claims' }, 'My claims')),
+    pageHead('Find supplies', 'Surplus from verified vendors near you.', h('a.btn.btn--secondary.btn--sm', { href: '#/ngo/claims' }, 'My claims')),
     pauseNotice(pause), pinNotice(),
     active.length ? activeClaims(active) : null,
     bar, summary, results);
@@ -211,7 +217,7 @@ function card(l) {
         started ? null : h('span', `Pickup from ${time(l.pickup_start)}`)),
       chips(dietChips(l.dietary)),
       h('div.app-card__foot',
-        h('p.app-card__price', h('span.app-card__amount', rs(l.price_rs)), h('span.app-card__retail', h('span.visually-hidden', 'Retail value '), rs(l.retail_value_rs))),
+        h('p.app-card__price', h('span.app-card__amount', l.price_rs ? rs(l.price_rs) : 'Free'), h('span.app-card__retail', h('span.visually-hidden', 'Retail value '), rs(l.retail_value_rs))),
         l.can_claim ? h('span.ngo-card__cta', 'Claim', icon('arrow', 16)) : h('span.badge.badge--muted', 'Too late to claim'))));
 }
 
@@ -234,10 +240,10 @@ async function listingDetail({ params }) {
   ]);
   if (mine.length) { go('/ngo/claims/' + mine[0].id); return h('div'); }
   const l = rows.find((r) => r.id === params.id);
-  const back = h('p.ngo-back', h('a', { href: '#/ngo' }, icon('back', 18), 'Find food'));
+  const back = h('p.ngo-back', h('a', { href: '#/ngo' }, icon('back', 18), 'Find supplies'));
   if (!l) {
     return h('section.app-narrow', back, empty('This food is no longer available',
-      'Another NGO claimed it or its pickup time has ended. Other food near you may still be free.', h('a.btn.btn--primary', { href: '#/ngo' }, 'Find other food')));
+      'Someone else claimed it or its pickup time has ended. Other food near you may still be free.', h('a.btn.btn--primary', { href: '#/ngo' }, 'Find other food')));
   }
 
   const timeLeft = h('span.ngo-timeleft');
@@ -253,21 +259,26 @@ async function listingDetail({ params }) {
   }
 
   const err = h('div.ngo-claim-error', { role: 'alert', hidden: true });
-  const claimBtn = h('button.btn.btn--accent.btn--block.ngo-claim-btn', { type: 'button', disabled: !l.can_claim || Boolean(pause) }, `Claim for ${rs(l.price_rs)}`);
+  const claimBtn = h('button.btn.btn--accent.btn--block.ngo-claim-btn', { type: 'button', disabled: !l.can_claim || Boolean(pause) }, l.price_rs ? `Claim for ${rs(l.price_rs)}` : 'Claim for free');
   claimBtn.addEventListener('click', async () => {
     err.hidden = true;
     const holdMins = Math.min(Number(conf.payment_window_minutes) || 30, minutesLeft(l.pickup_end) - (Number(conf.payment_cutoff_before_end_minutes) || 15));
     const holdUntil = Date.now() + holdMins * 60000;
-    const ok = await dialog({
+    const free = !l.price_rs;
+    const ok = await dialog(free ? {
       title: 'Claim this food?',
-      text: `We'll hold it for you until ${time(holdUntil)} while you pay ${rs(l.price_rs)}. If you don't pay in time, it goes back to other organisations.`,
+      text: 'It\'s free. You get the pickup code straight away. Collect it during the pickup window.',
+      confirm: 'Claim for free', cancel: 'Not now',
+    } : {
+      title: 'Claim this food?',
+      text: `We'll hold it for you until ${time(holdUntil)} while you pay ${rs(l.price_rs)}. If you don't pay in time, it goes back to others.`,
       confirm: `Claim for ${rs(l.price_rs)}`, cancel: 'Not now',
     });
     if (!ok) return;
     await busy(claimBtn, async () => {
       try {
         const orderId = await rpc('claim_listing', { p_ngo: state.org.id, p_listing: l.id, p_collector: collector?.input.value || null });
-        toast('Claimed. Pay before the deadline to get your pickup code.');
+        toast(free ? 'Claimed. Your pickup code is ready.' : 'Claimed. Pay before the deadline to get your pickup code.');
         go('/ngo/claims/' + orderId);
       } catch (e) {
         const msg = friendly(e);
@@ -304,12 +315,12 @@ async function listingDetail({ params }) {
       fact('Food', shortCategory(l.category_name)),
       fact('Storage', STORAGE[l.storage] || l.storage),
       fact('Safe until', dateTime(l.safe_until)),
-      fact('Price', h('span', rs(l.price_rs), ' ', h('s.app-muted', rs(l.retail_value_rs)))),
+      fact('Price', h('span', l.price_rs ? rs(l.price_rs) : 'Free', ' ', h('s.app-muted', rs(l.retail_value_rs)))),
       fact('Pickup address', 'Shown after you pay')),
     h('section.app-section.ngo-claim-box',
       pauseNotice(pause),
       l.can_claim ? null : notice('warning', 'There isn\'t enough time left to pay before pickup ends, so this can\'t be claimed.'),
-      collector ? collector.wrap : h('p.app-muted', 'No collectors yet. ', link('/ngo/collectors', 'Add a collector'), ' so you can send them the pickup code.'),
+      collector ? collector.wrap : h('p.app-muted', 'No drivers yet. ', link('/ngo/collectors', 'Add a driver'), ' so you can send them the pickup code.'),
       claimBtn,
       h('p.app-muted.ngo-claim-note', 'You pay the business directly or online after claiming. The address and pickup code appear once you have paid.'),
       err));
@@ -400,7 +411,7 @@ async function claimPage({ params, query }) {
       fact('Your payment reference', d.ngo_payment_reference),
       fact('Collected', d.picked_up_at ? dateTime(d.picked_up_at) : null),
       fact('Business', `${d.vendor.name} (${d.vendor.badge})`),
-      fact('Collector', d.collector ? `${d.collector.name}${d.collector.phone ? ', ' + phoneDisplay(d.collector.phone) : ''}` : 'Not chosen'))));
+      fact('Driver', d.collector ? `${d.collector.name}${d.collector.phone ? ', ' + phoneDisplay(d.collector.phone) : ''}` : 'Not chosen'))));
 
     if (disputes.length) {
       out.push(h('section.app-section', h('h2.app-h2', 'Problem reports'), h('ul.app-list', disputes.map((x) => h('li.app-list__item',
@@ -561,9 +572,9 @@ async function claimPage({ params, query }) {
             h('a.btn.btn--primary.btn--sm', { href: mapUrl, target: '_blank', rel: 'noopener' }, icon('pin', 18), 'Open in Google Maps'),
             v.phone ? h('a.btn.btn--secondary.btn--sm', { href: 'tel:' + v.phone }, icon('phone', 18), `Call ${phoneDisplay(v.phone)}`) : null))),
       h('section.app-section.ngo-collector',
-        h('h2.app-h2', 'Collector'),
-        h('p', d.collector ? `${d.collector.name}${d.collector.phone ? ', ' + phoneDisplay(d.collector.phone) : ''}` : 'No collector chosen. Send the code to whoever will collect.'),
-        h('a.btn.btn--secondary.ngo-wa', { href: 'https://wa.me/?text=' + encodeURIComponent(share), target: '_blank', rel: 'noopener' }, 'Send to collector on WhatsApp')),
+        h('h2.app-h2', 'Driver'),
+        h('p', d.collector ? `${d.collector.name}${d.collector.phone ? ', ' + phoneDisplay(d.collector.phone) : ''}` : 'No driver chosen. Send the code to whoever will collect.'),
+        h('a.btn.btn--secondary.ngo-wa', { href: 'https://wa.me/?text=' + encodeURIComponent(share), target: '_blank', rel: 'noopener' }, 'Send to driver on WhatsApp')),
     ];
   }
 
@@ -728,7 +739,7 @@ function row(o) {
     : ['paid', 'awaiting_collection_answer'].includes(o.status) ? `Collect ${windowText(l.pickup_start, l.pickup_end)}`
     : `Claimed ${dateTime(o.created_at)}`;
   return h('li', h('a.app-list__item.ngo-claim-row', { href: '#/ngo/claims/' + o.id },
-    h('div', h('p.app-list__title', l.title || 'Claim'), h('p.app-list__text', `${rs(o.price_rs)} · ${meta}`)),
+    h('div', h('p.app-list__title', l.title || 'Claim'), h('p.app-list__text', `${o.price_rs ? rs(o.price_rs) : 'Free'} · ${meta}`)),
     badge(o.status)));
 }
 
@@ -745,10 +756,10 @@ async function collectors({ app }) {
 
   const name = field({ name: 'name', label: 'Name', required: true, autocomplete: 'off' });
   const phone = field({ name: 'phone', label: 'Mobile number', type: 'tel', required: true, inputmode: 'tel', placeholder: '0300 1234567', autocomplete: 'off' });
-  const add = h('button.btn.btn--primary', { type: 'submit', disabled: full }, 'Add collector');
+  const add = h('button.btn.btn--primary', { type: 'submit', disabled: full }, 'Add driver');
   const form = h('form.app-form.card', { novalidate: true },
     h('div.form__grid', name.wrap, phone.wrap),
-    full ? h('p.app-muted', `You have ${MAX_COLLECTORS} active collectors, the most allowed. Deactivate one to add someone new.`) : null,
+    full ? h('p.app-muted', `You have ${MAX_COLLECTORS} active drivers, the most allowed. Deactivate one to add someone new.`) : null,
     add);
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -756,10 +767,10 @@ async function collectors({ app }) {
     if (name.value().length < 2) { name.error('Enter their name.'); return; }
     const tel = normalisePhone(phone.value());
     if (!tel) { phone.error('Enter a Pakistani mobile number, like 0300 1234567.'); return; }
-    if (rows.some((c) => c.active && c.phone === tel)) { phone.error('This number is already one of your collectors.'); return; }
+    if (rows.some((c) => c.active && c.phone === tel)) { phone.error('This number is already one of your drivers.'); return; }
     busy(add, async () => {
       const { error } = await db.from('collectors').insert({ organisation_id: state.org.id, name: name.value(), phone: tel });
-      if (error) throw new AppError(/row-level security/i.test(error.message) ? `You can have up to ${MAX_COLLECTORS} active collectors.` : friendly(error));
+      if (error) throw new AppError(/row-level security/i.test(error.message) ? `You can have up to ${MAX_COLLECTORS} active drivers.` : friendly(error));
       toast(`${name.value()} added.`);
       app.refresh();
     });
@@ -768,7 +779,7 @@ async function collectors({ app }) {
   const list = rows.length ? h('ul.app-list.ngo-collectors', rows.map((c) => {
     const toggle = h('button.btn.btn--secondary.btn--sm', { type: 'button' }, c.active ? 'Deactivate' : 'Reactivate');
     toggle.addEventListener('click', () => {
-      if (!c.active && full) { toast(`You already have ${MAX_COLLECTORS} active collectors. Deactivate one first.`, 'error'); return; }
+      if (!c.active && full) { toast(`You already have ${MAX_COLLECTORS} active drivers. Deactivate one first.`, 'error'); return; }
       busy(toggle, async () => {
         const { error } = await db.from('collectors').update({ active: !c.active }).eq('id', c.id);
         if (error) throw error;
@@ -778,7 +789,7 @@ async function collectors({ app }) {
     });
     const remove = h('button.btn.btn--secondary.btn--sm.ngo-remove', { type: 'button' }, 'Remove');
     remove.addEventListener('click', async () => {
-      const ok = await dialog({ title: `Remove ${c.name}?`, text: 'They won\'t be offered as a collector any more.', confirm: 'Remove', danger: true });
+      const ok = await dialog({ title: `Remove ${c.name}?`, text: 'They won\'t be offered as a driver any more.', confirm: 'Remove', danger: true });
       if (!ok) return;
       busy(remove, async () => {
         const { data, error } = await db.from('collectors').delete().eq('id', c.id).select('id');
@@ -791,10 +802,10 @@ async function collectors({ app }) {
     return h('li.app-list__item.ngo-collector', { class: c.active ? '' : 'is-inactive' },
       h('div', h('p.app-list__title', c.name, ' ', c.active ? null : h('span.badge.badge--muted', 'Inactive')), h('p.app-list__text', phoneDisplay(c.phone))),
       h('div.ngo-collector__actions', toggle, remove));
-  })) : empty('No collectors yet', 'Add the people who pick up food for you. You can send them the pickup code by WhatsApp.');
+  })) : empty('No drivers yet', 'Add the people who pick up food for you. You can send them the pickup code by WhatsApp.');
 
   return h('section.app-narrow',
-    pageHead('Collectors', `The drivers and volunteers who pick up food for you. Up to ${MAX_COLLECTORS} at a time.`),
-    h('section.app-section', h('h2.app-h2', `Your collectors (${activeCount} of ${MAX_COLLECTORS} active)`), list),
-    h('section.app-section', h('h2.app-h2', 'Add a collector'), form));
+    pageHead('Drivers', `The drivers and volunteers who pick up food for you. Up to ${MAX_COLLECTORS} at a time.`),
+    h('section.app-section', h('h2.app-h2', `Your drivers (${activeCount} of ${MAX_COLLECTORS} active)`), list),
+    h('section.app-section', h('h2.app-h2', 'Add a driver'), form));
 }

@@ -334,6 +334,71 @@ const before = (await ngoU.client.rpc('reliability_score', { p_org: ngo })).data
 ok(typeof before === 'number' && before >= 0 && before <= 100, 'reliability score is worked out from recent orders', before);
 
 // ---------------------------------------------------------------------------
+console.log('\n10a. Collectors: individuals, who can claim, and Rs 0 listings');
+async function uploadDoc(u, org, kind) {
+  const path = `${org}/${kind}-${run}.pdf`;
+  const up = await u.client.storage.from('documents').upload(path, new Blob(['%PDF-1.4 test'], { type: 'application/pdf' }), { contentType: 'application/pdf' });
+  if (up.error) throw new Error('upload: ' + up.error.message);
+  await must(u.client, 'add_document', { p_org: org, p_kind: kind, p_path: path });
+}
+// An individual needs only their CNIC.
+const indU = await user('individual');
+const ind = await must(indU.client, 'create_organisation', { p_type: 'ngo', p_name: 'Bilal Ahmed', p_phone: '+923001112222', p_kind: 'individual' });
+await must(indU.client, 'update_organisation', { p_org: ind, p_fields: { address: 'House 1, Street 2', sector: 'F-7', lat: 33.72, lng: 73.05 } });
+await uploadDoc(indU, ind, 'signatory_cnic');
+r = await rpc(indU.client, 'submit_for_review', { p_org: ind });
+ok(!r.error, 'an individual can apply with just a CNIC', r.error?.message);
+let kindRow = (await indU.client.from('organisations').select('collector_kind').eq('id', ind).single()).data;
+ok(kindRow.collector_kind === 'individual', 'the account is stored as an individual collector', kindRow);
+await must(admin1.client, 'admin_set_org_status', { p_org: ind, p_status: 'approved' });
+// A fresh organization collector, so earlier strikes and pauses don't interfere.
+const orgCU = await user('cafeteria');
+const orgC = await must(orgCU.client, 'create_organisation', { p_type: 'ngo', p_name: 'Campus Cafeteria', p_phone: '+923003334444', p_kind: 'organization' });
+await must(orgCU.client, 'update_organisation', { p_org: orgC, p_fields: { address: 'Campus Road', sector: 'F-7', lat: 33.72, lng: 73.05 } });
+await uploadDoc(orgCU, orgC, 'signatory_cnic');
+r = await rpc(orgCU.client, 'submit_for_review', { p_org: orgC });
+ok(r.error && /proof of your organization/.test(r.error.message), 'an organization also needs a proof of the organization', r.error?.message);
+await uploadDoc(orgCU, orgC, 'registration');
+await must(orgCU.client, 'submit_for_review', { p_org: orgC });
+await must(admin1.client, 'admin_set_org_status', { p_org: orgC, p_status: 'approved' });
+
+// Who can claim: organizations only at launch.
+const orgOnly = await must(vendorU.client, 'create_listing', listingArgs(vendor, { p_title: 'Org only lot' }));
+let seen = await must(indU.client, 'search_listings', { p_ngo: ind });
+ok(!seen.some((l) => l.id === orgOnly), 'individuals don\'t see organization-only listings');
+seen = await must(orgCU.client, 'search_listings', { p_ngo: orgC });
+ok(seen.some((l) => l.id === orgOnly), 'organizations see them');
+r = await rpc(indU.client, 'claim_listing', { p_ngo: ind, p_listing: orgOnly });
+ok(r.error && /isn't open to your account/.test(r.error.message), 'an individual cannot claim an organization-only listing', r.error?.message);
+r = await rpc(vendorU.client, 'create_listing', listingArgs(vendor, { p_title: 'Public lot', p_audience: 'public' }));
+ok(r.error && /organizations only until public listings open/.test(r.error.message), 'public listings are refused while they are closed', r.error?.message);
+r = await rpc(vendorU.client, 'create_listing', listingArgs(vendor, { p_title: 'Single buns', p_sold_as: 'items' }));
+ok(r.error && /Single items open/.test(r.error.message), 'single items wait for public listings too', r.error?.message);
+await setSetting('public_listings_open', true);
+const pub = await must(vendorU.client, 'create_listing', listingArgs(vendor, { p_title: 'Public lot', p_audience: 'public' }));
+seen = await must(indU.client, 'search_listings', { p_ngo: ind });
+ok(seen.some((l) => l.id === pub), 'once public listings open, individuals see public listings');
+seen = await must(orgCU.client, 'search_listings', { p_ngo: orgC });
+ok(!seen.some((l) => l.id === pub), 'organizations don\'t see public-only listings');
+await setSetting('public_listings_open', false);
+seen = await must(indU.client, 'search_listings', { p_ngo: ind });
+ok(!seen.some((l) => l.id === pub), 'closing public listings hides them from individuals again');
+
+// Rs 0: allowed, no payment, pickup code at once, no commission.
+r = await rpc(vendorU.client, 'create_listing', listingArgs(vendor, { p_title: 'Too cheap', p_price_rs: 500 }));
+ok(r.error && /Listings start at/.test(r.error.message), 'a price between Rs 0 and the minimum is refused', r.error?.message);
+const freeListing = await must(vendorU.client, 'create_listing', listingArgs(vendor, { p_title: 'Free bread', p_price_rs: 0 }));
+seen = await must(orgCU.client, 'search_listings', { p_ngo: orgC });
+ok(seen.some((l) => l.id === freeListing && l.price_rs === 0 && l.can_claim), 'a Rs 0 listing can be found and claimed');
+const freeOrder = await must(orgCU.client, 'claim_listing', { p_ngo: orgC, p_listing: freeListing });
+const fo = (await orgCU.client.from('orders').select('status, price_rs, commission_rs, vendor_share_rs, paid_at').eq('id', freeOrder).single()).data;
+ok(fo.status === 'paid' && fo.price_rs === 0 && fo.commission_rs === 0 && fo.paid_at, 'claiming a Rs 0 listing needs no payment', fo);
+const fd = await must(orgCU.client, 'order_details', { p_order: freeOrder });
+ok(/^\d{4}$/.test(fd.pickup_code || ''), 'the collector sees the pickup code straight away', fd.pickup_code);
+const fv = await must(vendorU.client, 'verify_pickup_code', { p_vendor: vendor, p_code: fd.pickup_code });
+ok(fv.ok === true, 'the vendor hands it over with the code', fv);
+
+// ---------------------------------------------------------------------------
 console.log('\n10. Ledger stays balanced');
 const { data: ledger } = await admin1.client.from('ledger_entries').select('txn_id, debit_rs, credit_rs');
 const byTxn = {};

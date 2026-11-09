@@ -142,7 +142,7 @@ export const STATUS_LABELS = {
   payment_due: 'Waiting for payment', payment_processing: 'Payment being confirmed', paid: 'Paid, ready to collect',
   awaiting_collection_answer: 'Did they collect?', picked_up: 'Handed over', completed: 'Completed',
   completed_unconfirmed: 'Completed (unconfirmed)', expired_unpaid: 'Expired unpaid', released: 'Released',
-  cancelled_by_ngo: 'Cancelled by NGO', cancelled_by_vendor: 'Cancelled by business', refused_at_pickup: 'Refused at pickup',
+  cancelled_by_ngo: 'Cancelled by collector', cancelled_by_vendor: 'Cancelled by business', refused_at_pickup: 'Refused at pickup',
   no_show: 'Not collected', live: 'Live', claimed: 'Claimed', expired: 'Ended', withdrawn: 'Withdrawn', removed: 'Removed', draft: 'Draft',
   onboarding: 'Setting up', pending_review: 'Waiting for review', needs_changes: 'Needs changes', approved: 'Approved',
   rejected: 'Not approved', suspended: 'Suspended',

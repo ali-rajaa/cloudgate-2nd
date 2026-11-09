@@ -1,38 +1,7 @@
 ---
-title: Frequently asked questions
+layout: redirect
+title: How it works
+redirect_to: /how-it-works/#faq
+sitemap: false
 permalink: /faq/
-description: Answers for food businesses and NGOs about Rizq Rasan, grouped by businesses, NGOs, payments, safety and accounts.
-heading: Questions and answers
-lead: Answers for food businesses and NGOs, grouped by topic. Accounts are open now. Listing and claiming start when Rizq Rasan launches in Islamabad on 22 March 2027, and most answers describe how it will work from then.
 ---
-<nav class="container container--narrow" aria-label="Questions by topic">
-  <div class="button-row">
-    {%- for g in site.data.faq %}
-    <a class="btn btn--secondary btn--sm" href="#{{ g.id }}">{{ g.group }}</a>
-    {%- endfor %}
-  </div>
-</nav>
-
-<div class="section section--tight">
-  <div class="container container--narrow">
-    {%- for g in site.data.faq %}
-    <section class="faq-group" id="{{ g.id }}" aria-labelledby="faq-{{ g.id }}-title">
-      <h2 class="display display--section" id="faq-{{ g.id }}-title">{{ g.group }}</h2>
-      {% include faq-list.html group=g.id %}
-    </section>
-    {%- endfor %}
-  </div>
-</div>
-
-<section class="section" aria-labelledby="still-title">
-  <div class="container container--narrow">
-    <div class="card stack">
-      <h2 class="display display--card" id="still-title">Still have a question?</h2>
-      <p>Write to us and we'll reply {{ site.contact.reply_time }}. You can also email us at <a href="mailto:{{ site.contact.email }}">{{ site.contact.email }}</a>.</p>
-      <div class="button-row">
-        <a class="btn btn--primary" href="{{ '/contact/' | relative_url }}">Contact us</a>
-        <a class="btn btn--secondary" href="{{ '/how-it-works/' | relative_url }}">See how it works</a>
-      </div>
-    </div>
-  </div>
-</section>

@@ -102,7 +102,7 @@ Rizq Rasan keeps a commission of 20% of the listing price, services tax included
 | Rs 1,234 | Rs 246, rounded down | Rs 988 |
 | Rs 10,000 | Rs 2,000 | Rs 8,000 |
 
-A change to the commission rate applies only to listings published after it takes effect. Try the [commission calculator]({{ '/pricing/#calculator' | relative_url }}).
+A change to the commission rate applies only to listings published after it takes effect. Try the [commission calculator]({{ '/for-vendors/#calculator' | relative_url }}).
 
 ## 9. Payouts and holds
 

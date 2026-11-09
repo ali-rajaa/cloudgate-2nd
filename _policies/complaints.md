@@ -26,7 +26,7 @@ To report a security flaw, follow our [Security and Responsible Disclosure]({{ '
 Complaining is free. You can reach us:
 
 - **By email** at {{ site.contact.email }}, with "Complaint" in the subject line.
-- **Through our [contact page]({{ '/contact/' | relative_url }}),** choosing "Complaint" as the topic.{% if site.contact.whatsapp != "" %}
+- **Through our [contact page]({{ '/about/#contact' | relative_url }}),** choosing "Complaint" as the topic.{% if site.contact.whatsapp != "" %}
 - **On WhatsApp** at {{ site.contact.whatsapp }}.{% endif %}{% if site.company.registered_office != "" %}
 - **By post** to the Grievance Officer, {{ site.company.legal_name }}, {{ site.company.registered_office }}.{% endif %}
 - **In your account,** from launch. The Help and disputes screen will let you open a ticket or a dispute, add photos, see our replies and appeal a decision.

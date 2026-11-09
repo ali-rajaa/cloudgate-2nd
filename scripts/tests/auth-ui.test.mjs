@@ -516,9 +516,9 @@ test('website: guests see one Log in button (no Join); nobody sees the account m
   assert.match(await login.getAttribute('href'), /\/app\/#\/login$/);
   assert.equal(await page.getByRole('link', { name: 'Join', exact: true }).count(), 0);
   assert.equal(await page.locator('[data-account]').isVisible(), false);
-  // The home page's buttons go straight to sign-up, as a business or an NGO.
-  assert.match(await page.getByRole('link', { name: 'I have surplus food' }).first().getAttribute('href'), /\/app\/#\/signup\/vendor$/);
-  assert.match(await page.getByRole('link', { name: 'I feed people' }).first().getAttribute('href'), /\/app\/#\/signup\/ngo$/);
+  // The home page's two big choices: vendors go straight to sign-up, collectors to their page.
+  assert.match(await page.getByRole('link', { name: /^Share your surplus/ }).first().getAttribute('href'), /\/app\/#\/signup\/vendor$/);
+  assert.match(await page.getByRole('link', { name: /^Find supplies/ }).first().getAttribute('href'), /\/for-collectors\/$/);
   await context.close();
 });
 
@@ -545,7 +545,7 @@ test('website: on phones the menu sheet offers your dashboard and log out instea
   await page.locator('[data-menu-open]').click();
   const sheet = page.locator('#menu-sheet');
   await sheet.getByRole('link', { name: 'Your dashboard' }).waitFor();
-  assert.equal(await sheet.getByRole('link', { name: 'I have surplus food' }).isVisible(), false);
+  assert.equal(await sheet.getByRole('link', { name: 'Log in', exact: true }).isVisible(), false);
   assert.ok(await sheet.getByText('Ali Rajaa').isVisible());
   await close();
 });
@@ -580,30 +580,30 @@ async function sitePage(pathname, viewport) {
   return { page, errors, close: () => context.close() };
 }
 
-test('header: four short links, and the highlight rests on the current page then follows the pointer', async () => {
-  const { page, errors, close } = await sitePage('/pricing/', { width: 1280, height: 800 });
+test('header: five short links, and the highlight rests on the current page then follows the pointer', async () => {
+  const { page, errors, close } = await sitePage('/for-vendors/', { width: 1280, height: 800 });
   const labels = await page.locator('.site-nav__link').allTextContents();
-  assert.deepEqual(labels.map((t) => t.trim()), ['How it works', 'Businesses', 'NGOs', 'Pricing']);
+  assert.deepEqual(labels.map((t) => t.trim()), ['How it works', 'For vendors', 'For collectors', 'Impact', 'About']);
   const box = (loc) => loc.evaluate((el) => { const r = el.getBoundingClientRect(); return [Math.round(r.left), Math.round(r.width)]; });
   const pill = page.locator('[data-nav-indicator]');
-  const pricing = page.locator('.site-nav__link', { hasText: 'Pricing' });
-  assert.deepEqual(await box(pill), await box(pricing));
+  const current = page.locator('.site-nav__link', { hasText: 'For vendors' });
+  assert.deepEqual(await box(pill), await box(current));
   // Wait for the spring to settle rather than for a fixed time.
   const settlesOn = (text) => page.waitForFunction((t) => {
     const p = document.querySelector('[data-nav-indicator]').getBoundingClientRect();
     const l = [...document.querySelectorAll('.site-nav__link')].find((a) => a.textContent.trim() === t).getBoundingClientRect();
     return Math.abs(p.left - l.left) < 1 && Math.abs(p.width - l.width) < 1;
   }, text, { timeout: 3000 });
-  await page.locator('.site-nav__link', { hasText: 'NGOs' }).hover();
-  await settlesOn('NGOs');
+  await page.locator('.site-nav__link', { hasText: 'For collectors' }).hover();
+  await settlesOn('For collectors');
   await page.mouse.move(640, 500);
-  await settlesOn('Pricing');
+  await settlesOn('For vendors');
   assert.deepEqual(errors, []);
   await close();
 });
 
 test('header: tucks away when scrolling down, returns on scroll up and when it gets focus', async () => {
-  const { page, close } = await sitePage('/for-businesses/', { width: 1280, height: 800 });
+  const { page, close } = await sitePage('/for-vendors/', { width: 1280, height: 800 });
   const header = page.locator('[data-header]');
   const tucked = async () => (await header.getAttribute('class')).includes('is-tucked');
   await page.mouse.move(640, 500);
@@ -624,15 +624,16 @@ test('header: on phones the bar is just logo, Log in and menu; the Urdu switch i
   assert.ok(await page.locator('.site-header__login').isVisible());
   await page.locator('[data-menu-open]').click();
   await page.locator('#menu-sheet .lang-toggle').waitFor();
-  // Log in, Create an account, and no Impact link until its numbers are published.
+  // Log in, Create an account, and the pages, with no repeats.
   assert.equal(await page.locator('#menu-sheet').getByRole('link', { name: 'Log in', exact: true }).count(), 1);
   assert.match(await page.locator('#menu-sheet').getByRole('link', { name: 'Create an account' }).getAttribute('href'), /#\/signup$/);
-  assert.equal(await page.locator('#menu-sheet').getByRole('link', { name: 'Impact' }).count(), 0);
+  assert.equal(await page.locator('#menu-sheet').getByRole('link', { name: 'Impact' }).count(), 1);
+  assert.match(await page.locator('#menu-sheet').getByRole('link', { name: 'Contact' }).getAttribute('href'), /\/about\/#contact$/);
   await close();
 });
 
 test('header: still tucks away after you tap one of its buttons', async () => {
-  const { page, close } = await sitePage('/for-ngos/', { width: 390, height: 800 });
+  const { page, close } = await sitePage('/for-collectors/', { width: 390, height: 800 });
   await page.locator('[data-menu-open]').click();
   await page.locator('#menu-sheet .menu-sheet__scrim').click({ position: { x: 20, y: 780 } });
   await page.waitForFunction(() => document.querySelector('#menu-sheet').hidden || !document.documentElement.classList.contains('has-sheet'));
@@ -685,5 +686,16 @@ test('join: the old /join/ address now opens sign-up in the app', async () => {
   await page.goto(`${base}${BASE_PATH}/join/`);
   await page.waitForFunction(() => location.hash === '#/signup');
   assert.match(page.url(), /\/app\/#\/signup$/);
+  await context.close();
+});
+
+test('old addresses: removed pages forward to where their content now lives', async () => {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  await page.route(/fonts\.(googleapis|gstatic)\.com|translate\.google/, (r) => r.abort());
+  for (const [from, to] of [['/for-ngos/', '/for-collectors/'], ['/for-businesses/', '/for-vendors/'], ['/pricing/', '/for-vendors/#commission'], ['/contact/', '/about/#contact'], ['/faq/', '/how-it-works/#faq']]) {
+    await page.goto(`${base}${BASE_PATH}${from}`);
+    await page.waitForURL((u) => u.pathname + u.hash === `${BASE_PATH}${to}`);
+  }
   await context.close();
 });

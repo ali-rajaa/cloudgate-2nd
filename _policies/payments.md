@@ -72,7 +72,7 @@ If a payment method stops working, it can't be chosen at checkout. If all paymen
 | Rs 1,234 | Rs 1,234 | Rs 988 | Rs 246 |
 | Rs 10,000 | Rs 10,000 | Rs 8,000 | Rs 2,000 |
 
-The vendor amounts are before any tax withheld. Our [commission calculator]({{ '/pricing/#calculator' | relative_url }}) works out any other price. If we ever change the commission, the change applies only to listings published after it takes effect, and we will email you at least 14 days ahead.
+The vendor amounts are before any tax withheld. Our [commission calculator]({{ '/for-vendors/#calculator' | relative_url }}) works out any other price. If we ever change the commission, the change applies only to listings published after it takes effect, and we will email you at least 14 days ahead.
 
 ## 6. Gateway fees
 

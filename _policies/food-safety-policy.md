@@ -11,7 +11,7 @@ summary:
   - Collectors check the food before the pickup code is entered and can refuse it for a full refund.
   - Food-safety reports are decided within 24 hours. An upheld complaint means a refund for the NGO and a strike for the vendor.
 ---
-Rizq Rasan sells food rather than giving it away, so Pakistan's food sale laws, including the Islamabad Capital Territory Food Safety Act 2021, apply in full. No Good Samaritan law protects anyone who donates or sells surplus food in Pakistan. This policy sets the rules every listing and every pickup must follow, during the pilot and after launch. It forms part of our [Terms of Service]({{ '/legal/terms/' | relative_url }}), and vendors and NGOs also agree to it through the [Vendor Agreement]({{ '/legal/vendor-agreement/' | relative_url }}) and the [NGO Agreement]({{ '/legal/ngo-agreement/' | relative_url }}). A shorter version is on our [food safety page]({{ '/food-safety/' | relative_url }}).
+Rizq Rasan sells food rather than giving it away, so Pakistan's food sale laws, including the Islamabad Capital Territory Food Safety Act 2021, apply in full. No Good Samaritan law protects anyone who donates or sells surplus food in Pakistan. This policy sets the rules every listing and every pickup must follow, during the pilot and after launch. It forms part of our [Terms of Service]({{ '/legal/terms/' | relative_url }}), and vendors and NGOs also agree to it through the [Vendor Agreement]({{ '/legal/vendor-agreement/' | relative_url }}) and the [NGO Agreement]({{ '/legal/ngo-agreement/' | relative_url }}).
 
 ## 1. Who is responsible for what
 

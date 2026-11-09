@@ -366,6 +366,27 @@ html.has-sheet { overflow: hidden; }
 .hero__meta span { display: inline-flex; align-items: center; gap: 0.4rem; }
 .page-hero { padding-block: clamp(3rem, 7vw, 5.5rem) clamp(1.5rem, 4vw, 2.5rem); }
 
+/* ---------- Home: the two big choices ---------- */
+.choice-row { display: grid; gap: 0.75rem; margin-top: 2rem; }
+@media (min-width: 560px) { .choice-row { grid-template-columns: 1fr 1fr; } }
+.choice {
+  display: flex; flex-direction: column; gap: 0.3rem; padding: 1.05rem 1.25rem 1.2rem;
+  border-radius: 1.25rem; text-decoration: none; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  transition: transform 160ms cubic-bezier(.2, .9, .3, 1), background-color 160ms ease;
+}
+.choice:hover { text-decoration: none; }
+.choice:active, .choice.is-pressed { transform: scale(0.98); transition-duration: 80ms; }
+.choice--primary { background: var(--ink); color: var(--on-ink); }
+.choice--primary:hover { background: var(--ink-deep); }
+.choice--secondary { background: var(--surface); color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); }
+.choice--secondary:hover { background: rgba(46, 69, 55, 0.05); }
+.choice__title {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+  font-family: var(--font-display); font-weight: 600; font-size: 1.375rem; line-height: 1.2; letter-spacing: -0.015em;
+}
+.choice__text { font-size: 0.9375rem; line-height: 1.4; opacity: 0.85; }
+@media (prefers-reduced-motion: reduce) { .choice:active, .choice.is-pressed { transform: none; } }
+
 /* ---------- Cards ---------- */
 .card {
   position: relative; padding: clamp(1.25rem, 3vw, 1.75rem);

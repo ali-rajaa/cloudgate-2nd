@@ -5,10 +5,8 @@ title: Rizq Rasan
 urdu_name: "رزق رسان"
 tagline: From surplus to sustenance.
 description: >-
-  Rizq Rasan will connect Islamabad's restaurants, bakeries and grocers that
-  have good surplus food with verified NGOs that feed people, from 22 March
-  2027. Vendors will recover part of their cost, and NGOs will pay no more
-  than half of retail.
+  Stores, bakeries and restaurants in Islamabad share their surplus.
+  Cafeterias, canteens, offices and people nearby collect it for less.
 lang: en
 locale: en_PK
 
@@ -39,7 +37,7 @@ company:
 forms:
   endpoint: ""
 
-# The platform (NGO and business accounts) at /app/. Fill these in from your
+# The platform (vendor and collector accounts) at /app/. Fill these in from your
 # Supabase project (Settings > API): the project URL and the anon public key.
 # Both are safe to publish; access is controlled by the database's rules.
 # While they are empty, /app/ says sign-in is switched off on this copy of the site.

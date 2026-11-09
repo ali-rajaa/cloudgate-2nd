@@ -1,14 +1,14 @@
 {%- comment -%}
-  Businesses / NGOs segmented control with three steps each. Param: id (unique prefix)
+  Vendors / Collectors switch with three steps each. Param: id (unique prefix)
 {%- endcomment -%}
 {%- assign uid = include.id | default: "steps" -%}
 <div class="steps-switch" data-tabs>
   <div class="segmented" role="tablist" aria-label="Show steps for">
     <span class="segmented__thumb" data-tabs-thumb aria-hidden="true"></span>
-    <button class="segmented__option" role="tab" id="{{ uid }}-tab-business" aria-controls="{{ uid }}-panel-business" aria-selected="true" type="button">For businesses</button>
-    <button class="segmented__option" role="tab" id="{{ uid }}-tab-ngo" aria-controls="{{ uid }}-panel-ngo" aria-selected="false" tabindex="-1" type="button">For NGOs</button>
+    <button class="segmented__option" role="tab" id="{{ uid }}-tab-vendor" aria-controls="{{ uid }}-panel-vendor" aria-selected="true" type="button">For vendors</button>
+    <button class="segmented__option" role="tab" id="{{ uid }}-tab-collector" aria-controls="{{ uid }}-panel-collector" aria-selected="false" tabindex="-1" type="button">For collectors</button>
   </div>
-  {%- assign groups = "business,ngo" | split: "," %}
+  {%- assign groups = "vendor,collector" | split: "," %}
   {%- for g in groups %}
   <div class="steps-panel" role="tabpanel" id="{{ uid }}-panel-{{ g }}" aria-labelledby="{{ uid }}-tab-{{ g }}" data-tabs-panel{% unless forloop.first %} hidden{% endunless %}>
     <ol class="steps">

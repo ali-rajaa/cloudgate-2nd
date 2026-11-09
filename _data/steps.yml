@@ -1,15 +1,15 @@
-# Three-step summaries used on Home and How it works.
-business:
-  - title: List what's left
-    text: Snap a photo, set a recovery price and a pickup window. It takes under a minute on your phone.
-  - title: An NGO claims and pays
-    text: A verified NGO nearby claims it and pays straight away. You get a notification and an email to get the food ready.
-  - title: Hand over and get paid
-    text: Type the NGO's 4-digit pickup code at the counter. Your 80% goes out in the first Monday or Thursday payout after the order is completed and the payment has settled.
-ngo:
-  - title: Find food near you
-    text: See verified listings within your area, sorted by the pickup that ends soonest.
+# Short step lists used on Home and How it works.
+vendor:
+  - title: List your surplus
+    text: Add a photo, the quantity, a price or Rs 0, and a pickup window.
+  - title: Someone claims it
+    text: A verified collector claims it and pays. You get a notification.
+  - title: Hand it over
+    text: Check their 4-digit pickup code at the counter. You keep 80% of the price.
+collector:
+  - title: Find supplies
+    text: See listings near you, soonest pickup first.
   - title: Claim and pay
-    text: Claim the food and pay by Raast or a JazzCash or Easypaisa wallet before the payment deadline.
-  - title: Collect with your code
-    text: Send the pickup code to your driver by WhatsApp. They show it at the counter and bring the food back.
+    text: Pay within 30 minutes, or nothing at all for Rs 0 listings.
+  - title: Collect
+    text: Show your 4-digit pickup code at the counter.

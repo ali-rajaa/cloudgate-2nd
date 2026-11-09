@@ -119,7 +119,7 @@ From handover, you are responsible for keeping the food safe until it is eaten. 
 - follow the Islamabad Food Authority's rules if you cook or reheat the food;
 - stop serving food at once if we tell you that food from a batch you collected may be unsafe, and follow our instructions.
 
-The [Food Safety Policy]({{ '/legal/food-safety-policy/' | relative_url }}) and our public [food safety rules for NGOs]({{ '/food-safety/#ngos' | relative_url }}) form part of this agreement.
+The [Food Safety Policy]({{ '/legal/food-safety-policy/' | relative_url }}) forms part of this agreement.
 
 ## 11. Cancellations and no-shows
 

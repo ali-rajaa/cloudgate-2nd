@@ -1,33 +1,20 @@
-# Footer link columns. Phase 2 pages (Help centre, Stories, Volunteer and careers)
-# are added here only once they exist.
+# Footer link columns.
 columns:
   - title: Platform
     links:
       - { title: How it works, url: /how-it-works/ }
-      - { title: Pricing and fees, url: /pricing/ }
+      - { title: For vendors, url: /for-vendors/ }
+      - { title: For collectors, url: /for-collectors/ }
       - { title: Impact, url: /impact/ }
-      - { title: Food safety, url: /food-safety/ }
-      - { title: FAQ, url: /faq/ }
-  - title: For businesses
+  - title: Get started
     links:
-      - { title: Why list with us, url: /for-businesses/ }
-      - { title: Create a business account, url: /app/#/signup/vendor }
-      - { title: Vendor Agreement, url: /legal/vendor-agreement/ }
-      - { title: Food safety for vendors, url: /food-safety/#vendors }
-      - { title: Verification Policy, url: /legal/verification/ }
-  - title: For NGOs
-    links:
-      - { title: Why join, url: /for-ngos/ }
-      - { title: Create an NGO account, url: /app/#/signup/ngo }
-      - { title: NGO Agreement, url: /legal/ngo-agreement/ }
-      - { title: Food safety after pickup, url: /food-safety/#ngos }
-      - { title: Reliability and No-show Policy, url: /legal/reliability/ }
+      - { title: Share your surplus, url: /app/#/signup/vendor }
+      - { title: Find supplies, url: /for-collectors/ }
+      - { title: Log in, url: /app/#/login }
   - title: Company
     links:
       - { title: About us, url: /about/ }
-      - { title: The problem, url: /the-problem/ }
-      - { title: Partners, url: /partners/ }
-      - { title: Contact, url: /contact/ }
+      - { title: Contact, url: /about/#contact }
       - { title: Legal Information, url: /legal/company/ }
   - title: Legal
     links:
@@ -35,6 +22,4 @@ columns:
       - { title: Privacy Policy, url: /legal/privacy/ }
       - { title: Payments and Refunds, url: /legal/payments/ }
       - { title: Food Safety Policy, url: /legal/food-safety-policy/ }
-      - { title: Complaints and Disputes, url: /legal/complaints/ }
-      - { title: Cookie Policy, url: /legal/cookies/ }
       - { title: All policies, url: /legal/ }

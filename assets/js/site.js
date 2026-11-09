@@ -171,7 +171,7 @@
   /* ---------------------------------------------------------------------------
      Press feedback on pointer-down (iOS Safari is slow to apply :active).
   --------------------------------------------------------------------------- */
-  var pressable = '.btn, .card--link, .icon-button, .lang-toggle';
+  var pressable = '.btn, .choice, .card--link, .icon-button, .lang-toggle';
   document.addEventListener('pointerdown', function (e) {
     var el = e.target.closest && e.target.closest(pressable);
     if (!el) return;

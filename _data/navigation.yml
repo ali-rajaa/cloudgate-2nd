@@ -1,11 +1,12 @@
-# Header links. Four, short, one line at every width. Everything else is in
-# the footer (and the phone menu's "More" row).
+# Header links: short, one line at every width. Everything else is in the footer.
 main:
   - title: How it works
     url: /how-it-works/
-  - title: Businesses
-    url: /for-businesses/
-  - title: NGOs
-    url: /for-ngos/
-  - title: Pricing
-    url: /pricing/
+  - title: For vendors
+    url: /for-vendors/
+  - title: For collectors
+    url: /for-collectors/
+  - title: Impact
+    url: /impact/
+  - title: About
+    url: /about/

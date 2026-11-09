@@ -51,7 +51,7 @@ The full process is in our [Complaints and Disputes]({{ '/legal/complaints/' | r
 
 - **Email:** {{ site.contact.email }}. We reply {{ site.contact.reply_time }}, {{ site.contact.hours }}.{% if site.contact.whatsapp != "" %}
 - **WhatsApp:** {{ site.contact.whatsapp }}.{% endif %}
-- **Online:** our [contact page]({{ '/contact/' | relative_url }}) has a form for general questions, and our [partners page]({{ '/partners/' | relative_url }}) one for partnership requests.
+- **Online:** the [contact form]({{ '/about/#contact' | relative_url }}) on our About page, for general questions and partnership requests.
 - **Legal notices:** send them to {{ site.contact.email }}.{% if site.company.registered_office != "" %} You can also post them to our registered office at {{ site.company.registered_office }}.{% endif %}
 
 ## 5. Our name and brand

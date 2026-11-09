@@ -1,0 +1,66 @@
+---
+layout: page
+title: For collectors
+permalink: /for-collectors/
+description: Find surplus supplies from verified vendors in Islamabad, for organizations such as cafeterias and canteens, and soon for individuals.
+eyebrow: For organizations and individuals
+heading: Find supplies
+lead: Good surplus from verified vendors near you, for less than retail.
+---
+<section class="section section--tight" aria-labelledby="who-title">
+  <div class="container">
+    <h2 id="who-title" class="visually-hidden">Who can collect</h2>
+    <div class="join-cards">
+      <div class="card join-card">
+        <h2>Organizations</h2>
+        <p>University cafeterias, school canteens, offices and bulk buyers.</p>
+        <ul class="check-list">
+          <li>Bulk lots at up to half of retail</li>
+          <li>Rs 0 listings from vendors' CSR programmes</li>
+          <li>Open from launch</li>
+        </ul>
+        <div class="button-row">
+          <a class="btn btn--primary" href="{{ site.app_url }}#/signup/organization">Create an organization account</a>
+        </div>
+      </div>
+      <div class="card join-card">
+        <h2>Individuals</h2>
+        <p>Anyone in Islamabad who wants good supplies for less.</p>
+        <ul class="check-list">
+          <li>Single items and smaller lots</li>
+          <li>Opens to the public after launch</li>
+          <li>Sign up now to be first in</li>
+        </ul>
+        <div class="button-row">
+          <a class="btn btn--secondary" href="{{ site.app_url }}#/signup/individual">Create an individual account</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--sunk" aria-labelledby="claim-title">
+  <div class="container">
+    {% include section-head.html title="How collecting works" id="claim-title" %}
+    <ol class="steps">
+      {%- for step in site.data.steps.collector %}
+      <li class="step">
+        <span class="step__number" aria-hidden="true">{{ forloop.index }}</span>
+        <h3 class="step__title">{{ step.title }}</h3>
+        <p class="step__text">{{ step.text }}</p>
+      </li>
+      {%- endfor %}
+    </ol>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="need-title">
+  <div class="container offset">
+    {% include section-head.html title="What you'll need" id="need-title" lead="We check every organization within 2 working days." %}
+    <ul class="check-list">
+      <li>Organizations: proof of the organization and the CNIC of the person in charge</li>
+      <li>Individuals: your CNIC and mobile number</li>
+    </ul>
+  </div>
+</section>
+

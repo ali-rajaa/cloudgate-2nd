@@ -34,10 +34,6 @@
     </nav>
 
     <div class="site-footer__bottom">
-      <a class="sdg-strip" href="{{ '/impact/#sdgs' | relative_url }}" aria-label="UN Sustainable Development Goals we work towards: {% for g in site.data.sdgs %}{{ g.number }} {{ g.name }}{% unless forloop.last %}, {% endunless %}{% endfor %}">
-        <span class="sdg-strip__label">SDGs</span>
-        {%- for g in site.data.sdgs %}<span class="sdg-chip">{{ g.number }}</span>{%- endfor %}
-      </a>
       {%- if site.nust_credit %}
       <p class="site-footer__credit">Started at NUST Business School</p>
       {%- endif %}
